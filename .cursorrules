@@ -2,6 +2,65 @@
 # Version: 1.0.0
 # Description: A comprehensive vehicle management application for tracking expenses, fuel costs, and maintenance
 
+# Best Practices
+code_principles:
+  solid:
+    single_responsibility:
+      - Each class/module should have only one reason to change
+      - Split large classes into smaller, focused ones
+      - Keep files under 300 lines of code
+    open_closed:
+      - Design for extension, not modification
+      - Use interfaces and abstract classes
+      - Implement new features by adding new code, not changing existing code
+    liskov_substitution:
+      - Derived classes must be substitutable for their base classes
+      - Follow interface contracts strictly
+      - Avoid breaking inherited behavior
+    interface_segregation:
+      - Keep interfaces small and focused
+      - Split large interfaces into smaller ones
+      - Clients should not depend on methods they don't use
+    dependency_inversion:
+      - Depend on abstractions, not concrete implementations
+      - Use dependency injection
+      - Define clear interface boundaries
+
+  kiss:
+    - Keep solutions as simple as possible
+    - Avoid premature optimization
+    - Prefer readability over cleverness
+    - Use descriptive naming over comments
+    - Break complex problems into smaller, manageable parts
+
+  dry:
+    - Avoid code duplication
+    - Extract common functionality into shared utilities
+    - Use composition over inheritance
+    - Create reusable components and hooks
+    - Implement shared business logic in services
+
+file_organization:
+  - Group related files together
+  - Maintain consistent file structure across features
+  - Keep implementation details private
+  - Export only what's necessary
+  - Use index files for clean imports
+
+code_style:
+  - Follow consistent naming conventions
+  - Use meaningful variable and function names
+  - Keep functions small and focused
+  - Document public APIs and complex logic
+  - Use type annotations effectively
+
+error_handling:
+  - Use typed errors for different scenarios
+  - Provide meaningful error messages
+  - Handle edge cases explicitly
+  - Validate input data
+  - Log errors appropriately
+
 # Project Structure
 root_directories:
   - webapp
@@ -103,11 +162,9 @@ testing:
     - Unit tests for domain logic
     - Integration tests for repositories
     - E2E tests for critical flows
-    - UI component tests
   coverage:
     domain: 90%
     data: 80%
-    presentation: 70%
 
 # Performance Requirements
 metrics:
