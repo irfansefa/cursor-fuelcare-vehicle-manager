@@ -4,11 +4,10 @@ const nextConfig = {
   images: {
     domains: ['images.unsplash.com'],
   },
+  // Enable Next.js Speed Insights
   experimental: {
-    instrumentationHook: true,
+    webVitalsAttribution: ['CLS', 'LCP', 'FCP', 'FID', 'TTFB', 'INP'],
   },
-  // Enable Next.js Analytics
-  analyticsId: process.env.NEXT_PUBLIC_ANALYTICS_ID,
 };
 
 module.exports = nextConfig; 
