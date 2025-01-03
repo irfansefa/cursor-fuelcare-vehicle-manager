@@ -115,7 +115,6 @@ fuelcare/
 
 ## Testing Strategy
 - Unit testing with Jest
-- Component testing with React Testing Library
 - E2E testing with Cypress
 - Performance testing
 - Accessibility testing
