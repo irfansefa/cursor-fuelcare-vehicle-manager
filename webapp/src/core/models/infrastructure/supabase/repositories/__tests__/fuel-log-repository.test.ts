@@ -78,6 +78,18 @@ describe('SupabaseFuelLogRepository', () => {
       const result = await repository.getById('nonexistent');
       expect(result).toBeNull();
     });
+
+    it('should throw error when Supabase returns an error', async () => {
+      client.from = jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            single: jest.fn().mockResolvedValue({ data: null, error: new Error('Database error') }),
+          }),
+        }),
+      });
+
+      await expect(repository.getById('123')).rejects.toThrow('Database error');
+    });
   });
 
   describe('getByVehicleId', () => {
@@ -99,6 +111,31 @@ describe('SupabaseFuelLogRepository', () => {
       const result = await repository.getByVehicleId('nonexistent');
       expect(result).toEqual([]);
     });
+
+    it('should return empty array when data is null', async () => {
+      client.from = jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            order: jest.fn().mockResolvedValue({ data: null, error: null }),
+          }),
+        }),
+      });
+
+      const result = await repository.getByVehicleId('vehicle123');
+      expect(result).toEqual([]);
+    });
+
+    it('should throw error when Supabase returns an error', async () => {
+      client.from = jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            order: jest.fn().mockResolvedValue({ data: null, error: new Error('Database error') }),
+          }),
+        }),
+      });
+
+      await expect(repository.getByVehicleId('vehicle123')).rejects.toThrow('Database error');
+    });
   });
 
   describe('create', () => {
@@ -114,6 +151,19 @@ describe('SupabaseFuelLogRepository', () => {
         insert: jest.fn().mockReturnValue({
           select: jest.fn().mockReturnValue({
             single: jest.fn().mockResolvedValue({ data: null, error: new Error('Failed to create fuel log') }),
+          }),
+        }),
+      });
+
+      const { id, created_at, updated_at, ...createData } = mockFuelLog;
+      await expect(repository.create(createData)).rejects.toThrow('Failed to create fuel log');
+    });
+
+    it('should throw error when data is null', async () => {
+      client.from = jest.fn().mockReturnValue({
+        insert: jest.fn().mockReturnValue({
+          select: jest.fn().mockReturnValue({
+            single: jest.fn().mockResolvedValue({ data: null, error: null }),
           }),
         }),
       });
@@ -149,6 +199,21 @@ describe('SupabaseFuelLogRepository', () => {
           eq: jest.fn().mockReturnValue({
             select: jest.fn().mockReturnValue({
               single: jest.fn().mockResolvedValue({ data: null, error: new Error('Failed to update fuel log') }),
+            }),
+          }),
+        }),
+      });
+
+      await expect(repository.update('123', { quantity: 50.0 }))
+        .rejects.toThrow('Failed to update fuel log');
+    });
+
+    it('should throw error when data is null', async () => {
+      client.from = jest.fn().mockReturnValue({
+        update: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            select: jest.fn().mockReturnValue({
+              single: jest.fn().mockResolvedValue({ data: null, error: null }),
             }),
           }),
         }),
@@ -210,6 +275,31 @@ describe('SupabaseFuelLogRepository', () => {
         total_fuel: 0,
         avg_price_per_unit: 0
       });
+    });
+
+    it('should return zero values when data is null', async () => {
+      client.from = jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockResolvedValue({ data: null, error: null }),
+        }),
+      });
+
+      const result = await repository.getVehicleStats('vehicle123');
+      expect(result).toEqual({
+        total_spent: 0,
+        total_fuel: 0,
+        avg_price_per_unit: 0
+      });
+    });
+
+    it('should throw error when Supabase returns an error', async () => {
+      client.from = jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockResolvedValue({ data: null, error: new Error('Database error') }),
+        }),
+      });
+
+      await expect(repository.getVehicleStats('vehicle123')).rejects.toThrow('Database error');
     });
   });
 
@@ -275,6 +365,70 @@ describe('SupabaseFuelLogRepository', () => {
       );
 
       expect(result).toEqual([]);
+    });
+
+    it('should return empty array when data is null', async () => {
+      client.from = jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            gte: jest.fn().mockReturnValue({
+              lte: jest.fn().mockReturnValue({
+                order: jest.fn().mockResolvedValue({ data: null, error: null }),
+              }),
+            }),
+          }),
+        }),
+      });
+
+      const result = await repository.getMonthlyStats('vehicle123', '2023-01-01', '2023-12-31');
+      expect(result).toEqual([]);
+    });
+
+    it('should throw error when Supabase returns an error', async () => {
+      client.from = jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            gte: jest.fn().mockReturnValue({
+              lte: jest.fn().mockReturnValue({
+                order: jest.fn().mockResolvedValue({ data: null, error: new Error('Database error') }),
+              }),
+            }),
+          }),
+        }),
+      });
+
+      await expect(repository.getMonthlyStats('vehicle123', '2023-01-01', '2023-12-31'))
+        .rejects.toThrow('Database error');
+    });
+
+    it('should handle multiple logs in the same month', async () => {
+      const mockLogs = [
+        { date: '2023-01-01', total_cost: 100, quantity: 50 },
+        { date: '2023-01-15', total_cost: 150, quantity: 75 },
+        { date: '2023-01-31', total_cost: 200, quantity: 100 }
+      ];
+
+      client.from = jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            gte: jest.fn().mockReturnValue({
+              lte: jest.fn().mockReturnValue({
+                order: jest.fn().mockResolvedValue({ data: mockLogs, error: null }),
+              }),
+            }),
+          }),
+        }),
+      });
+
+      const result = await repository.getMonthlyStats('vehicle123', '2023-01-01', '2023-01-31');
+      expect(result).toEqual([
+        {
+          month: '2023-01',
+          total_spent: 450,
+          total_fuel: 225,
+          avg_price_per_unit: 2
+        }
+      ]);
     });
   });
 }); 

@@ -104,6 +104,19 @@ describe('SupabaseVehicleRepository', () => {
       expect(result).toEqual([]);
     });
 
+    it('should return empty array when data is null', async () => {
+      client.from = jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            order: jest.fn().mockResolvedValue({ data: null, error: null }),
+          }),
+        }),
+      });
+
+      const result = await repository.getByUserId('user123');
+      expect(result).toEqual([]);
+    });
+
     it('should throw error when Supabase returns an error', async () => {
       client.from = jest.fn().mockReturnValue({
         select: jest.fn().mockReturnValue({
