@@ -1,145 +1,109 @@
 'use client';
 
 import React from 'react';
-import { Button } from '@/components/buttons/Button';
-import { Input } from '@/components/inputs/Input';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/cards/Card';
-import { Navigation } from '@/components/navigation/Navigation';
-import { Form } from '@/components/forms/Form';
-import { Toast, ToastTitle, ToastDescription } from '@/components/feedback/Toast';
-import { MainLayout } from '@/components/layouts/MainLayout';
 
 const ShowcasePage = () => {
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-8">Component Showcase</h1>
-      
-      {/* Buttons Section */}
-      <section className="mb-12" id="buttons">
-        <h2 className="text-2xl font-semibold mb-4">Buttons</h2>
-        <div className="space-y-4">
-          <div className="flex gap-4">
-            <Button>Default Button</Button>
-            <Button variant="secondary">Secondary Button</Button>
-            <Button variant="outline">Outline Button</Button>
-            <Button variant="ghost">Ghost Button</Button>
-            <Button variant="link">Link Button</Button>
-          </div>
-          <div className="flex gap-4">
-            <Button size="sm">Small Button</Button>
-            <Button size="default">Default Size</Button>
-            <Button size="lg">Large Button</Button>
-            <Button size="icon">🔍</Button>
-          </div>
+    <div className="min-h-screen p-8">
+      <div className="mx-auto max-w-7xl space-y-8">
+        {/* Header */}
+        <div className="border-b pb-5">
+          <h1 className="text-3xl font-bold tracking-tight">Component Showcase</h1>
+          <p className="mt-2 text-muted-foreground">
+            A collection of all components with their variants and states.
+          </p>
         </div>
-      </section>
 
-      {/* Inputs Section */}
-      <section className="mb-12" id="inputs">
-        <h2 className="text-2xl font-semibold mb-4">Inputs</h2>
-        <div className="space-y-4 max-w-sm">
-          <Input placeholder="Default input" />
-          <Input variant="error" error="This field is required" placeholder="Error input" />
-          <Input inputSize="sm" placeholder="Small input" />
-          <Input inputSize="lg" placeholder="Large input" />
-        </div>
-      </section>
-
-      {/* Forms Section */}
-      <section className="mb-12" id="forms">
-        <h2 className="text-2xl font-semibold mb-4">Forms</h2>
-        <div className="space-y-4 max-w-sm">
-          <Form onSubmit={() => {}}>
-            <div className="space-y-4">
-              <Input placeholder="Username" />
-              <Input type="password" placeholder="Password" />
-              <Button type="submit">Submit</Button>
+        {/* Buttons Section */}
+        <section className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-semibold tracking-tight">Buttons</h2>
+              <p className="text-sm text-muted-foreground">
+                Button components with different variants and states.
+              </p>
             </div>
-          </Form>
-        </div>
-      </section>
+          </div>
+          <div className="space-y-4">
+            {/* Button variants will go here */}
+          </div>
+        </section>
 
-      {/* Cards Section */}
-      <section className="mb-12" id="cards">
-        <h2 className="text-2xl font-semibold mb-4">Cards</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Default Card</CardTitle>
-              <CardDescription>This is a default card example</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>Card content goes here</p>
-            </CardContent>
-            <CardFooter>
-              <Button>Action</Button>
-            </CardFooter>
-          </Card>
-          
-          <Card variant="destructive">
-            <CardHeader>
-              <CardTitle>Destructive Card</CardTitle>
-              <CardDescription>This is a destructive card example</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>Card content goes here</p>
-            </CardContent>
-            <CardFooter>
-              <Button variant="secondary">Cancel</Button>
-            </CardFooter>
-          </Card>
-
-          <Card variant="ghost">
-            <CardHeader>
-              <CardTitle>Ghost Card</CardTitle>
-              <CardDescription>This is a ghost card example</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>Card content goes here</p>
-            </CardContent>
-            <CardFooter>
-              <Button variant="ghost">Action</Button>
-            </CardFooter>
-          </Card>
-        </div>
-      </section>
-
-      {/* Navigation Section */}
-      <section className="mb-12" id="navigation">
-        <h2 className="text-2xl font-semibold mb-4">Navigation</h2>
-        <div className="space-y-4">
-          <Navigation>
-            <div className="flex items-center gap-4">
-              <span className="font-bold">Logo</span>
-              <Button variant="ghost">Home</Button>
-              <Button variant="ghost">About</Button>
-              <Button variant="ghost">Contact</Button>
+        {/* Inputs Section */}
+        <section className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-semibold tracking-tight">Inputs</h2>
+              <p className="text-sm text-muted-foreground">
+                Input components with different states and variations.
+              </p>
             </div>
-            <Button>Login</Button>
-          </Navigation>
-        </div>
-      </section>
+          </div>
+          <div className="space-y-4">
+            {/* Input variants will go here */}
+          </div>
+        </section>
 
-      {/* Feedback Section */}
-      <section className="mb-12" id="feedback">
-        <h2 className="text-2xl font-semibold mb-4">Feedback</h2>
-        <div className="space-y-4">
-          <Toast>
-            <ToastTitle>Default Toast</ToastTitle>
-            <ToastDescription>This is a default toast message.</ToastDescription>
-          </Toast>
-          
-          <Toast variant="destructive">
-            <ToastTitle>Error Toast</ToastTitle>
-            <ToastDescription>This is an error toast message.</ToastDescription>
-          </Toast>
+        {/* Forms Section */}
+        <section className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-semibold tracking-tight">Forms</h2>
+              <p className="text-sm text-muted-foreground">
+                Form components and layouts.
+              </p>
+            </div>
+          </div>
+          <div className="space-y-4">
+            {/* Form examples will go here */}
+          </div>
+        </section>
 
-          <Toast variant="success">
-            <ToastTitle>Success Toast</ToastTitle>
-            <ToastDescription>This is a success toast message.</ToastDescription>
-          </Toast>
-        </div>
-      </section>
+        {/* Cards Section */}
+        <section className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-semibold tracking-tight">Cards</h2>
+              <p className="text-sm text-muted-foreground">
+                Card components with different layouts and content.
+              </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {/* Card examples will go here */}
+          </div>
+        </section>
+
+        {/* Navigation Section */}
+        <section className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-semibold tracking-tight">Navigation</h2>
+              <p className="text-sm text-muted-foreground">
+                Navigation components and patterns.
+              </p>
+            </div>
+          </div>
+          <div className="space-y-4">
+            {/* Navigation examples will go here */}
+          </div>
+        </section>
+
+        {/* Feedback Section */}
+        <section className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-semibold tracking-tight">Feedback</h2>
+              <p className="text-sm text-muted-foreground">
+                Feedback and notification components.
+              </p>
+            </div>
+          </div>
+          <div className="space-y-4">
+            {/* Feedback components will go here */}
+          </div>
+        </section>
+      </div>
     </div>
   );
 };
