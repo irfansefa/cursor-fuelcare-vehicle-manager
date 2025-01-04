@@ -53,14 +53,14 @@ describe('RepositoryFactory', () => {
 
   describe('initialization', () => {
     it('should initialize repositories with Supabase client', () => {
-      const profileRepository = repositoryFactory.getProfileRepository();
-      const vehicleRepository = repositoryFactory.getVehicleRepository();
-      const fuelLogRepository = repositoryFactory.getFuelLogRepository();
+      const profileRepository = repositoryFactory.getProfileRepository() as SupabaseProfileRepository;
+      const vehicleRepository = repositoryFactory.getVehicleRepository() as SupabaseVehicleRepository;
+      const fuelLogRepository = repositoryFactory.getFuelLogRepository() as SupabaseFuelLogRepository;
 
       // Check that each repository has a Supabase client
-      expect((profileRepository as any).client).toBeDefined();
-      expect((vehicleRepository as any).client).toBeDefined();
-      expect((fuelLogRepository as any).client).toBeDefined();
+      expect(profileRepository['client']).toBeDefined();
+      expect(vehicleRepository['client']).toBeDefined();
+      expect(fuelLogRepository['client']).toBeDefined();
     });
   });
 }); 
