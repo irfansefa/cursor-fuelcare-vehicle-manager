@@ -61,6 +61,13 @@ error_handling:
   - Validate input data
   - Log errors appropriately
 
+progress_tracking:
+  - Update docs/PROGRESS.md whenever implementing RFC features
+  - Mark items as "In Progress" when starting implementation
+  - Mark items as "Completed" when passing all tests and reviews
+  - Mark items as "Blocked" if dependencies or issues prevent progress
+  - Add notes for blocked items explaining the blockage reason
+
 # Project Structure
 root_directories:
   - webapp
