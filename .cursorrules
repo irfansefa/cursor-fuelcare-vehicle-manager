@@ -2,6 +2,24 @@
 # Version: 1.0.0
 # Description: A comprehensive vehicle management application for tracking expenses, fuel costs, and maintenance
 
+# Component Showcase Rules
+component_showcase:
+  rules:
+    - All new components must be added to the showcase page
+    - Each component must demonstrate all its variants and states
+    - Components must be organized in their respective sections
+    - Include example usage with common props and configurations
+    - Add proper documentation comments for each showcase section
+  file_location: webapp/src/app/showcase/page.tsx
+  sections:
+    - Buttons
+    - Inputs
+    - Forms
+    - Cards
+    - Navigation
+    - Feedback
+    - Layout
+
 # Best Practices
 code_principles:
   solid:
