@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { ThemeProvider } from "@/core/providers/theme-provider";
+import { Providers } from "@/core/providers/Providers";
 import { MainNav } from "@/components/navigation/main-nav";
 import { UserNav } from "@/components/navigation/user-nav";
 import { ModeToggle } from "@/components/mode-toggle";
@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} antialiased`} suppressHydrationWarning>
-        <ThemeProvider>
+        <Providers>
           <div className="min-h-screen bg-background">
             {/* Header */}
             <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -37,7 +37,7 @@ export default function RootLayout({
             {/* Main content */}
             <main className="container py-6">{children}</main>
           </div>
-        </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );
