@@ -49,6 +49,16 @@ export default function ComponentShowcase() {
             Components for displaying data including cards, tables, and statistics.
           </p>
         </Link>
+
+        <Link 
+          href="/showcase/feedback" 
+          className="block p-6 rounded-lg border hover:border-primary transition-colors"
+        >
+          <h2 className="text-xl font-semibold mb-2">Feedback</h2>
+          <p className="text-muted-foreground">
+            Components for user feedback including alerts, toasts, progress, and loading states.
+          </p>
+        </Link>
       </div>
     </div>
   )
