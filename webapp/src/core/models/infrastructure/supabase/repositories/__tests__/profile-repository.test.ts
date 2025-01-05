@@ -111,7 +111,7 @@ describe('SupabaseProfileRepository', () => {
 
   describe('create', () => {
     it('should create and return a new profile', async () => {
-      const { id: _id, created_at: _created_at, updated_at: _updated_at, ...createData } = mockProfile;
+      const { ...createData } = mockProfile;
       const result = await repository.create('user123', createData);
       expect(result).toEqual(mockProfile);
       expect(client.from).toHaveBeenCalledWith('profiles');
@@ -126,7 +126,7 @@ describe('SupabaseProfileRepository', () => {
         }),
       });
 
-      const { id: _id, created_at: _created_at, updated_at: _updated_at, ...createData } = mockProfile;
+      const { ...createData } = mockProfile;
       await expect(repository.create('user123', createData)).rejects.toThrow('Failed to create profile');
     });
 
@@ -139,12 +139,12 @@ describe('SupabaseProfileRepository', () => {
         }),
       });
 
-      const { id: _id, created_at: _created_at, updated_at: _updated_at, ...createData } = mockProfile;
+      const { ...createData } = mockProfile;
       await expect(repository.create('user123', createData)).rejects.toThrow('Failed to create profile');
     });
 
     it('should include userId as id in the created profile', async () => {
-      const { id: _id, created_at: _created_at, updated_at: _updated_at, ...createData } = mockProfile;
+      const { ...createData } = mockProfile;
       const userId = 'user123';
 
       await repository.create(userId, createData);

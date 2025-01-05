@@ -140,7 +140,7 @@ describe('SupabaseFuelLogRepository', () => {
 
   describe('create', () => {
     it('should create and return a new fuel log', async () => {
-      const { id, created_at, updated_at, ...createData } = mockFuelLog;
+      const { ...createData } = mockFuelLog;
       const result = await repository.create(createData);
       expect(result).toEqual(mockFuelLog);
       expect(client.from).toHaveBeenCalledWith('fuel_logs');
@@ -155,7 +155,7 @@ describe('SupabaseFuelLogRepository', () => {
         }),
       });
 
-      const { id, created_at, updated_at, ...createData } = mockFuelLog;
+      const { ...createData } = mockFuelLog;
       await expect(repository.create(createData)).rejects.toThrow('Failed to create fuel log');
     });
 
@@ -168,7 +168,7 @@ describe('SupabaseFuelLogRepository', () => {
         }),
       });
 
-      const { id, created_at, updated_at, ...createData } = mockFuelLog;
+      const { ...createData } = mockFuelLog;
       await expect(repository.create(createData)).rejects.toThrow('Failed to create fuel log');
     });
   });

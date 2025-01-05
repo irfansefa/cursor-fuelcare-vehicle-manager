@@ -132,7 +132,7 @@ describe('SupabaseVehicleRepository', () => {
 
   describe('create', () => {
     it('should create and return a new vehicle', async () => {
-      const { id: _id, created_at: _created_at, updated_at: _updated_at, ...createData } = mockVehicle;
+      const { ...createData } = mockVehicle;
       const result = await repository.create(createData);
       expect(result).toEqual(mockVehicle);
       expect(client.from).toHaveBeenCalledWith('vehicles');
@@ -147,7 +147,7 @@ describe('SupabaseVehicleRepository', () => {
         }),
       });
 
-      const { id: _id, created_at: _created_at, updated_at: _updated_at, ...createData } = mockVehicle;
+      const { ...createData } = mockVehicle;
       await expect(repository.create(createData)).rejects.toThrow('Failed to create vehicle');
     });
 
@@ -160,7 +160,7 @@ describe('SupabaseVehicleRepository', () => {
         }),
       });
 
-      const { id: _id, created_at: _created_at, updated_at: _updated_at, ...createData } = mockVehicle;
+      const { ...createData } = mockVehicle;
       await expect(repository.create(createData)).rejects.toThrow('Failed to create vehicle');
     });
   });

@@ -60,7 +60,7 @@ describe('VehicleRepository', () => {
 
   describe('create', () => {
     it('should create and return a new vehicle', async () => {
-      const { id, created_at, updated_at, ...createData } = mockVehicle;
+      const { ...createData } = mockVehicle;
       (repository.create as jest.Mock).mockResolvedValue(mockVehicle);
       
       const result = await repository.create(createData);

@@ -55,7 +55,7 @@ describe('ProfileRepository', () => {
 
   describe('create', () => {
     it('should create and return a new profile', async () => {
-      const { id: _id, created_at: _created_at, updated_at: _updated_at, ...createData } = mockProfile;
+      const { ...createData } = mockProfile;
       const userId = 'user123';
       (repository.create as jest.Mock).mockResolvedValue(mockProfile);
       
