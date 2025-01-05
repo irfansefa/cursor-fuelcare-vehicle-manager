@@ -15,6 +15,7 @@ const navigation = [
       { title: 'Feedback', href: '/showcase/feedback' },
       { title: 'Navigation', href: '/showcase/navigation' },
       { title: 'Modals', href: '/showcase/modals' },
+      { title: 'Layout & Utils', href: '/showcase/layout-utils' },
     ],
   },
 ];
