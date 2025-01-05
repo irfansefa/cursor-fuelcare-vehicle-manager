@@ -9,12 +9,13 @@ const navigation = [
   {
     title: 'Components',
     items: [
-      { title: 'Buttons', href: '#buttons' },
-      { title: 'Inputs', href: '#inputs' },
-      { title: 'Forms', href: '#forms' },
-      { title: 'Cards', href: '#cards' },
-      { title: 'Navigation', href: '#navigation' },
-      { title: 'Feedback', href: '#feedback' },
+      { title: 'Buttons', href: '/showcase/buttons' },
+      { title: 'Inputs', href: '/showcase/inputs' },
+      // Commented out unimplemented components
+      // { title: 'Forms', href: '/showcase/forms' },
+      // { title: 'Cards', href: '/showcase/cards' },
+      // { title: 'Navigation', href: '/showcase/navigation' },
+      // { title: 'Feedback', href: '/showcase/feedback' },
     ],
   },
 ];
@@ -29,14 +30,7 @@ export default function ShowcaseLayout({
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
-      <div className="fixed inset-y-0 z-50 flex w-72 flex-col border-r">
-        {/* Sidebar header */}
-        <div className="border-b px-6 py-4">
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="text-xl font-bold">FuelCare</span>
-          </Link>
-        </div>
-        {/* Sidebar content */}
+      <div className="fixed left-0 top-[57px] z-40 flex h-[calc(100vh-57px)] w-72 flex-col border-r bg-background">
         <div className="flex-1 overflow-y-auto py-6">
           <nav className="space-y-6 px-6">
             {navigation.map((group) => (
@@ -46,7 +40,7 @@ export default function ShowcaseLayout({
                 </h3>
                 <div className="space-y-1">
                   {group.items.map((item) => (
-                    <a
+                    <Link
                       key={item.href}
                       href={item.href}
                       className={cn(
@@ -57,7 +51,7 @@ export default function ShowcaseLayout({
                       )}
                     >
                       {item.title}
-                    </a>
+                    </Link>
                   ))}
                 </div>
               </div>
@@ -67,8 +61,8 @@ export default function ShowcaseLayout({
       </div>
 
       {/* Main content */}
-      <div className="pl-72">
-        <main>{children}</main>
+      <div className="pl-72 pt-[57px] w-full">
+        <main className="min-h-screen">{children}</main>
       </div>
     </div>
   );
