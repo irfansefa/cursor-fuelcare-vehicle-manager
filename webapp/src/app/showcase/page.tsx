@@ -1,111 +1,86 @@
 'use client';
 
 import React from 'react';
+import { Button } from "@/components/ui/button/button"
+import { FiPlus, FiTrash2, FiSave } from "react-icons/fi"
 
-const ShowcasePage = () => {
+export default function ComponentShowcase() {
   return (
-    <div className="min-h-screen p-8">
-      <div className="mx-auto max-w-7xl space-y-8">
-        {/* Header */}
-        <div className="border-b pb-5">
-          <h1 className="text-3xl font-bold tracking-tight">Component Showcase</h1>
-          <p className="mt-2 text-muted-foreground">
-            A collection of all components with their variants and states.
-          </p>
+    <div className="container mx-auto p-8">
+      <h1 className="text-3xl font-bold mb-8">Component Showcase</h1>
+
+      {/* Buttons Section */}
+      <section className="mb-12">
+        <h2 className="text-2xl font-semibold mb-4">Buttons</h2>
+        
+        {/* Default Variants */}
+        <div className="flex flex-wrap gap-4 mb-8">
+          <div className="flex flex-col gap-2">
+            <h3 className="text-lg font-medium mb-2">Default Variants</h3>
+            <Button>Default Button</Button>
+            <Button variant="destructive">Destructive</Button>
+            <Button variant="outline">Outline</Button>
+            <Button variant="secondary">Secondary</Button>
+            <Button variant="ghost">Ghost</Button>
+            <Button variant="link">Link</Button>
+          </div>
+
+          {/* Sizes */}
+          <div className="flex flex-col gap-2">
+            <h3 className="text-lg font-medium mb-2">Sizes</h3>
+            <Button size="sm">Small</Button>
+            <Button size="default">Default</Button>
+            <Button size="lg">Large</Button>
+          </div>
+
+          {/* States */}
+          <div className="flex flex-col gap-2">
+            <h3 className="text-lg font-medium mb-2">States</h3>
+            <Button disabled>Disabled</Button>
+            <Button className="cursor-wait">Loading</Button>
+          </div>
+
+          {/* With Icons */}
+          <div className="flex flex-col gap-2">
+            <h3 className="text-lg font-medium mb-2">With Icons</h3>
+            <Button>
+              <FiPlus className="mr-2 h-4 w-4" /> Add New
+            </Button>
+            <Button variant="destructive">
+              <FiTrash2 className="mr-2 h-4 w-4" /> Delete
+            </Button>
+            <Button variant="outline">
+              <FiSave className="mr-2 h-4 w-4" /> Save
+            </Button>
+            <Button size="icon">
+              <FiPlus className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
-        {/* Buttons Section */}
-        <section className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-semibold tracking-tight">Buttons</h2>
-              <p className="text-sm text-muted-foreground">
-                Button components with different variants and states.
-              </p>
-            </div>
-          </div>
-          <div className="space-y-4">
-            {/* Button variants will go here */}
-          </div>
-        </section>
+        {/* Code Example */}
+        <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-md">
+          <pre className="text-sm">
+            {`import { Button } from "@/components/ui/button/button"
 
-        {/* Inputs Section */}
-        <section className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-semibold tracking-tight">Inputs</h2>
-              <p className="text-sm text-muted-foreground">
-                Input components with different states and variations.
-              </p>
-            </div>
-          </div>
-          <div className="space-y-4">
-            {/* Input variants will go here */}
-          </div>
-        </section>
+// Basic usage
+<Button>Default Button</Button>
+<Button variant="destructive">Destructive</Button>
 
-        {/* Forms Section */}
-        <section className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-semibold tracking-tight">Forms</h2>
-              <p className="text-sm text-muted-foreground">
-                Form components and layouts.
-              </p>
-            </div>
-          </div>
-          <div className="space-y-4">
-            {/* Form examples will go here */}
-          </div>
-        </section>
+// With icons
+<Button>
+  <FiPlus className="mr-2 h-4 w-4" /> Add New
+</Button>
 
-        {/* Cards Section */}
-        <section className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-semibold tracking-tight">Cards</h2>
-              <p className="text-sm text-muted-foreground">
-                Card components with different layouts and content.
-              </p>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {/* Card examples will go here */}
-          </div>
-        </section>
+// Different sizes
+<Button size="sm">Small</Button>
+<Button size="lg">Large</Button>
 
-        {/* Navigation Section */}
-        <section className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-semibold tracking-tight">Navigation</h2>
-              <p className="text-sm text-muted-foreground">
-                Navigation components and patterns.
-              </p>
-            </div>
-          </div>
-          <div className="space-y-4">
-            {/* Navigation examples will go here */}
-          </div>
-        </section>
-
-        {/* Feedback Section */}
-        <section className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-semibold tracking-tight">Feedback</h2>
-              <p className="text-sm text-muted-foreground">
-                Feedback and notification components.
-              </p>
-            </div>
-          </div>
-          <div className="space-y-4">
-            {/* Feedback components will go here */}
-          </div>
-        </section>
-      </div>
+// States
+<Button disabled>Disabled</Button>`}
+          </pre>
+        </div>
+      </section>
     </div>
-  );
-};
-
-export default ShowcasePage; 
+  )
+} 
