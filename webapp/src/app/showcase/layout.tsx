@@ -8,6 +8,8 @@ import { cn } from '@/lib/utils';
 const navigation = [
   {
     items: [
+      { title: 'Typography', href: '/showcase/typography' },
+      { title: 'Colors', href: '/showcase/colors' },
       { title: 'Buttons', href: '/showcase/buttons' },
       { title: 'Inputs', href: '/showcase/inputs' },
       { title: 'Forms', href: '/showcase/forms' },
