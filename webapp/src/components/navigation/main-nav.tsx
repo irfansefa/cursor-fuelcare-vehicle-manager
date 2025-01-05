@@ -4,6 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { NavbarItem } from '@/components/ui/navigation/navbar';
 
 const items = [
   {
@@ -36,14 +37,10 @@ export function MainNav() {
   const pathname = usePathname();
 
   return (
-    <div className="mr-4 flex">
-      <Link href="/" className="mr-6 flex items-center space-x-2">
-        <span className="hidden font-bold sm:inline-block">FuelCare</span>
-      </Link>
-      <nav className="flex items-center space-x-6 text-sm font-medium">
-        {items.map((item) => (
+    <nav className="flex items-center space-x-6 text-sm font-medium">
+      {items.map((item) => (
+        <NavbarItem key={item.href}>
           <Link
-            key={item.href}
             href={item.href}
             className={cn(
               'transition-colors hover:text-foreground/80',
@@ -52,8 +49,8 @@ export function MainNav() {
           >
             {item.title}
           </Link>
-        ))}
-      </nav>
-    </div>
+        </NavbarItem>
+      ))}
+    </nav>
   );
 } 

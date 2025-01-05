@@ -15,12 +15,12 @@ const Breadcrumbs = React.forwardRef<HTMLElement, BreadcrumbsProps>(
       <nav ref={ref} aria-label="breadcrumb" className={cn("flex", className)} {...props}>
         <ol className="flex items-center space-x-2">
           {items.map((item, index) => (
-            <li key={index} className="flex items-center">
+            <React.Fragment key={index}>
               {item}
               {index < items.length - 1 && (
                 <span className="mx-2 text-muted-foreground">{separator}</span>
               )}
-            </li>
+            </React.Fragment>
           ))}
         </ol>
       </nav>
@@ -35,7 +35,7 @@ const BreadcrumbItem = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <li
     ref={ref}
-    className={cn("text-sm text-muted-foreground hover:text-foreground", className)}
+    className={cn("text-sm text-muted-foreground hover:text-foreground flex items-center", className)}
     {...props}
   />
 ))

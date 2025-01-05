@@ -5,6 +5,9 @@ import { Providers } from "@/core/providers/Providers";
 import { MainNav } from "@/components/navigation/main-nav";
 import { UserNav } from "@/components/navigation/user-nav";
 import { ModeToggle } from "@/components/mode-toggle";
+import { Container } from "@/components/ui/layout/container";
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@/components/ui/navigation/navbar";
+import Link from 'next/link';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,22 +23,36 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} antialiased`} suppressHydrationWarning>
+      <body className={inter.className} suppressHydrationWarning>
         <Providers>
           <div className="min-h-screen bg-background">
-            {/* Header */}
-            <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-              <div className="container flex h-14 items-center">
+            <Navbar 
+              variant="default" 
+              size="sm"
+              className="sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+              brand={
+                <NavbarBrand>
+                  <Link href="/" className="flex items-center space-x-2">
+                    <span className="hidden font-bold sm:inline-block">FuelCare</span>
+                  </Link>
+                </NavbarBrand>
+              }
+            >
+              <NavbarContent>
                 <MainNav />
                 <div className="ml-auto flex items-center space-x-4">
                   <ModeToggle />
                   <UserNav />
                 </div>
-              </div>
-            </header>
+              </NavbarContent>
+            </Navbar>
 
             {/* Main content */}
-            <main className="container py-6">{children}</main>
+            <main>
+              <Container className="py-6">
+                {children}
+              </Container>
+            </main>
           </div>
         </Providers>
       </body>
