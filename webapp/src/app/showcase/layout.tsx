@@ -13,8 +13,7 @@ const navigation = [
       { title: 'Forms', href: '/showcase/forms' },
       { title: 'Data Display', href: '/showcase/data-display' },
       { title: 'Feedback', href: '/showcase/feedback' },
-      // Commented out unimplemented components
-      // { title: 'Navigation', href: '/showcase/navigation' },
+      { title: 'Navigation', href: '/showcase/navigation' },
     ],
   },
 ];
@@ -29,7 +28,7 @@ export default function ShowcaseLayout({
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
-      <div className="fixed left-0 top-0 z-40 flex h-screen w-72 flex-col border-r bg-background">
+      <div className="fixed left-0 top-0 z-40 flex h-screen w-72 flex-col border-r bg-background pt-6">
         <div className="flex-1 overflow-y-auto py-6">
           <nav className="space-y-6 px-6">
             {navigation.map((group, idx) => (
