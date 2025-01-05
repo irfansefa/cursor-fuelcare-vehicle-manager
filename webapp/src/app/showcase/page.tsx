@@ -29,6 +29,16 @@ export default function ComponentShowcase() {
             Input components with various types, states, and icon support.
           </p>
         </Link>
+
+        <Link 
+          href="/showcase/forms" 
+          className="block p-6 rounded-lg border hover:border-primary transition-colors"
+        >
+          <h2 className="text-xl font-semibold mb-2">Forms</h2>
+          <p className="text-muted-foreground">
+            Form components with validation, error handling, and various field types.
+          </p>
+        </Link>
       </div>
     </div>
   )
