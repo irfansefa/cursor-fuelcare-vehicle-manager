@@ -55,12 +55,13 @@ describe('ProfileRepository', () => {
 
   describe('create', () => {
     it('should create and return a new profile', async () => {
-      const { id, created_at, updated_at, ...createData } = mockProfile;
+      const { id: _id, created_at: _created_at, updated_at: _updated_at, ...createData } = mockProfile;
+      const userId = 'user123';
       (repository.create as jest.Mock).mockResolvedValue(mockProfile);
       
-      const result = await repository.create('user123', createData);
+      const result = await repository.create(userId, createData);
       expect(result).toEqual(mockProfile);
-      expect(repository.create).toHaveBeenCalledWith('user123', createData);
+      expect(repository.create).toHaveBeenCalledWith(userId, createData);
     });
   });
 

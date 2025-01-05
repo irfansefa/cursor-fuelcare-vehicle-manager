@@ -65,7 +65,7 @@ describe('FuelLogRepository', () => {
 
   describe('create', () => {
     it('should create and return a new fuel log', async () => {
-      const { id: _id, created_at: _created_at, updated_at: _updated_at, ...createData } = mockFuelLog;
+      const { ...createData } = mockFuelLog;
       (repository.create as jest.Mock).mockResolvedValue(mockFuelLog);
       
       const result = await repository.create(createData);
