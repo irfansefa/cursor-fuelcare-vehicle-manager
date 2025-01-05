@@ -24,66 +24,70 @@ export default function NavigationShowcase() {
       {/* Navbar Section */}
       <section className="mb-12">
         <h2 className="text-2xl font-semibold mb-4">Navbar</h2>
-        <div className="space-y-8">
+        <div className="space-y-8 relative">
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Default Navbar</h3>
-            <Navbar
-              brand={
-                <NavbarBrand>
-                  <FiHome className="h-6 w-6" />
-                  <span className="text-xl font-bold">Brand</span>
-                </NavbarBrand>
-              }
-            >
-              <NavbarContent>
-                <NavbarItem>
-                  <Link href="#" className="text-sm font-medium">
-                    Home
-                  </Link>
-                </NavbarItem>
-                <NavbarItem>
-                  <Link href="#" className="text-sm font-medium">
-                    About
-                  </Link>
-                </NavbarItem>
-                <NavbarItem>
-                  <Link href="#" className="text-sm font-medium">
-                    Contact
-                  </Link>
-                </NavbarItem>
-              </NavbarContent>
-            </Navbar>
+            <div className="relative border rounded-lg overflow-hidden">
+              <Navbar
+                brand={
+                  <NavbarBrand>
+                    <FiHome className="h-6 w-6" />
+                    <span className="text-xl font-bold">Brand</span>
+                  </NavbarBrand>
+                }
+              >
+                <NavbarContent>
+                  <NavbarItem>
+                    <Link href="#" className="text-sm font-medium">
+                      Home
+                    </Link>
+                  </NavbarItem>
+                  <NavbarItem>
+                    <Link href="#" className="text-sm font-medium">
+                      About
+                    </Link>
+                  </NavbarItem>
+                  <NavbarItem>
+                    <Link href="#" className="text-sm font-medium">
+                      Contact
+                    </Link>
+                  </NavbarItem>
+                </NavbarContent>
+              </Navbar>
+            </div>
           </div>
 
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Primary Navbar</h3>
-            <Navbar
-              variant="primary"
-              brand={
-                <NavbarBrand>
-                  <FiHome className="h-6 w-6" />
-                  <span className="text-xl font-bold">Brand</span>
-                </NavbarBrand>
-              }
-            >
-              <NavbarContent>
-                <NavbarItem>
-                  <Link href="#" className="text-sm font-medium">
-                    Home
-                  </Link>
-                </NavbarItem>
-                <NavbarItem>
-                  <Link href="#" className="text-sm font-medium">
-                    About
-                  </Link>
-                </NavbarItem>
-                <NavbarItem>
-                  <Link href="#" className="text-sm font-medium">
-                    Contact
-                  </Link>
-                </NavbarItem>
-              </NavbarContent>
-            </Navbar>
+            <div className="relative border rounded-lg overflow-hidden">
+              <Navbar
+                variant="primary"
+                brand={
+                  <NavbarBrand>
+                    <FiHome className="h-6 w-6" />
+                    <span className="text-xl font-bold">Brand</span>
+                  </NavbarBrand>
+                }
+              >
+                <NavbarContent>
+                  <NavbarItem>
+                    <Link href="#" className="text-sm font-medium">
+                      Home
+                    </Link>
+                  </NavbarItem>
+                  <NavbarItem>
+                    <Link href="#" className="text-sm font-medium">
+                      About
+                    </Link>
+                  </NavbarItem>
+                  <NavbarItem>
+                    <Link href="#" className="text-sm font-medium">
+                      Contact
+                    </Link>
+                  </NavbarItem>
+                </NavbarContent>
+              </Navbar>
+            </div>
           </div>
         </div>
       </section>

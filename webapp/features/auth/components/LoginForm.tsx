@@ -14,7 +14,7 @@ import Link from "next/link";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: z.string().min(1, "Password is required"),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -61,9 +61,14 @@ export function LoginForm({ onSuccess, onError, redirectPath = "/dashboard" }: L
           <FormItem>
             <FormLabel>Email</FormLabel>
             <FormControl>
-              <Input placeholder="Enter your email" type="email" {...field} />
+              <Input 
+                placeholder="Enter your email" 
+                type="email" 
+                autoComplete="username"
+                {...field} 
+              />
             </FormControl>
-            <FormMessage>email</FormMessage>
+            <FormMessage />
           </FormItem>
         )}
       />
@@ -72,24 +77,41 @@ export function LoginForm({ onSuccess, onError, redirectPath = "/dashboard" }: L
         name="password"
         render={({ field }: { field: ControllerRenderProps<LoginFormValues, "password"> }) => (
           <FormItem>
-            <FormLabel>Password</FormLabel>
+            <div className="flex items-center justify-between">
+              <FormLabel>Password</FormLabel>
+              <Link 
+                href="/forgot-password" 
+                className="text-sm text-primary hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
             <FormControl>
-              <Input placeholder="Enter your password" type="password" {...field} />
+              <Input 
+                placeholder="Enter your password" 
+                type="password" 
+                autoComplete="current-password"
+                {...field} 
+              />
             </FormControl>
-            <FormMessage>password</FormMessage>
+            <FormMessage />
           </FormItem>
         )}
       />
       {authError && (
         <div className="text-sm text-destructive">{authError}</div>
       )}
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? "Signing in..." : "Sign In"}
+      <Button 
+        type="submit" 
+        className="w-full" 
+        disabled={loading}
+      >
+        {loading ? "Signing in..." : "Sign in"}
       </Button>
       <div className="text-center text-sm text-muted-foreground">
         Don't have an account?{" "}
         <Link href="/register" className="text-primary hover:underline">
-          Create one
+          Create account
         </Link>
       </div>
     </Form>

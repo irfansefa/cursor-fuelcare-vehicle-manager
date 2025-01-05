@@ -1,13 +1,14 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import '@/styles/globals.css';
-import { ClientProviders } from '@/providers/client-providers';
+import './globals.css';
+import { Providers } from '@/components/Providers';
+import { Navbar } from '@/components/Navbar';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'FuelCare Vehicle Manager',
-  description: 'A comprehensive vehicle management application for tracking expenses, fuel costs, and maintenance',
+  title: 'FuelCare',
+  description: 'Track your vehicle expenses and fuel consumption',
 };
 
 export default function RootLayout({
@@ -17,8 +18,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
-        <ClientProviders>{children}</ClientProviders>
+      <body className={inter.className} cz-shortcut-listen="true">
+        <Providers>
+          <Navbar />
+          {children}
+        </Providers>
       </body>
     </html>
   );

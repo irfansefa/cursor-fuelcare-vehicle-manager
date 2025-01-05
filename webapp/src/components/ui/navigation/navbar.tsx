@@ -16,10 +16,15 @@ const navbarVariants = cva(
         sm: "h-14",
         lg: "h-20",
       },
+      fixed: {
+        true: "sticky top-0 z-50",
+        false: "",
+      }
     },
     defaultVariants: {
       variant: "default",
       size: "default",
+      fixed: false,
     },
   }
 )
@@ -32,11 +37,11 @@ interface NavbarProps
 }
 
 const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
-  ({ className, variant, size, brand, children, ...props }, ref) => {
+  ({ className, variant, size, fixed, brand, children, ...props }, ref) => {
     return (
       <nav
         ref={ref}
-        className={cn(navbarVariants({ variant, size }), className)}
+        className={cn(navbarVariants({ variant, size, fixed }), className)}
         {...props}
       >
         <div className="container mx-auto h-full px-4">
