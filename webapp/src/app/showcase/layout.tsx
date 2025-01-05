@@ -14,6 +14,7 @@ const navigation = [
       { title: 'Data Display', href: '/showcase/data-display' },
       { title: 'Feedback', href: '/showcase/feedback' },
       { title: 'Navigation', href: '/showcase/navigation' },
+      { title: 'Modals', href: '/showcase/modals' },
     ],
   },
 ];
