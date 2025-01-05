@@ -12,8 +12,8 @@ const navigation = [
       { title: 'Buttons', href: '/showcase/buttons' },
       { title: 'Inputs', href: '/showcase/inputs' },
       { title: 'Forms', href: '/showcase/forms' },
+      { title: 'Data Display', href: '/showcase/data-display' },
       // Commented out unimplemented components
-      // { title: 'Cards', href: '/showcase/cards' },
       // { title: 'Navigation', href: '/showcase/navigation' },
       // { title: 'Feedback', href: '/showcase/feedback' },
     ],

@@ -39,6 +39,16 @@ export default function ComponentShowcase() {
             Form components with validation, error handling, and various field types.
           </p>
         </Link>
+
+        <Link 
+          href="/showcase/data-display" 
+          className="block p-6 rounded-lg border hover:border-primary transition-colors"
+        >
+          <h2 className="text-xl font-semibold mb-2">Data Display</h2>
+          <p className="text-muted-foreground">
+            Components for displaying data including cards, tables, and statistics.
+          </p>
+        </Link>
       </div>
     </div>
   )
