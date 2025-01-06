@@ -27,7 +27,7 @@ interface ResetPasswordFormProps {
   redirectPath?: string;
 }
 
-export function ResetPasswordForm({ onSuccess, onError, redirectPath = "/" }: ResetPasswordFormProps) {
+export function ResetPasswordForm({ onSuccess, onError, redirectPath = "/auth" }: ResetPasswordFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();

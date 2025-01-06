@@ -69,7 +69,7 @@ export function ForgotPasswordForm({ onSuccess, onError }: ForgotPasswordFormPro
         </p>
         <p className="text-sm text-muted-foreground">
           Remember your password?{" "}
-          <Link href="/" className="text-primary hover:underline">
+          <Link href="/auth" className="text-primary hover:underline">
             Sign in
           </Link>
         </p>
@@ -115,7 +115,7 @@ export function ForgotPasswordForm({ onSuccess, onError }: ForgotPasswordFormPro
       </Button>
       <div className="text-center text-sm text-muted-foreground">
         Remember your password?{" "}
-        <Link href="/" className="text-primary hover:underline">
+        <Link href="/auth" className="text-primary hover:underline">
           Sign in
         </Link>
       </div>

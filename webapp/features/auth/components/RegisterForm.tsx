@@ -74,7 +74,7 @@ export function RegisterForm({ onSuccess, onError, redirectPath = "/dashboard" }
         </p>
         <p className="text-sm text-muted-foreground">
           Already confirmed?{" "}
-          <Link href="/" className="text-primary hover:underline">
+          <Link href="/auth" className="text-primary hover:underline">
             Sign in
           </Link>
         </p>
@@ -167,7 +167,7 @@ export function RegisterForm({ onSuccess, onError, redirectPath = "/dashboard" }
       </Button>
       <div className="text-center text-sm text-muted-foreground">
         Already have an account?{" "}
-        <Link href="/" className="text-primary hover:underline">
+        <Link href="/auth" className="text-primary hover:underline">
           Sign in
         </Link>
       </div>

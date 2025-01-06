@@ -80,7 +80,7 @@ export function LoginForm({ onSuccess, onError, redirectPath = "/dashboard" }: L
             <div className="flex items-center justify-between">
               <FormLabel>Password</FormLabel>
               <Link 
-                href="/forgot-password" 
+                href="/auth/forgot-password" 
                 className="text-sm text-primary hover:underline"
               >
                 Forgot password?
@@ -110,7 +110,7 @@ export function LoginForm({ onSuccess, onError, redirectPath = "/dashboard" }: L
       </Button>
       <div className="text-center text-sm text-muted-foreground">
         Don't have an account?{" "}
-        <Link href="/register" className="text-primary hover:underline">
+        <Link href="/auth/register" className="text-primary hover:underline">
           Create account
         </Link>
       </div>
