@@ -22,6 +22,10 @@ export interface GetFuelLogsParams {
   vehicleId: string;
   page?: number;
   pageSize?: number;
+  dateFrom?: string;
+  dateTo?: string;
+  fuelType?: string;
+  location?: string;
 }
 
 export const fuelLogApi = createApi({
@@ -33,8 +37,20 @@ export const fuelLogApi = createApi({
   tagTypes: ['FuelLog'],
   endpoints: (builder) => ({
     getFuelLogs: builder.query<PaginatedResponse<FuelLog>, GetFuelLogsParams>({
-      query: ({ vehicleId, page = 1, pageSize = 10 }) => 
-        `/fuel-logs/list?vehicleId=${vehicleId}&page=${page}&pageSize=${pageSize}`,
+      query: ({ vehicleId, page = 1, pageSize = 10, dateFrom, dateTo, fuelType, location }) => {
+        const params = new URLSearchParams({
+          vehicleId,
+          page: page.toString(),
+          pageSize: pageSize.toString(),
+        });
+
+        if (dateFrom) params.append('dateFrom', dateFrom);
+        if (dateTo) params.append('dateTo', dateTo);
+        if (fuelType) params.append('fuelType', fuelType);
+        if (location) params.append('location', location);
+
+        return `/fuel-logs/list?${params.toString()}`;
+      },
       providesTags: ['FuelLog'],
     }),
     addFuelLog: builder.mutation<FuelLog, FuelLogFormValues & { vehicleId: string }>({

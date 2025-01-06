@@ -19,7 +19,9 @@ import { EditFuelLogModal } from "./EditFuelLogModal";
 import { DeleteFuelLogDialog } from "./DeleteFuelLogDialog";
 import { useToast } from "@/components/ui/feedback/use-toast";
 import { Pagination } from "@/components/ui/navigation/pagination";
+import { FuelLogFilters } from "./FuelLogFilters";
 import type { FuelLog } from "../../store/fuelLogApi";
+import type { FuelLogFilters as FuelLogFiltersType } from "./FuelLogFilters";
 
 interface VehicleFuelLogsProps {
   vehicle: Vehicle;
@@ -31,11 +33,13 @@ export function VehicleFuelLogs({ vehicle }: VehicleFuelLogsProps) {
   const [deleteLogId, setDeleteLogId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [filters, setFilters] = useState<FuelLogFiltersType>({});
 
   const { data: fuelLogsData, isLoading } = useGetFuelLogsQuery({
     vehicleId: vehicle.id,
     page,
     pageSize,
+    ...filters,
   });
 
   const [deleteFuelLog, { isLoading: isDeleting }] = useDeleteFuelLogMutation();
@@ -65,6 +69,11 @@ export function VehicleFuelLogs({ vehicle }: VehicleFuelLogsProps) {
         variant: 'error',
       });
     }
+  };
+
+  const handleFiltersChange = (newFilters: FuelLogFiltersType) => {
+    setFilters(newFilters);
+    setPage(1); // Reset to first page when filters change
   };
 
   const formatDate = (dateString: string) => {
@@ -100,7 +109,11 @@ export function VehicleFuelLogs({ vehicle }: VehicleFuelLogsProps) {
             Add Fuel Log
           </Button>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-6">
+          <FuelLogFilters
+            filters={filters}
+            onFiltersChange={handleFiltersChange}
+          />
           {fuelLogs.length > 0 ? (
             <>
               <Table>
@@ -146,19 +159,17 @@ export function VehicleFuelLogs({ vehicle }: VehicleFuelLogsProps) {
                   ))}
                 </TableBody>
               </Table>
-              <div className="mt-4">
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  pageSize={pageSize}
-                  totalItems={totalCount}
-                  onPageChange={setPage}
-                  onPageSizeChange={(newPageSize) => {
-                    setPageSize(newPageSize);
-                    setPage(1); // Reset to first page when changing page size
-                  }}
-                />
-              </div>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                pageSize={pageSize}
+                totalItems={totalCount}
+                onPageChange={setPage}
+                onPageSizeChange={(newPageSize) => {
+                  setPageSize(newPageSize);
+                  setPage(1); // Reset to first page when changing page size
+                }}
+              />
             </>
           ) : (
             <div className="text-center py-8 text-muted-foreground">

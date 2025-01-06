@@ -8,6 +8,10 @@ export async function GET(request: NextRequest) {
     const vehicleId = searchParams.get('vehicleId');
     const page = parseInt(searchParams.get('page') || '1');
     const pageSize = parseInt(searchParams.get('pageSize') || '10');
+    const dateFrom = searchParams.get('dateFrom');
+    const dateTo = searchParams.get('dateTo');
+    const fuelType = searchParams.get('fuelType');
+    const location = searchParams.get('location');
 
     if (!vehicleId) {
       return NextResponse.json(
@@ -18,11 +22,27 @@ export async function GET(request: NextRequest) {
 
     const supabase = createRouteHandlerClient({ cookies });
 
-    // Get total count
-    const { count: totalCount, error: countError } = await supabase
+    // Build query with filters
+    let query = supabase
       .from('fuel_logs')
-      .select('*', { count: 'exact', head: true })
+      .select('*', { count: 'exact' })
       .eq('vehicle_id', vehicleId);
+
+    if (dateFrom) {
+      query = query.gte('date', dateFrom);
+    }
+    if (dateTo) {
+      query = query.lte('date', dateTo);
+    }
+    if (fuelType) {
+      query = query.eq('fuel_type', fuelType);
+    }
+    if (location) {
+      query = query.ilike('location', `%${location}%`);
+    }
+
+    // Get total count with filters
+    const { count: totalCount, error: countError } = await query;
 
     if (countError) {
       console.error('Error getting fuel logs count:', countError);
@@ -36,11 +56,8 @@ export async function GET(request: NextRequest) {
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
-    // Get paginated data
-    const { data: fuelLogs, error } = await supabase
-      .from('fuel_logs')
-      .select('*')
-      .eq('vehicle_id', vehicleId)
+    // Get paginated data with filters
+    const { data: fuelLogs, error } = await query
       .order('date', { ascending: false })
       .range(from, to);
 
