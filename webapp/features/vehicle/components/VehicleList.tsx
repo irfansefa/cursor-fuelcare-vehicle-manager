@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/form/select";
+import { CreateVehicleModal } from "./CreateVehicleModal";
 
 interface VehicleListProps {
   vehicles: Vehicle[];
@@ -28,30 +29,33 @@ export function VehicleList({
 }: VehicleListProps) {
   return (
     <div className="space-y-6">
-      <div className="flex gap-4">
-        <Input
-          placeholder="Search vehicles..."
-          value={filters.search ?? ""}
-          onChange={(e) =>
-            onFilterChange({ ...filters, search: e.target.value })
-          }
-          className="max-w-sm"
-        />
-        <Select
-          defaultValue={filters.status}
-          onValueChange={(value: VehicleStatus) =>
-            onFilterChange({ ...filters, status: value })
-          }
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="maintenance">Maintenance</SelectItem>
-            <SelectItem value="inactive">Inactive</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="flex gap-4 items-center justify-between">
+        <div className="flex gap-4">
+          <Input
+            placeholder="Search vehicles..."
+            value={filters.search ?? ""}
+            onChange={(e) =>
+              onFilterChange({ ...filters, search: e.target.value })
+            }
+            className="max-w-sm"
+          />
+          <Select
+            defaultValue={filters.status}
+            onValueChange={(value: VehicleStatus) =>
+              onFilterChange({ ...filters, status: value })
+            }
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="maintenance">Maintenance</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <CreateVehicleModal />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

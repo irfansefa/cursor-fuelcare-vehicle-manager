@@ -5,7 +5,7 @@ export interface Document {
   name: string;
   type: string;
   url: string;
-  expiryDate?: Date;
+  expiryDate?: string;
 }
 
 export interface Vehicle {
@@ -17,8 +17,8 @@ export interface Vehicle {
   vin?: string;
   status: VehicleStatus;
   documents: Document[];
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface VehicleFilters {

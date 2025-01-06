@@ -7,6 +7,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from '@/store/store';
 import { AuthService } from '@/features/auth/services/auth-service';
 import { setCredentials } from '@/features/auth/store/authSlice';
+import { Toaster } from '@/components/ui/feedback/Toaster';
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -34,6 +35,7 @@ export function Providers({ children }: ProvidersProps) {
           disableTransitionOnChange
         >
           {children}
+          <Toaster />
         </ThemeProvider>
       </PersistGate>
     </ReduxProvider>
