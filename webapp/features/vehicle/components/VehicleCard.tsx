@@ -55,14 +55,18 @@ export function VehicleCard({ vehicle, onEdit, onDelete, onSelect }: VehicleCard
       </CardHeader>
       <CardContent className="pt-2">
         <div className="grid grid-cols-2 gap-2 text-sm">
-          <div>
-            <p className="text-muted-foreground">Year</p>
-            <p className="font-medium">{vehicle.year}</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">License Plate</p>
-            <p className="font-medium">{vehicle.licensePlate}</p>
-          </div>
+          {vehicle.year && (
+            <div>
+              <p className="text-muted-foreground">Year</p>
+              <p className="font-medium">{vehicle.year}</p>
+            </div>
+          )}
+          {vehicle.licensePlate && (
+            <div>
+              <p className="text-muted-foreground">License Plate</p>
+              <p className="font-medium">{vehicle.licensePlate}</p>
+            </div>
+          )}
           {vehicle.vin && (
             <div className="col-span-2">
               <p className="text-muted-foreground">VIN</p>

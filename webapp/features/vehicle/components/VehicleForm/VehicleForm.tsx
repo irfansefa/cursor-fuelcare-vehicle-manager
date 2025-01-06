@@ -27,8 +27,8 @@ const vehicleSchema = z.object({
     .min(1900, "Year must be after 1900")
     .max(new Date().getFullYear() + 1, "Year cannot be in the future")
     .nullable()
-    .refine((val) => val !== null, "Year is required"),
-  licensePlate: z.string().min(1, "License plate is required"),
+    .optional(),
+  licensePlate: z.string().optional(),
   vin: z.string().optional(),
   status: z.enum(["active", "maintenance", "inactive"] as const),
 });
@@ -46,7 +46,7 @@ export function VehicleForm({ onSubmit, onCancel }: VehicleFormProps) {
     defaultValues: {
       make: '',
       model: '',
-      year: null,  // Start with null
+      year: null,
       licensePlate: '',
       vin: '',
       status: "active",
@@ -55,10 +55,9 @@ export function VehicleForm({ onSubmit, onCancel }: VehicleFormProps) {
 
   const handleSubmit = async (data: VehicleFormData) => {
     try {
-      // Transform null year to number before submitting
       const vehicleData: NewVehicle = {
         ...data,
-        year: data.year ?? new Date().getFullYear(),
+        year: data.year ?? undefined,
       };
       await onSubmit(vehicleData);
       form.reset();
@@ -106,13 +105,13 @@ export function VehicleForm({ onSubmit, onCancel }: VehicleFormProps) {
               name="year"
               render={({ field: { onChange, value, ...field } }) => (
                 <FormItem>
-                  <FormLabel>Year</FormLabel>
+                  <FormLabel>Year (Optional)</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       placeholder="Enter vehicle year"
                       {...field}
-                      value={value ?? ''}  // Show empty string when null
+                      value={value ?? ''}
                       onChange={(e) => {
                         const val = e.target.value;
                         onChange(val ? parseInt(val) : null);
@@ -129,7 +128,7 @@ export function VehicleForm({ onSubmit, onCancel }: VehicleFormProps) {
               name="licensePlate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>License Plate</FormLabel>
+                  <FormLabel>License Plate (Optional)</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Enter license plate number"
