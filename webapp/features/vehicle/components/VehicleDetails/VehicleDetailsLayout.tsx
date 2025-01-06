@@ -6,6 +6,7 @@ import { Vehicle } from "../../types";
 import { Badge } from "@/components/ui/utils/badge";
 import { VehicleOverview } from "./VehicleOverview";
 import { VehicleFuelLogs } from "./VehicleFuelLogs";
+import { VehicleConsumption } from "./VehicleConsumption";
 
 interface VehicleDetailsLayoutProps {
   vehicle: Vehicle;
@@ -37,6 +38,7 @@ export function VehicleDetailsLayout({ vehicle }: VehicleDetailsLayoutProps) {
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="fuel">Fuel Logs</TabsTrigger>
+          <TabsTrigger value="consumption">Consumption</TabsTrigger>
           <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
           <TabsTrigger value="documents">Documents</TabsTrigger>
         </TabsList>
@@ -47,6 +49,10 @@ export function VehicleDetailsLayout({ vehicle }: VehicleDetailsLayoutProps) {
 
         <TabsContent value="fuel">
           <VehicleFuelLogs vehicle={vehicle} />
+        </TabsContent>
+
+        <TabsContent value="consumption">
+          <VehicleConsumption vehicle={vehicle} />
         </TabsContent>
 
         <TabsContent value="maintenance" className="space-y-4">
