@@ -9,8 +9,8 @@ export const fuelLogSchema = z.object({
   pricePerUnit: z.number().min(0.01, 'Price per unit must be greater than 0'),
   totalCost: z.number().min(0, 'Total cost must be greater than or equal to 0'),
   odometer: z.number().min(0, 'Odometer reading must be greater than or equal to 0'),
-  location: z.string().optional(),
-  notes: z.string().optional(),
+  location: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
 });
 
 export type FuelLogFormValues = z.infer<typeof fuelLogSchema>; 

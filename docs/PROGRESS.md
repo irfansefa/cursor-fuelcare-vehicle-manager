@@ -100,7 +100,11 @@ This document tracks the implementation progress of all features and components 
     - ✅ Fuel type filter
     - ✅ Location search
     - ✅ Server-side filtering
-  - ⏳ Sort fuel logs
+  - ✅ Sort fuel logs
+    - ✅ Sortable column headers
+    - ✅ Server-side sorting
+    - ✅ Sort indicators
+    - ✅ Multiple column support
   - ✅ Paginate fuel logs
     - ✅ Pagination UI components
     - ✅ Server-side pagination

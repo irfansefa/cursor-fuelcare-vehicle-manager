@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card/card";
 import { Button } from "@/components/ui/button";
-import { FiEdit2, FiMoreVertical, FiPlus, FiTrash2 } from "react-icons/fi";
+import { FiEdit2, FiMoreVertical, FiPlus, FiTrash2, FiArrowUp, FiArrowDown } from "react-icons/fi";
 import { Vehicle } from "../../types";
 import {
   Table,
@@ -22,10 +22,25 @@ import { Pagination } from "@/components/ui/navigation/pagination";
 import { FuelLogFilters } from "./FuelLogFilters";
 import type { FuelLog } from "../../store/fuelLogApi";
 import type { FuelLogFilters as FuelLogFiltersType } from "./FuelLogFilters";
+import type { SortField, SortOrder } from "../../store/fuelLogApi";
 
 interface VehicleFuelLogsProps {
   vehicle: Vehicle;
 }
+
+interface SortableColumn {
+  key: SortField;
+  label: string;
+}
+
+const sortableColumns: SortableColumn[] = [
+  { key: 'date', label: 'Date' },
+  { key: 'odometer', label: 'Odometer' },
+  { key: 'quantity', label: 'Quantity' },
+  { key: 'price_per_unit', label: 'Price/Unit' },
+  { key: 'total_cost', label: 'Total Cost' },
+  { key: 'location', label: 'Location' },
+];
 
 export function VehicleFuelLogs({ vehicle }: VehicleFuelLogsProps) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -34,12 +49,16 @@ export function VehicleFuelLogs({ vehicle }: VehicleFuelLogsProps) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState<FuelLogFiltersType>({});
+  const [sortField, setSortField] = useState<SortField>('date');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 
   const { data: fuelLogsData, isLoading } = useGetFuelLogsQuery({
     vehicleId: vehicle.id,
     page,
     pageSize,
     ...filters,
+    sortField,
+    sortOrder,
   });
 
   const [deleteFuelLog, { isLoading: isDeleting }] = useDeleteFuelLogMutation();
@@ -76,6 +95,16 @@ export function VehicleFuelLogs({ vehicle }: VehicleFuelLogsProps) {
     setPage(1); // Reset to first page when filters change
   };
 
+  const handleSort = (field: SortField) => {
+    if (field === sortField) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortOrder('asc');
+    }
+    setPage(1); // Reset to first page when sorting changes
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
   };
@@ -86,6 +115,15 @@ export function VehicleFuelLogs({ vehicle }: VehicleFuelLogsProps) {
       style: 'currency',
       currency: 'USD'
     }).format(amount);
+  };
+
+  const renderSortIcon = (field: SortField) => {
+    if (field !== sortField) return null;
+    return sortOrder === 'asc' ? (
+      <FiArrowUp className="ml-2 h-4 w-4 inline" />
+    ) : (
+      <FiArrowDown className="ml-2 h-4 w-4 inline" />
+    );
   };
 
   if (isLoading) {
@@ -119,12 +157,18 @@ export function VehicleFuelLogs({ vehicle }: VehicleFuelLogsProps) {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Odometer</TableHead>
-                    <TableHead>Quantity</TableHead>
-                    <TableHead>Price/Unit</TableHead>
-                    <TableHead>Total Cost</TableHead>
-                    <TableHead>Location</TableHead>
+                    {sortableColumns.map((column) => (
+                      <TableHead
+                        key={column.key}
+                        className="cursor-pointer hover:bg-muted/50"
+                        onClick={() => handleSort(column.key)}
+                      >
+                        <span className="inline-flex items-center">
+                          {column.label}
+                          {renderSortIcon(column.key)}
+                        </span>
+                      </TableHead>
+                    ))}
                     <TableHead className="w-[100px]"></TableHead>
                   </TableRow>
                 </TableHeader>

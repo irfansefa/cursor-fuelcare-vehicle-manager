@@ -12,10 +12,23 @@ export async function GET(request: NextRequest) {
     const dateTo = searchParams.get('dateTo');
     const fuelType = searchParams.get('fuelType');
     const location = searchParams.get('location');
+    const sortField = searchParams.get('sortField') || 'date';
+    const sortOrder = searchParams.get('sortOrder') || 'desc';
 
     if (!vehicleId) {
       return NextResponse.json(
         { error: 'Vehicle ID is required' },
+        { status: 400 }
+      );
+    }
+
+    // Validate sort parameters
+    const allowedSortFields = ['date', 'odometer', 'quantity', 'price_per_unit', 'total_cost', 'location'];
+    const allowedSortOrders = ['asc', 'desc'];
+
+    if (!allowedSortFields.includes(sortField) || !allowedSortOrders.includes(sortOrder)) {
+      return NextResponse.json(
+        { error: 'Invalid sort parameters' },
         { status: 400 }
       );
     }
@@ -56,9 +69,9 @@ export async function GET(request: NextRequest) {
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
-    // Get paginated data with filters
+    // Get paginated data with filters and sorting
     const { data: fuelLogs, error } = await query
-      .order('date', { ascending: false })
+      .order(sortField, { ascending: sortOrder === 'asc' })
       .range(from, to);
 
     if (error) {

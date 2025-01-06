@@ -18,6 +18,9 @@ export interface PaginatedResponse<T> {
   };
 }
 
+export type SortOrder = 'asc' | 'desc';
+export type SortField = 'date' | 'odometer' | 'quantity' | 'price_per_unit' | 'total_cost' | 'location';
+
 export interface GetFuelLogsParams {
   vehicleId: string;
   page?: number;
@@ -26,6 +29,8 @@ export interface GetFuelLogsParams {
   dateTo?: string;
   fuelType?: string;
   location?: string;
+  sortField?: SortField;
+  sortOrder?: SortOrder;
 }
 
 export const fuelLogApi = createApi({
@@ -37,11 +42,13 @@ export const fuelLogApi = createApi({
   tagTypes: ['FuelLog'],
   endpoints: (builder) => ({
     getFuelLogs: builder.query<PaginatedResponse<FuelLog>, GetFuelLogsParams>({
-      query: ({ vehicleId, page = 1, pageSize = 10, dateFrom, dateTo, fuelType, location }) => {
+      query: ({ vehicleId, page = 1, pageSize = 10, dateFrom, dateTo, fuelType, location, sortField = 'date', sortOrder = 'desc' }) => {
         const params = new URLSearchParams({
           vehicleId,
           page: page.toString(),
           pageSize: pageSize.toString(),
+          sortField,
+          sortOrder,
         });
 
         if (dateFrom) params.append('dateFrom', dateFrom);
