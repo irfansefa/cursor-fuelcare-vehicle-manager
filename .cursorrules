@@ -133,6 +133,16 @@ progress_tracking:
   - Mark items as "Blocked" if dependencies or issues prevent progress
   - Add notes for blocked items explaining the blockage reason
 
+# Dependency Management Rules
+dependency_management:
+  rules:
+    - All new dependencies must be approved by the user before adding
+    - No automatic dependency updates without user approval
+    - No direct modification of package versions without user consent
+    - Dependencies must be proposed with clear justification
+    - Version changes must be explicitly approved
+    - Lock files must not be modified without approval
+
 # Project Structure
 root_directories:
   - webapp
