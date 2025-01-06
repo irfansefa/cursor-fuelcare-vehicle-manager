@@ -1,11 +1,27 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { FuelLogFormValues } from '../components/VehicleDetails/FuelLogForm/schema';
 
-interface FuelLog extends FuelLogFormValues {
+export interface FuelLog extends FuelLogFormValues {
   id: string;
   vehicleId: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: {
+    currentPage: number;
+    pageSize: number;
+    totalCount: number;
+    totalPages: number;
+  };
+}
+
+export interface GetFuelLogsParams {
+  vehicleId: string;
+  page?: number;
+  pageSize?: number;
 }
 
 export const fuelLogApi = createApi({
@@ -13,46 +29,21 @@ export const fuelLogApi = createApi({
   baseQuery: fetchBaseQuery({ 
     baseUrl: '/api/fleet-management',
     credentials: 'include',
-    prepareHeaders: (headers) => {
-      console.log('Request Headers:', Object.fromEntries(headers.entries()));
-      return headers;
-    },
   }),
   tagTypes: ['FuelLog'],
   endpoints: (builder) => ({
-    getFuelLogs: builder.query<FuelLog[], string>({
-      query: (vehicleId) => {
-        console.log('Getting fuel logs for vehicle:', vehicleId);
-        return `/fuel-logs/list?vehicleId=${vehicleId}`;
-      },
+    getFuelLogs: builder.query<PaginatedResponse<FuelLog>, GetFuelLogsParams>({
+      query: ({ vehicleId, page = 1, pageSize = 10 }) => 
+        `/fuel-logs/list?vehicleId=${vehicleId}&page=${page}&pageSize=${pageSize}`,
       providesTags: ['FuelLog'],
-      transformResponse: (response: FuelLog[]) => {
-        console.log('Fuel logs response:', response);
-        return response;
-      },
-      transformErrorResponse: (error) => {
-        console.error('Error fetching fuel logs:', error);
-        return error;
-      },
     }),
     addFuelLog: builder.mutation<FuelLog, FuelLogFormValues & { vehicleId: string }>({
-      query: (fuelLog) => {
-        console.log('Adding fuel log:', fuelLog);
-        return {
-          url: '/fuel-logs/create',
-          method: 'POST',
-          body: fuelLog,
-        };
-      },
+      query: (fuelLog) => ({
+        url: '/fuel-logs/create',
+        method: 'POST',
+        body: fuelLog,
+      }),
       invalidatesTags: ['FuelLog'],
-      transformResponse: (response: FuelLog) => {
-        console.log('Add fuel log response:', response);
-        return response;
-      },
-      transformErrorResponse: (error) => {
-        console.error('Error adding fuel log:', error);
-        return error;
-      },
     }),
     updateFuelLog: builder.mutation<FuelLog, { id: string; vehicleId: string; fuelLog: Partial<FuelLogFormValues> }>({
       query: ({ id, vehicleId, fuelLog }) => ({
@@ -62,11 +53,10 @@ export const fuelLogApi = createApi({
       }),
       invalidatesTags: ['FuelLog'],
     }),
-    deleteFuelLog: builder.mutation<void, { id: string; vehicleId: string }>({
-      query: ({ id, vehicleId }) => ({
+    deleteFuelLog: builder.mutation<void, string>({
+      query: (id) => ({
         url: `/fuel-logs/delete/${id}`,
         method: 'DELETE',
-        body: { vehicleId },
       }),
       invalidatesTags: ['FuelLog'],
     }),

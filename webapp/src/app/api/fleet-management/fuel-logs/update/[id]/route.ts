@@ -2,38 +2,31 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 
-interface RouteParams {
-  params: {
-    id: string;
-  };
-}
-
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
+    const { id } = params;
+    const body = await request.json();
     const supabase = createRouteHandlerClient({ cookies });
-    const data = await request.json();
 
-    if (!data.vehicleId) {
-      return NextResponse.json(
-        { error: 'Vehicle ID is required' },
-        { status: 400 }
-      );
-    }
+    // Convert camelCase to snake_case for database
+    const updateData = {
+      date: body.date,
+      fuel_type: body.fuelType,
+      quantity: body.quantity,
+      price_per_unit: body.pricePerUnit,
+      total_cost: body.totalCost,
+      odometer: body.odometer,
+      location: body.location,
+      notes: body.notes,
+    };
 
     const { data: fuelLog, error } = await supabase
       .from('fuel_logs')
-      .update({
-        vehicle_id: data.vehicleId,
-        date: data.date,
-        fuel_type: data.fuelType,
-        quantity: data.quantity,
-        price_per_unit: data.pricePerUnit,
-        total_cost: data.totalCost,
-        odometer: data.odometer,
-        location: data.location,
-        notes: data.notes,
-      })
-      .eq('id', params.id)
+      .update(updateData)
+      .eq('id', id)
       .select()
       .single();
 
@@ -45,7 +38,23 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    return NextResponse.json(fuelLog);
+    // Convert snake_case back to camelCase for response
+    const response = {
+      id: fuelLog.id,
+      vehicleId: fuelLog.vehicle_id,
+      date: fuelLog.date,
+      fuelType: fuelLog.fuel_type,
+      quantity: fuelLog.quantity,
+      pricePerUnit: fuelLog.price_per_unit,
+      totalCost: fuelLog.total_cost,
+      odometer: fuelLog.odometer,
+      location: fuelLog.location,
+      notes: fuelLog.notes,
+      createdAt: fuelLog.created_at,
+      updatedAt: fuelLog.updated_at,
+    };
+
+    return NextResponse.json(response);
   } catch (error) {
     console.error('Error in update fuel log route:', error);
     return NextResponse.json(

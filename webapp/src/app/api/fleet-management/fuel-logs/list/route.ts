@@ -6,6 +6,8 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const vehicleId = searchParams.get('vehicleId');
+    const page = parseInt(searchParams.get('page') || '1');
+    const pageSize = parseInt(searchParams.get('pageSize') || '10');
 
     if (!vehicleId) {
       return NextResponse.json(
@@ -16,11 +18,31 @@ export async function GET(request: NextRequest) {
 
     const supabase = createRouteHandlerClient({ cookies });
 
+    // Get total count
+    const { count: totalCount, error: countError } = await supabase
+      .from('fuel_logs')
+      .select('*', { count: 'exact', head: true })
+      .eq('vehicle_id', vehicleId);
+
+    if (countError) {
+      console.error('Error getting fuel logs count:', countError);
+      return NextResponse.json(
+        { error: 'Failed to get fuel logs count' },
+        { status: 500 }
+      );
+    }
+
+    // Calculate pagination
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    // Get paginated data
     const { data: fuelLogs, error } = await supabase
       .from('fuel_logs')
       .select('*')
       .eq('vehicle_id', vehicleId)
-      .order('date', { ascending: false });
+      .order('date', { ascending: false })
+      .range(from, to);
 
     if (error) {
       console.error('Error fetching fuel logs:', error);
@@ -47,8 +69,15 @@ export async function GET(request: NextRequest) {
       location: log.location
     }));
 
-    console.log('Transformed fuel logs:', JSON.stringify(transformedLogs, null, 2));
-    return NextResponse.json(transformedLogs);
+    return NextResponse.json({
+      data: transformedLogs,
+      meta: {
+        currentPage: page,
+        pageSize,
+        totalCount: totalCount || 0,
+        totalPages: Math.ceil((totalCount || 0) / pageSize),
+      }
+    });
   } catch (error) {
     console.error('Error in fuel logs list route:', error);
     return NextResponse.json(
