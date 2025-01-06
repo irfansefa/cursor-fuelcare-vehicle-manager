@@ -25,7 +25,9 @@ const vehicleSchema = z.object({
   year: z.coerce
     .number()
     .min(1900, "Year must be after 1900")
-    .max(new Date().getFullYear() + 1, "Year cannot be in the future"),
+    .max(new Date().getFullYear() + 1, "Year cannot be in the future")
+    .nullable()
+    .refine((val) => val !== null, "Year is required"),
   licensePlate: z.string().min(1, "License plate is required"),
   vin: z.string().optional(),
   status: z.enum(["active", "maintenance", "inactive"] as const),
@@ -42,13 +44,23 @@ export function VehicleForm({ onSubmit, onCancel }: VehicleFormProps) {
   const form = useForm<VehicleFormData>({
     resolver: zodResolver(vehicleSchema),
     defaultValues: {
+      make: '',
+      model: '',
+      year: null,  // Start with null
+      licensePlate: '',
+      vin: '',
       status: "active",
     },
   });
 
   const handleSubmit = async (data: VehicleFormData) => {
     try {
-      await onSubmit(data);
+      // Transform null year to number before submitting
+      const vehicleData: NewVehicle = {
+        ...data,
+        year: data.year ?? new Date().getFullYear(),
+      };
+      await onSubmit(vehicleData);
       form.reset();
     } catch (error) {
       // Error handling will be done by the parent component
@@ -92,7 +104,7 @@ export function VehicleForm({ onSubmit, onCancel }: VehicleFormProps) {
             <FormField
               control={form.control}
               name="year"
-              render={({ field }) => (
+              render={({ field: { onChange, value, ...field } }) => (
                 <FormItem>
                   <FormLabel>Year</FormLabel>
                   <FormControl>
@@ -100,6 +112,11 @@ export function VehicleForm({ onSubmit, onCancel }: VehicleFormProps) {
                       type="number"
                       placeholder="Enter vehicle year"
                       {...field}
+                      value={value ?? ''}  // Show empty string when null
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        onChange(val ? parseInt(val) : null);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -149,7 +166,7 @@ export function VehicleForm({ onSubmit, onCancel }: VehicleFormProps) {
                   <FormLabel>Status</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    value={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>

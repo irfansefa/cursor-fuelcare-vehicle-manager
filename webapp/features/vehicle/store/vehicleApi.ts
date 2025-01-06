@@ -19,14 +19,14 @@ function transformVehicleResponse(vehicle: any): Vehicle {
 export const vehicleApi = createApi({
   reducerPath: 'vehicleApi',
   baseQuery: fetchBaseQuery({ 
-    baseUrl: '/api',
+    baseUrl: '/api/fleet-management',
     credentials: 'include',
   }),
   tagTypes: ['Vehicle'],
   endpoints: (builder) => ({
     getVehicles: builder.query<Vehicle[], VehicleFilters>({
       query: (filters) => ({
-        url: '/vehicles',
+        url: '/vehicles/list',
         params: filters,
       }),
       transformResponse: (response: any[]) => response.map(transformVehicleResponse),
@@ -36,7 +36,7 @@ export const vehicleApi = createApi({
       providesTags: ['Vehicle'],
     }),
     getVehicleById: builder.query<Vehicle, string>({
-      query: (id) => `/vehicles/${id}`,
+      query: (id) => `/vehicles/details/${id}`,
       transformResponse: transformVehicleResponse,
       transformErrorResponse: (response: { status: number, data: any }) => {
         return response.data?.error || 'Failed to fetch vehicle';
@@ -45,7 +45,7 @@ export const vehicleApi = createApi({
     }),
     createVehicle: builder.mutation<Vehicle, NewVehicle>({
       query: (vehicle) => ({
-        url: '/vehicles',
+        url: '/vehicles/create',
         method: 'POST',
         body: vehicle,
       }),
@@ -60,7 +60,7 @@ export const vehicleApi = createApi({
     }),
     updateVehicle: builder.mutation<Vehicle, UpdateVehicle>({
       query: ({ id, ...vehicle }) => ({
-        url: `/vehicles/${id}`,
+        url: `/vehicles/update/${id}`,
         method: 'PATCH',
         body: vehicle,
       }),
@@ -75,7 +75,7 @@ export const vehicleApi = createApi({
     }),
     deleteVehicle: builder.mutation<void, string>({
       query: (id) => ({
-        url: `/vehicles/${id}`,
+        url: `/vehicles/delete/${id}`,
         method: 'DELETE',
       }),
       transformErrorResponse: (response: { status: number, data: any }) => {
