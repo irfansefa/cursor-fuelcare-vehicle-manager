@@ -49,6 +49,7 @@ interface ModalContentProps
   extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,
     VariantProps<typeof modalVariants> {
   showClose?: boolean
+  children: React.ReactNode
 }
 
 const ModalContent = React.forwardRef<

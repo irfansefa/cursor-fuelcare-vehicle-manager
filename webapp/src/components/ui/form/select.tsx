@@ -3,13 +3,7 @@ import * as SelectPrimitive from "@radix-ui/react-select"
 import { FiChevronDown, FiCheck } from "react-icons/fi"
 import { cn } from "@/lib/utils"
 
-const Select = React.forwardRef<
-  React.ElementRef<typeof SelectPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root>
->((props, ref) => (
-  <SelectPrimitive.Root {...props} ref={ref} />
-))
-Select.displayName = SelectPrimitive.Root.displayName
+const Select = SelectPrimitive.Root
 
 const SelectGroup = SelectPrimitive.Group
 

@@ -1,4 +1,4 @@
-import { Vehicle, VehicleFilters } from "../types";
+import { Vehicle, VehicleFilters, VehicleStatus } from "../types";
 import { VehicleCard } from "./VehicleCard";
 import { Input } from "@/components/ui/input";
 import {
@@ -39,7 +39,7 @@ export function VehicleList({
         />
         <Select
           defaultValue={filters.status}
-          onValueChange={(value: string) =>
+          onValueChange={(value: VehicleStatus) =>
             onFilterChange({ ...filters, status: value })
           }
         >

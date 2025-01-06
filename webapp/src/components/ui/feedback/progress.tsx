@@ -35,8 +35,9 @@ const progressIndicatorVariants = cva("h-full w-full flex-1 transition-all", {
 })
 
 interface ProgressProps
-  extends React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>,
+  extends Omit<React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>, "value">,
     VariantProps<typeof progressVariants> {
+  value?: number
   indicatorClassName?: string
 }
 
