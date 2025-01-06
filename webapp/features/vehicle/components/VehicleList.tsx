@@ -38,8 +38,8 @@ export function VehicleList({
           className="max-w-sm"
         />
         <Select
-          value={filters.status}
-          onValueChange={(value: any) =>
+          defaultValue={filters.status}
+          onValueChange={(value: string) =>
             onFilterChange({ ...filters, status: value })
           }
         >
