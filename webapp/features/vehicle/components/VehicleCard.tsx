@@ -11,10 +11,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/navigation/dropdown-menu";
 import { DeleteVehicleDialog } from './DeleteVehicleDialog';
+import { UpdateVehicleModal } from './UpdateVehicleModal';
 
 interface VehicleCardProps {
   vehicle: Vehicle;
   onEdit?: () => void;
+  onDelete?: () => void;
   onSelect?: () => void;
 }
 
@@ -24,8 +26,9 @@ const statusVariants: Record<VehicleStatus, "success" | "warning" | "error"> = {
   inactive: "error",
 };
 
-export function VehicleCard({ vehicle, onEdit, onSelect }: VehicleCardProps) {
+export function VehicleCard({ vehicle, onEdit, onDelete, onSelect }: VehicleCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   const handleDeleteClick = () => {
     setShowDeleteDialog(true);
@@ -33,6 +36,14 @@ export function VehicleCard({ vehicle, onEdit, onSelect }: VehicleCardProps) {
 
   const handleDeleteClose = () => {
     setShowDeleteDialog(false);
+  };
+
+  const handleEditClick = () => {
+    setShowUpdateModal(true);
+  };
+
+  const handleEditClose = () => {
+    setShowUpdateModal(false);
   };
 
   return (
@@ -52,11 +63,9 @@ export function VehicleCard({ vehicle, onEdit, onSelect }: VehicleCardProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {onEdit && (
-                <DropdownMenuItem onClick={onEdit}>
-                  Edit
-                </DropdownMenuItem>
-              )}
+              <DropdownMenuItem onClick={handleEditClick}>
+                Edit
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={handleDeleteClick} className="text-red-600">
                 Delete
               </DropdownMenuItem>
@@ -98,6 +107,13 @@ export function VehicleCard({ vehicle, onEdit, onSelect }: VehicleCardProps) {
         vehicle={vehicle}
         isOpen={showDeleteDialog}
         onClose={handleDeleteClose}
+        onDelete={onDelete}
+      />
+
+      <UpdateVehicleModal
+        vehicle={vehicle}
+        isOpen={showUpdateModal}
+        onClose={handleEditClose}
       />
     </>
   );

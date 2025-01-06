@@ -53,7 +53,7 @@ This document tracks the implementation progress of all features and components 
   - ✅ VehicleCard component
   - ✅ VehicleList component
   - ✅ Vehicle UI components organized
-- 🚧 Vehicle CRUD operations
+- ✅ Vehicle CRUD operations
   - ✅ Vehicle form components
   - ✅ Create vehicle functionality
     - ✅ Vehicle form validation
@@ -66,8 +66,16 @@ This document tracks the implementation progress of all features and components 
     - ✅ GET /api/fleet-management/vehicles/details/[id]
     - ✅ PATCH /api/fleet-management/vehicles/update/[id]
     - ✅ DELETE /api/fleet-management/vehicles/delete/[id]
-  - ⏳ Update vehicle functionality
-  - ⏳ Delete vehicle functionality
+  - ✅ Update vehicle functionality
+    - ✅ Update vehicle form
+    - ✅ Update API integration
+    - ✅ Error handling
+    - ✅ Success feedback
+  - ✅ Delete vehicle functionality
+    - ✅ Delete confirmation dialog
+    - ✅ Delete API integration
+    - ✅ Error handling
+    - ✅ Success feedback
 - ⏳ Vehicle details view
 - ⏳ Vehicle history tracking
 - ⏳ Vehicle documents management

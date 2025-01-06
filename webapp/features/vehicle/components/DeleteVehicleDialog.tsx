@@ -16,9 +16,10 @@ interface DeleteVehicleDialogProps {
   vehicle: Vehicle;
   isOpen: boolean;
   onClose: () => void;
+  onDelete?: () => void;
 }
 
-export function DeleteVehicleDialog({ vehicle, isOpen, onClose }: DeleteVehicleDialogProps) {
+export function DeleteVehicleDialog({ vehicle, isOpen, onClose, onDelete }: DeleteVehicleDialogProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const { toast } = useToast();
   const [deleteVehicle] = vehicleApi.useDeleteVehicleMutation();
@@ -31,6 +32,7 @@ export function DeleteVehicleDialog({ vehicle, isOpen, onClose }: DeleteVehicleD
         title: 'Vehicle deleted',
         description: `${vehicle.make} ${vehicle.model} has been deleted successfully.`,
       });
+      onDelete?.();
       onClose();
     } catch (error) {
       toast({

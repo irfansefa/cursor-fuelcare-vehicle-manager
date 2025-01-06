@@ -1,4 +1,4 @@
-import { NewVehicle, VehicleStatus } from "../../types";
+import { NewVehicle, Vehicle, VehicleStatus } from "../../types";
 import { Button } from "@/components/ui/button";
 import {
   FormControl,
@@ -36,20 +36,22 @@ const vehicleSchema = z.object({
 type VehicleFormData = z.infer<typeof vehicleSchema>;
 
 interface VehicleFormProps {
+  initialData?: Vehicle;
   onSubmit: (data: NewVehicle) => Promise<void>;
   onCancel: () => void;
+  submitLabel?: string;
 }
 
-export function VehicleForm({ onSubmit, onCancel }: VehicleFormProps) {
+export function VehicleForm({ initialData, onSubmit, onCancel, submitLabel = "Create Vehicle" }: VehicleFormProps) {
   const form = useForm<VehicleFormData>({
     resolver: zodResolver(vehicleSchema),
     defaultValues: {
-      make: '',
-      model: '',
-      year: null,
-      licensePlate: '',
-      vin: '',
-      status: "active",
+      make: initialData?.make ?? '',
+      model: initialData?.model ?? '',
+      year: initialData?.year ?? null,
+      licensePlate: initialData?.licensePlate ?? '',
+      vin: initialData?.vin ?? '',
+      status: initialData?.status ?? "active",
     },
   });
 
@@ -63,7 +65,7 @@ export function VehicleForm({ onSubmit, onCancel }: VehicleFormProps) {
       form.reset();
     } catch (error) {
       // Error handling will be done by the parent component
-      console.error("Failed to create vehicle:", error);
+      console.error("Failed to submit vehicle:", error);
     }
   };
 
@@ -188,7 +190,7 @@ export function VehicleForm({ onSubmit, onCancel }: VehicleFormProps) {
             <Button type="button" variant="outline" onClick={onCancel}>
               Cancel
             </Button>
-            <Button type="submit">Create Vehicle</Button>
+            <Button type="submit">{submitLabel}</Button>
           </div>
         </form>
       </FormProvider>
