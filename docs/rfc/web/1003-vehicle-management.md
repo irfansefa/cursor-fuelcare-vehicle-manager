@@ -80,19 +80,13 @@ interface Vehicle {
    - Vehicle details dashboard
    - Quick actions menu
 
-2. Document Management UI
-   - Drag-and-drop document upload
-   - Document preview gallery
-   - Expiry notifications
-   - Document categorization
-
-3. Status Monitoring Dashboard
+2. Status Monitoring Dashboard
    - Real-time status updates
    - Interactive charts
    - Maintenance schedule
    - Alert notifications
 
-4. Data Analysis Interface
+3. Data Analysis Interface
    - Expense tracking charts
    - Maintenance history timeline
    - Fuel efficiency graphs
@@ -123,19 +117,13 @@ export const vehicleApi = createApi({
 - [ ] Basic CRUD operations
 - [ ] Search and filter functionality
 
-### Phase 2: Document Management UI (Week 2)
-- [ ] Document upload interface
-- [ ] Document viewer component
-- [ ] Document management features
-- [ ] Expiry notification system
-
-### Phase 3: Dashboard Implementation (Week 3)
+### Phase 2: Dashboard Implementation (Week 2)
 - [ ] Status dashboard layout
 - [ ] Interactive charts and graphs
 - [ ] Real-time updates
 - [ ] Alert system UI
 
-### Phase 4: Analysis Tools (Week 4)
+### Phase 3: Analysis Tools (Week 3)
 - [ ] Expense tracking interface
 - [ ] Maintenance timeline
 - [ ] Data visualization components

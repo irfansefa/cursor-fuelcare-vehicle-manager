@@ -16,7 +16,7 @@ export interface Vehicle {
   licensePlate?: string;
   vin?: string;
   status: VehicleStatus;
-  documents: Document[];
+  documents: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -34,4 +34,24 @@ export interface NewVehicle extends Omit<Vehicle, 'id' | 'documents' | 'createdA
 
 export interface UpdateVehicle extends Partial<NewVehicle> {
   id: string;
-} 
+}
+
+export type FuelType = 'regular' | 'premium' | 'diesel' | 'electric';
+
+export interface FuelLog {
+  id: string;
+  vehicleId: string;
+  date: string;
+  fuelType: FuelType;
+  quantity: number;
+  pricePerUnit: number;
+  totalCost: number;
+  odometer: number;
+  gasStationId?: string;
+  location?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NewFuelLog extends Omit<FuelLog, 'id' | 'createdAt' | 'updatedAt'> {} 
