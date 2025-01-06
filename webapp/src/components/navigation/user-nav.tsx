@@ -9,8 +9,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+} from '@/components/ui/navigation/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/data-display/avatar';
 
 export function UserNav() {
   return (

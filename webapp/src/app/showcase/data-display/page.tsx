@@ -2,9 +2,9 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { FiArrowLeft, FiEdit, FiTrash2, FiMoreVertical } from "react-icons/fi"
-
-import { Button } from "@/components/ui/button/button"
+import { FiEdit, FiTrash2, FiMoreVertical } from "react-icons/fi";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/data-display/avatar";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -12,7 +12,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card/card"
+} from "@/components/ui/card/card";
 import {
   Table,
   TableBody,
@@ -21,8 +21,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table/table"
-import { cn } from "@/lib/utils"
+} from "@/components/ui/table/table";
+import { cn } from "@/lib/utils";
 
 const invoices = [
   {
@@ -43,41 +43,77 @@ const invoices = [
     totalAmount: "$350.00",
     paymentMethod: "Bank Transfer",
   },
-  {
-    invoice: "INV004",
-    paymentStatus: "Paid",
-    totalAmount: "$450.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV005",
-    paymentStatus: "Paid",
-    totalAmount: "$550.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV006",
-    paymentStatus: "Pending",
-    totalAmount: "$200.00",
-    paymentMethod: "Bank Transfer",
-  },
-]
+];
 
 export default function DataDisplayShowcase() {
   return (
-    <div className="container mx-auto p-8">
-      <div className="mb-8">
-        <Link href="/showcase" className="inline-flex items-center text-muted-foreground hover:text-foreground">
-          <FiArrowLeft className="mr-2 h-4 w-4" />
-          Back to Showcase
-        </Link>
+    <div className="container mx-auto p-8 space-y-12">
+      <div>
+        <h1 className="text-3xl font-bold mb-4">Data Display Components</h1>
+        <p className="text-muted-foreground">
+          Components for displaying various types of data and content.
+        </p>
       </div>
 
-      <h1 className="text-3xl font-bold mb-8">Data Display</h1>
+      {/* Avatar Section */}
+      <section className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold mb-2">Avatar</h2>
+          <p className="text-muted-foreground mb-6">
+            Avatars are used to represent users or entities. They can display images,
+            initials, or fallback icons.
+          </p>
+        </div>
+
+        <div className="grid gap-8">
+          <div className="space-y-3">
+            <h3 className="text-lg font-semibold">Basic Usage</h3>
+            <div className="flex flex-wrap gap-4">
+              <div className="flex items-center gap-2">
+                <Avatar>
+                  <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+                <span className="text-sm text-muted-foreground">With Image</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Avatar>
+                  <AvatarFallback>JD</AvatarFallback>
+                </Avatar>
+                <span className="text-sm text-muted-foreground">With Initials</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <h3 className="text-lg font-semibold">Sizes</h3>
+            <div className="flex flex-wrap items-center gap-4">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+              <Avatar className="h-10 w-10">
+                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+              <Avatar className="h-12 w-12">
+                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Cards Section */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">Cards</h2>
+      <section className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold mb-2">Cards</h2>
+          <p className="text-muted-foreground mb-6">
+            Cards are used to group and display content in a way that is easily readable.
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Basic Card */}
           <Card>
@@ -94,10 +130,6 @@ export default function DataDisplayShowcase() {
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Account Type</span>
                   <span className="font-medium">Premium</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Status</span>
-                  <span className="font-medium text-green-600">Active</span>
                 </div>
               </div>
             </CardContent>
@@ -127,13 +159,13 @@ export default function DataDisplayShowcase() {
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="icon">
+                      <Button variant="ghost" size="sm">
                         <FiEdit className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon">
+                      <Button variant="ghost" size="sm">
                         <FiTrash2 className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon">
+                      <Button variant="ghost" size="sm">
                         <FiMoreVertical className="h-4 w-4" />
                       </Button>
                     </div>
@@ -141,54 +173,19 @@ export default function DataDisplayShowcase() {
                 ))}
               </div>
             </CardContent>
-            <CardFooter>
-              <Button variant="outline" className="w-full">
-                View All Activity
-              </Button>
-            </CardFooter>
-          </Card>
-
-          {/* Stats Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Statistics</CardTitle>
-              <CardDescription>Your monthly performance</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <p className="text-3xl font-bold">89%</p>
-                  <p className="text-xs text-muted-foreground">
-                    Success Rate
-                  </p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-3xl font-bold">12k</p>
-                  <p className="text-xs text-muted-foreground">
-                    Total Views
-                  </p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-3xl font-bold">$4.2k</p>
-                  <p className="text-xs text-muted-foreground">
-                    Revenue
-                  </p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-3xl font-bold">+18%</p>
-                  <p className="text-xs text-muted-foreground">
-                    Growth
-                  </p>
-                </div>
-              </div>
-            </CardContent>
           </Card>
         </div>
       </section>
 
       {/* Tables Section */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">Tables</h2>
+      <section className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold mb-2">Tables</h2>
+          <p className="text-muted-foreground mb-6">
+            Tables are used to organize and display data in a structured format.
+          </p>
+        </div>
+
         <Card>
           <CardContent className="p-0">
             <Table>
@@ -228,49 +225,6 @@ export default function DataDisplayShowcase() {
           </CardContent>
         </Card>
       </section>
-
-      {/* Code Example */}
-      <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-md">
-        <pre className="text-sm">
-          {`// Card Example
-<Card>
-  <CardHeader>
-    <CardTitle>Account Summary</CardTitle>
-    <CardDescription>Overview of your account status</CardDescription>
-  </CardHeader>
-  <CardContent>
-    <div className="space-y-2">
-      <div className="flex justify-between">
-        <span>Balance</span>
-        <span>$2,500.00</span>
-      </div>
     </div>
-  </CardContent>
-  <CardFooter>
-    <Button>Manage Account</Button>
-  </CardFooter>
-</Card>
-
-// Table Example
-<Table>
-  <TableCaption>A list of your recent invoices.</TableCaption>
-  <TableHeader>
-    <TableRow>
-      <TableHead>Invoice</TableHead>
-      <TableHead>Status</TableHead>
-      <TableHead>Amount</TableHead>
-    </TableRow>
-  </TableHeader>
-  <TableBody>
-    <TableRow>
-      <TableCell>INV001</TableCell>
-      <TableCell>Paid</TableCell>
-      <TableCell>$250.00</TableCell>
-    </TableRow>
-  </TableBody>
-</Table>`}
-        </pre>
-      </div>
-    </div>
-  )
+  );
 } 

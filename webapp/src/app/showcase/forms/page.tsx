@@ -1,12 +1,9 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-import { FiArrowLeft, FiMail, FiLock } from "react-icons/fi"
-
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 import {
   Form,
   FormControl,
@@ -15,19 +12,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form/form"
-import { Input } from "@/components/ui/input/input"
-import { Button } from "@/components/ui/button/button"
-import { Checkbox } from "@/components/ui/form/checkbox"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/form/radio-group"
-import { 
+} from "@/components/ui/form/form";
+import { Input } from "@/components/ui/input/input";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/form/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/form/radio-group";
+import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/form/select"
-import { Textarea } from "@/components/ui/form/textarea"
+} from "@/components/ui/form/select";
+import { Textarea } from "@/components/ui/form/textarea";
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -49,7 +48,7 @@ const formSchema = z.object({
   contactPreference: z.enum(["email", "phone", "mail"], {
     required_error: "Please select a contact preference.",
   }),
-})
+});
 
 export default function FormsShowcase() {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -61,26 +60,90 @@ export default function FormsShowcase() {
       bio: "",
       notifications: false,
     },
-  })
+  });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+    console.log(values);
   }
 
   return (
-    <div className="container mx-auto p-8">
-      <div className="mb-8">
-        <Link href="/showcase" className="inline-flex items-center text-muted-foreground hover:text-foreground">
-          <FiArrowLeft className="mr-2 h-4 w-4" />
-          Back to Showcase
-        </Link>
+    <div className="container mx-auto p-8 space-y-12">
+      <div>
+        <h1 className="text-3xl font-bold mb-4">Form Components</h1>
+        <p className="text-muted-foreground">
+          Components for building forms and collecting user input.
+        </p>
       </div>
 
-      <h1 className="text-3xl font-bold mb-8">Forms</h1>
+      {/* Select Component Section */}
+      <section className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold mb-2">Select</h2>
+          <p className="text-muted-foreground mb-6">
+            Select components allow users to choose a single value from a list of options.
+          </p>
+        </div>
 
-      {/* Form with All Field Types */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">Form Fields</h2>
+        <div className="grid gap-8">
+          <div className="space-y-3">
+            <h3 className="text-lg font-semibold">Basic Usage</h3>
+            <div className="flex flex-wrap gap-4">
+              <div className="w-[180px]">
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a fruit" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Fruits</SelectLabel>
+                      <SelectItem value="apple">Apple</SelectItem>
+                      <SelectItem value="banana">Banana</SelectItem>
+                      <SelectItem value="orange">Orange</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <h3 className="text-lg font-semibold">With Groups</h3>
+            <div className="flex flex-wrap gap-4">
+              <div className="w-[240px]">
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a food" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Fruits</SelectLabel>
+                      <SelectItem value="apple">Apple</SelectItem>
+                      <SelectItem value="banana">Banana</SelectItem>
+                      <SelectItem value="orange">Orange</SelectItem>
+                    </SelectGroup>
+                    <SelectGroup>
+                      <SelectLabel>Vegetables</SelectLabel>
+                      <SelectItem value="carrot">Carrot</SelectItem>
+                      <SelectItem value="potato">Potato</SelectItem>
+                      <SelectItem value="tomato">Tomato</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Form Fields Section */}
+      <section className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold mb-2">Form Fields</h2>
+          <p className="text-muted-foreground mb-6">
+            A collection of form fields with validation and error handling.
+          </p>
+        </div>
+
         <div className="max-w-md">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -102,7 +165,7 @@ export default function FormsShowcase() {
                 )}
               />
 
-              {/* Email Input with Icon */}
+              {/* Email Input */}
               <FormField
                 control={form.control}
                 name="email"
@@ -110,12 +173,7 @@ export default function FormsShowcase() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="email" 
-                        placeholder="Enter your email" 
-                        leftIcon={<FiMail className="h-4 w-4" />}
-                        {...field} 
-                      />
+                      <Input type="email" placeholder="Enter your email" {...field} />
                     </FormControl>
                     <FormDescription>
                       We'll never share your email with anyone else.
@@ -125,7 +183,7 @@ export default function FormsShowcase() {
                 )}
               />
 
-              {/* Password Input with Icon */}
+              {/* Password Input */}
               <FormField
                 control={form.control}
                 name="password"
@@ -133,12 +191,7 @@ export default function FormsShowcase() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="password" 
-                        placeholder="Enter your password" 
-                        leftIcon={<FiLock className="h-4 w-4" />}
-                        {...field} 
-                      />
+                      <Input type="password" placeholder="Enter your password" {...field} />
                     </FormControl>
                     <FormDescription>
                       Must be at least 8 characters long.
@@ -156,10 +209,7 @@ export default function FormsShowcase() {
                   <FormItem>
                     <FormLabel>Bio</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        placeholder="Tell us about yourself"
-                        {...field}
-                      />
+                      <Textarea placeholder="Tell us about yourself" {...field} />
                     </FormControl>
                     <FormDescription>
                       A brief description about yourself.
@@ -269,60 +319,6 @@ export default function FormsShowcase() {
           </Form>
         </div>
       </section>
-
-      {/* Code Example */}
-      <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-md">
-        <pre className="text-sm">
-          {`import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-
-// Define your form schema
-const formSchema = z.object({
-  username: z.string().min(2),
-  email: z.string().email(),
-  bio: z.string().min(10),
-  role: z.string(),
-  notifications: z.boolean(),
-  contactPreference: z.enum(["email", "phone", "mail"]),
-})
-
-// Use the form
-const form = useForm<z.infer<typeof formSchema>>({
-  resolver: zodResolver(formSchema),
-})
-
-// Form Fields
-<FormField
-  control={form.control}
-  name="username"
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>Username</FormLabel>
-      <FormControl>
-        <Input {...field} />
-      </FormControl>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
-
-<FormField
-  control={form.control}
-  name="notifications"
-  render={({ field }) => (
-    <FormItem>
-      <FormControl>
-        <Checkbox
-          checked={field.value}
-          onCheckedChange={field.onChange}
-        />
-      </FormControl>
-    </FormItem>
-  )}
-/>`}
-        </pre>
-      </div>
     </div>
-  )
+  );
 } 

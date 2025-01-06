@@ -1,17 +1,19 @@
 'use client';
 
+import { Button } from "@/components/ui/button";
 import { useAuth } from "../hooks/useAuth";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/data-display/avatar";
+import { FiLogOut, FiSettings, FiUser } from "react-icons/fi";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/navigation/dropdown-menu";
 import { useRouter } from "next/navigation";
-import { User, Settings, LogOut } from "lucide-react";
 
 export function UserMenu() {
   const { user, logout } = useAuth();
@@ -41,7 +43,7 @@ export function UserMenu() {
         <Avatar className="h-8 w-8">
           <AvatarImage src={user.avatarUrl || undefined} alt={user.fullName || user.email} />
           <AvatarFallback className="bg-primary text-primary-foreground">
-            {user.avatarUrl ? <User className="h-4 w-4" /> : initials}
+            {user.avatarUrl ? <FiUser size={16} /> : initials}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
@@ -54,11 +56,11 @@ export function UserMenu() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => router.push('/profile')} className="cursor-pointer">
-          <User className="mr-2 h-4 w-4" />
+          <FiUser size={16} />
           <span>Profile</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => router.push('/settings')} className="cursor-pointer">
-          <Settings className="mr-2 h-4 w-4" />
+          <FiSettings size={16} />
           <span>Settings</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -66,7 +68,7 @@ export function UserMenu() {
           onClick={handleLogout}
           className="text-destructive focus:text-destructive cursor-pointer"
         >
-          <LogOut className="mr-2 h-4 w-4" />
+          <FiLogOut size={16} />
           <span>Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
