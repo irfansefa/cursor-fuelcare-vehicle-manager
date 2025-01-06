@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { Vehicle, VehicleFilters } from '../types';
+import { Vehicle, VehicleFilters, NewVehicle } from '../types';
 
 export const vehicleApi = createApi({
   reducerPath: 'vehicleApi',
@@ -20,7 +20,7 @@ export const vehicleApi = createApi({
       query: (id) => `/vehicles/details/${id}`,
       providesTags: ['Vehicle'],
     }),
-    createVehicle: builder.mutation<Vehicle, Partial<Vehicle>>({
+    createVehicle: builder.mutation<Vehicle, Omit<NewVehicle, 'documents'>>({
       query: (vehicle) => ({
         url: '/vehicles/create',
         method: 'POST',

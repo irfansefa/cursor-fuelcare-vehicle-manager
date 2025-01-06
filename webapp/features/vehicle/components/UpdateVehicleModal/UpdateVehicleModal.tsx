@@ -23,11 +23,12 @@ export function UpdateVehicleModal({ vehicle, isOpen, onClose }: UpdateVehicleMo
 
   const handleSubmit = async (data: NewVehicle) => {
     try {
-      const updateData = {
-        ...data,
+      const { documents, ...vehicleData } = data;
+      await updateVehicle({
         id: vehicle.id,
-      };
-      await updateVehicle(updateData).unwrap();
+        vehicle: vehicleData,
+      }).unwrap();
+      
       toast({
         title: "Success",
         description: "Vehicle updated successfully",

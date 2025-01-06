@@ -35,10 +35,10 @@ export function FuelLogForm({ defaultValues, onSubmit, isSubmitting }: FuelLogFo
     defaultValues: {
       date: new Date().toISOString().split('T')[0],
       fuelType: 'regular',
-      quantity: undefined,
-      pricePerUnit: undefined,
+      quantity: 0,
+      pricePerUnit: 0,
       totalCost: 0,
-      odometer: undefined,
+      odometer: 0,
       location: '',
       notes: '',
       ...defaultValues,
@@ -49,10 +49,10 @@ export function FuelLogForm({ defaultValues, onSubmit, isSubmitting }: FuelLogFo
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
       if (name === 'quantity' || name === 'pricePerUnit') {
-        const quantity = form.getValues('quantity');
-        const pricePerUnit = form.getValues('pricePerUnit');
+        const quantity = form.getValues('quantity') || 0;
+        const pricePerUnit = form.getValues('pricePerUnit') || 0;
         const totalCost = Number((quantity * pricePerUnit).toFixed(2));
-        form.setValue('totalCost', totalCost || 0);
+        form.setValue('totalCost', totalCost);
       }
     });
     return () => subscription.unsubscribe();
@@ -83,7 +83,7 @@ export function FuelLogForm({ defaultValues, onSubmit, isSubmitting }: FuelLogFo
               <FormItem>
                 <FormLabel>Fuel Type</FormLabel>
                 <Select
-                  value={field.value || 'regular'}
+                  value={field.value}
                   onValueChange={field.onChange}
                 >
                   <FormControl>
@@ -106,7 +106,7 @@ export function FuelLogForm({ defaultValues, onSubmit, isSubmitting }: FuelLogFo
           <FormField
             control={form.control}
             name="quantity"
-            render={({ field }) => (
+            render={({ field: { value, onChange, ...field } }) => (
               <FormItem>
                 <FormLabel>Quantity (L)</FormLabel>
                 <FormControl>
@@ -116,8 +116,11 @@ export function FuelLogForm({ defaultValues, onSubmit, isSubmitting }: FuelLogFo
                     min="0.01"
                     placeholder="Enter quantity"
                     {...field}
-                    value={field.value?.toString() || ''}
-                    onChange={(e) => field.onChange(e.target.value ? +e.target.value : undefined)}
+                    value={value || ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      onChange(val ? Number(val) : 0);
+                    }}
                   />
                 </FormControl>
                 <FormMessage />
@@ -128,7 +131,7 @@ export function FuelLogForm({ defaultValues, onSubmit, isSubmitting }: FuelLogFo
           <FormField
             control={form.control}
             name="pricePerUnit"
-            render={({ field }) => (
+            render={({ field: { value, onChange, ...field } }) => (
               <FormItem>
                 <FormLabel>Price per Unit</FormLabel>
                 <FormControl>
@@ -138,8 +141,11 @@ export function FuelLogForm({ defaultValues, onSubmit, isSubmitting }: FuelLogFo
                     min="0.01"
                     placeholder="Enter price per unit"
                     {...field}
-                    value={field.value?.toString() || ''}
-                    onChange={(e) => field.onChange(e.target.value ? +e.target.value : undefined)}
+                    value={value || ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      onChange(val ? Number(val) : 0);
+                    }}
                   />
                 </FormControl>
                 <FormMessage />
@@ -150,7 +156,7 @@ export function FuelLogForm({ defaultValues, onSubmit, isSubmitting }: FuelLogFo
           <FormField
             control={form.control}
             name="totalCost"
-            render={({ field }) => (
+            render={({ field: { value, ...field } }) => (
               <FormItem>
                 <FormLabel>Total Cost</FormLabel>
                 <FormControl>
@@ -159,7 +165,7 @@ export function FuelLogForm({ defaultValues, onSubmit, isSubmitting }: FuelLogFo
                     step="0.01"
                     min="0"
                     {...field}
-                    value={field.value?.toString() || '0'}
+                    value={value || 0}
                     disabled
                   />
                 </FormControl>
@@ -171,7 +177,7 @@ export function FuelLogForm({ defaultValues, onSubmit, isSubmitting }: FuelLogFo
           <FormField
             control={form.control}
             name="odometer"
-            render={({ field }) => (
+            render={({ field: { value, onChange, ...field } }) => (
               <FormItem>
                 <FormLabel>Odometer (km)</FormLabel>
                 <FormControl>
@@ -180,8 +186,11 @@ export function FuelLogForm({ defaultValues, onSubmit, isSubmitting }: FuelLogFo
                     min="0"
                     placeholder="Enter odometer reading"
                     {...field}
-                    value={field.value?.toString() || ''}
-                    onChange={(e) => field.onChange(e.target.value ? +e.target.value : undefined)}
+                    value={value || ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      onChange(val ? Number(val) : 0);
+                    }}
                   />
                 </FormControl>
                 <FormMessage />

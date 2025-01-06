@@ -1,73 +1,63 @@
-import { Vehicle, VehicleFilters, VehicleStatus } from "../types";
+import { useState } from "react";
 import { VehicleCard } from "./VehicleCard";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/form/select";
+import { useGetVehiclesQuery } from "../store/vehicleApi";
+import { VehicleStatus } from "../types";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/form/select";
 import { CreateVehicleModal } from "./CreateVehicleModal";
+import { Button } from "@/components/ui/button";
 
-interface VehicleListProps {
-  vehicles: Vehicle[];
-  filters: VehicleFilters;
-  onFilterChange: (filters: VehicleFilters) => void;
-  onEdit?: (vehicle: Vehicle) => void;
-  onDelete?: (vehicle: Vehicle) => void;
-  onSelect?: (vehicle: Vehicle) => void;
-}
+export function VehicleList() {
+  const [statusFilter, setStatusFilter] = useState<VehicleStatus | 'all'>('all');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const { data: vehicles = [], isLoading } = useGetVehiclesQuery(
+    statusFilter === 'all' ? {} : { status: statusFilter }
+  );
 
-export function VehicleList({
-  vehicles,
-  filters,
-  onFilterChange,
-  onEdit,
-  onDelete,
-  onSelect,
-}: VehicleListProps) {
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      <div className="flex gap-4 items-center justify-between">
-        <div className="flex gap-4">
-          <Input
-            placeholder="Search vehicles..."
-            value={filters.search ?? ""}
-            onChange={(e) =>
-              onFilterChange({ ...filters, search: e.target.value })
-            }
-            className="max-w-sm"
-          />
+      <div className="flex items-center justify-between">
+        <div className="w-[200px]">
           <Select
-            defaultValue={filters.status}
-            onValueChange={(value: VehicleStatus) =>
-              onFilterChange({ ...filters, status: value })
-            }
+            value={statusFilter}
+            onValueChange={(value) => setStatusFilter(value as VehicleStatus | 'all')}
           >
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger>
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="all">All vehicles</SelectItem>
               <SelectItem value="active">Active</SelectItem>
               <SelectItem value="maintenance">Maintenance</SelectItem>
               <SelectItem value="inactive">Inactive</SelectItem>
             </SelectContent>
           </Select>
         </div>
-        <CreateVehicleModal />
+        <Button onClick={() => setIsCreateModalOpen(true)}>
+          Add Vehicle
+        </Button>
+        <CreateVehicleModal 
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {vehicles.map((vehicle) => (
-          <VehicleCard
-            key={vehicle.id}
-            vehicle={vehicle}
-            onEdit={onEdit ? () => onEdit(vehicle) : undefined}
-            onDelete={onDelete ? () => onDelete(vehicle) : undefined}
-            onSelect={onSelect ? () => onSelect(vehicle) : undefined}
-          />
+          <VehicleCard key={vehicle.id} vehicle={vehicle} />
         ))}
+        {vehicles.length === 0 && (
+          <div className="col-span-full text-center py-8 text-muted-foreground">
+            No vehicles found. Add your first vehicle to get started.
+          </div>
+        )}
       </div>
     </div>
   );

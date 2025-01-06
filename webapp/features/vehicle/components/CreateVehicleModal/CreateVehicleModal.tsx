@@ -1,33 +1,38 @@
-import { Button } from "@/components/ui/button";
 import {
-  Modal as Dialog,
-  ModalContent as DialogContent,
-  ModalHeader as DialogHeader,
-  ModalTitle as DialogTitle,
-  ModalTrigger as DialogTrigger,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalTitle,
 } from "@/components/ui/modal/modal";
 import { VehicleForm } from "../VehicleForm";
 import { NewVehicle } from "../../types";
 import { vehicleApi } from "../../store/vehicleApi";
-import { useState } from "react";
 import { useToast } from "@/components/ui/feedback/use-toast";
 import { useRouter } from "next/navigation";
 
-export function CreateVehicleModal() {
-  const [open, setOpen] = useState(false);
+interface CreateVehicleModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export function CreateVehicleModal({ isOpen, onClose }: CreateVehicleModalProps) {
   const { toast } = useToast();
   const router = useRouter();
   const [createVehicle] = vehicleApi.useCreateVehicleMutation();
 
   const handleSubmit = async (data: NewVehicle) => {
     try {
-      const result = await createVehicle(data).unwrap();
+      // Omit documents if they exist, as they're handled separately
+      const { documents, ...vehicleData } = data;
+      const result = await createVehicle(vehicleData).unwrap();
+      
       toast({
         title: "Success",
         description: "Vehicle created successfully",
         variant: "success",
       });
-      setOpen(false);
+      onClose();
+      router.push(`/vehicles/${result.id}`);
     } catch (error: any) {
       if (error?.status === 401) {
         toast({
@@ -48,19 +53,16 @@ export function CreateVehicleModal() {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>Add Vehicle</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
-        <DialogHeader>
-          <DialogTitle>Create New Vehicle</DialogTitle>
-        </DialogHeader>
+    <Modal open={isOpen} onOpenChange={onClose}>
+      <ModalContent className="sm:max-w-[600px]">
+        <ModalHeader>
+          <ModalTitle>Create Vehicle</ModalTitle>
+        </ModalHeader>
         <VehicleForm
           onSubmit={handleSubmit}
-          onCancel={() => setOpen(false)}
+          onCancel={onClose}
         />
-      </DialogContent>
-    </Dialog>
+      </ModalContent>
+    </Modal>
   );
 } 
