@@ -5,8 +5,10 @@ import { VehicleStatus } from "../types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/form/select";
 import { CreateVehicleModal } from "./CreateVehicleModal";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export function VehicleList() {
+  const router = useRouter();
   const [statusFilter, setStatusFilter] = useState<VehicleStatus | 'all'>('all');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const { data: vehicles = [], isLoading } = useGetVehiclesQuery(
@@ -51,7 +53,11 @@ export function VehicleList() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {vehicles.map((vehicle) => (
-          <VehicleCard key={vehicle.id} vehicle={vehicle} />
+          <VehicleCard 
+            key={vehicle.id} 
+            vehicle={vehicle}
+            onSelect={() => router.push(`/vehicles/${vehicle.id}`)}
+          />
         ))}
         {vehicles.length === 0 && (
           <div className="col-span-full text-center py-8 text-muted-foreground">
