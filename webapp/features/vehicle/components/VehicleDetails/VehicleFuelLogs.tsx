@@ -151,6 +151,7 @@ export function VehicleFuelLogs({ vehicle }: VehicleFuelLogsProps) {
           <FuelLogFilters
             filters={filters}
             onFiltersChange={handleFiltersChange}
+            vehicleId={vehicle.id}
           />
           {fuelLogs.length > 0 ? (
             <>

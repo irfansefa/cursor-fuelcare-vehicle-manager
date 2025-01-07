@@ -22,9 +22,7 @@ export function CreateVehicleModal({ isOpen, onClose }: CreateVehicleModalProps)
 
   const handleSubmit = async (data: NewVehicle) => {
     try {
-      // Omit documents if they exist, as they're handled separately
-      const { documents, ...vehicleData } = data;
-      const result = await createVehicle(vehicleData).unwrap();
+      const result = await createVehicle(data).unwrap();
       
       toast({
         title: "Success",

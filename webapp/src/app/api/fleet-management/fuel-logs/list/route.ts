@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     const pageSize = parseInt(searchParams.get('pageSize') || '10');
     const dateFrom = searchParams.get('dateFrom');
     const dateTo = searchParams.get('dateTo');
-    const fuelType = searchParams.get('fuelType');
+    const fuelTypeId = searchParams.get('fuelTypeId');
     const location = searchParams.get('location');
     const sortField = searchParams.get('sortField') || 'date';
     const sortOrder = searchParams.get('sortOrder') || 'desc';
@@ -49,8 +49,8 @@ export async function GET(request: NextRequest) {
     if (dateTo) {
       query = query.lte('date', dateTo);
     }
-    if (fuelType) {
-      query = query.eq('fuel_type', fuelType);
+    if (fuelTypeId) {
+      query = query.eq('fuel_type_id', fuelTypeId);
     }
     if (location) {
       query = query.ilike('location', `%${location}%`);
@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
       id: log.id,
       vehicleId: log.vehicle_id,
       date: log.date,
-      fuelType: log.fuel_type,
+      fuelTypeId: log.fuel_type_id,
       quantity: log.quantity,
       pricePerUnit: log.price_per_unit,
       totalCost: log.total_cost,

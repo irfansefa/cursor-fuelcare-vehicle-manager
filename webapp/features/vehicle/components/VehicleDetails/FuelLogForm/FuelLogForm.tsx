@@ -12,29 +12,26 @@ import {
   FormMessage,
 } from '@/components/ui/form/form';
 import { Input } from '@/components/ui/input/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/form/select';
 import { Button } from '@/components/ui/button/button';
 import { Textarea } from '@/components/ui/form/textarea';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { FuelTypeSelect } from '@/features/fuel/components/FuelLog/FuelTypeSelect';
 
 interface FuelLogFormProps {
   defaultValues?: Partial<FuelLogFormValues>;
   onSubmit: (data: FuelLogFormValues) => void;
   isSubmitting?: boolean;
+  vehicleId: string;
 }
 
-export function FuelLogForm({ defaultValues, onSubmit, isSubmitting }: FuelLogFormProps) {
+export function FuelLogForm({ defaultValues, onSubmit, isSubmitting, vehicleId }: FuelLogFormProps) {
+  const [unit, setUnit] = useState<'liters' | 'gallons'>('liters');
+
   const form = useForm<FuelLogFormValues>({
     resolver: zodResolver(fuelLogSchema),
     defaultValues: {
       date: new Date().toISOString().split('T')[0],
-      fuelType: 'regular',
+      fuelTypeId: '',
       quantity: 0,
       pricePerUnit: 0,
       totalCost: 0,
@@ -78,26 +75,19 @@ export function FuelLogForm({ defaultValues, onSubmit, isSubmitting }: FuelLogFo
 
           <FormField
             control={form.control}
-            name="fuelType"
+            name="fuelTypeId"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Fuel Type</FormLabel>
-                <Select
-                  value={field.value}
-                  onValueChange={field.onChange}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select fuel type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="regular">Regular</SelectItem>
-                    <SelectItem value="premium">Premium</SelectItem>
-                    <SelectItem value="diesel">Diesel</SelectItem>
-                    <SelectItem value="electric">Electric</SelectItem>
-                  </SelectContent>
-                </Select>
+                <FormControl>
+                  <FuelTypeSelect
+                    vehicleId={vehicleId}
+                    value={field.value}
+                    onChange={field.onChange}
+                    onUnitChange={setUnit}
+                    error={form.formState.errors.fuelTypeId?.message}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -108,7 +98,7 @@ export function FuelLogForm({ defaultValues, onSubmit, isSubmitting }: FuelLogFo
             name="quantity"
             render={({ field: { value, onChange, ...field } }) => (
               <FormItem>
-                <FormLabel>Quantity (L)</FormLabel>
+                <FormLabel>Quantity ({unit === 'liters' ? 'L' : 'gal'})</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -133,7 +123,7 @@ export function FuelLogForm({ defaultValues, onSubmit, isSubmitting }: FuelLogFo
             name="pricePerUnit"
             render={({ field: { value, onChange, ...field } }) => (
               <FormItem>
-                <FormLabel>Price per Unit</FormLabel>
+                <FormLabel>Price per {unit === 'liters' ? 'Liter' : 'Gallon'}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"

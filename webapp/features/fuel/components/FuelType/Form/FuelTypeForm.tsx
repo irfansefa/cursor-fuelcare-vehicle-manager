@@ -86,7 +86,7 @@ export function FuelTypeForm(props: FuelTypeFormProps | EditFuelTypeFormProps) {
       const submitData = {
         ...data,
         properties,
-        ...(isEditing ? { id: props.fuelType.id } : {}),
+        ...(isEditing && props.fuelType ? { id: props.fuelType.id } : {}),
       };
 
       await onSubmit(submitData as any); // Type assertion needed due to TypeScript limitation

@@ -49,7 +49,7 @@ export function AddFuelLogModal({ vehicleId, isOpen, onClose }: AddFuelLogModalP
             Record a new fuel log for your vehicle
           </ModalDescription>
         </ModalHeader>
-        <FuelLogForm onSubmit={handleSubmit} />
+        <FuelLogForm onSubmit={handleSubmit} vehicleId={vehicleId} />
       </ModalContent>
     </Modal>
   );

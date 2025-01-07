@@ -23,10 +23,9 @@ export function UpdateVehicleModal({ vehicle, isOpen, onClose }: UpdateVehicleMo
 
   const handleSubmit = async (data: NewVehicle) => {
     try {
-      const { documents, ...vehicleData } = data;
       await updateVehicle({
         id: vehicle.id,
-        vehicle: vehicleData,
+        vehicle: data,
       }).unwrap();
       
       toast({

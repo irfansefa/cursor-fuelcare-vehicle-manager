@@ -27,6 +27,7 @@ import {
   SelectValue,
 } from "@/components/ui/form/select";
 import { Textarea } from "@/components/ui/form/textarea";
+import FuelTypeSelectShowcase from './fuel-type-select';
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -133,6 +134,18 @@ export default function FormsShowcase() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Custom Select Components */}
+      <section className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold mb-2">Custom Select Components</h2>
+          <p className="text-muted-foreground mb-6">
+            Specialized select components for specific use cases.
+          </p>
+        </div>
+
+        <FuelTypeSelectShowcase />
       </section>
 
       {/* Form Fields Section */}

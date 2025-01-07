@@ -1,24 +1,25 @@
 'use client';
 
 import { Input } from "@/components/ui/input/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/form/select";
 import { Label } from "@/components/ui/form/label";
 import { Button } from "@/components/ui/button/button";
-import { FiSearch, FiX } from "react-icons/fi";
+import { FiX } from "react-icons/fi";
+import { FuelTypeSelect } from "@/features/fuel/components/FuelLog/FuelTypeSelect";
 
 export interface FuelLogFilters {
   dateFrom?: string;
   dateTo?: string;
-  fuelType?: string;
+  fuelTypeId?: string;
   location?: string;
 }
 
 interface FuelLogFiltersProps {
   filters: FuelLogFilters;
   onFiltersChange: (filters: FuelLogFilters) => void;
+  vehicleId: string;
 }
 
-export function FuelLogFilters({ filters, onFiltersChange }: FuelLogFiltersProps) {
+export function FuelLogFilters({ filters, onFiltersChange, vehicleId }: FuelLogFiltersProps) {
   const handleReset = () => {
     onFiltersChange({});
   };
@@ -26,7 +27,7 @@ export function FuelLogFilters({ filters, onFiltersChange }: FuelLogFiltersProps
   const handleFuelTypeChange = (value: string) => {
     onFiltersChange({
       ...filters,
-      fuelType: value === 'all' ? undefined : value,
+      fuelTypeId: value === 'all' ? undefined : value,
     });
   };
 
@@ -51,21 +52,11 @@ export function FuelLogFilters({ filters, onFiltersChange }: FuelLogFiltersProps
         </div>
         <div className="space-y-2">
           <Label>Fuel Type</Label>
-          <Select
-            value={filters.fuelType || 'all'}
-            onValueChange={handleFuelTypeChange}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="All fuel types" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All fuel types</SelectItem>
-              <SelectItem value="regular">Regular</SelectItem>
-              <SelectItem value="premium">Premium</SelectItem>
-              <SelectItem value="diesel">Diesel</SelectItem>
-              <SelectItem value="electric">Electric</SelectItem>
-            </SelectContent>
-          </Select>
+          <FuelTypeSelect
+            vehicleId={vehicleId}
+            value={filters.fuelTypeId || ''}
+            onChange={handleFuelTypeChange}
+          />
         </div>
         <div className="space-y-2">
           <Label>Location</Label>

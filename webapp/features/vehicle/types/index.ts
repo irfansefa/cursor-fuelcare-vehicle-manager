@@ -1,5 +1,14 @@
 export type VehicleStatus = 'active' | 'maintenance' | 'inactive';
 
+export interface FuelType {
+  id: string;
+  name: string;
+  description?: string;
+  unit: 'liters' | 'gallons';
+  properties?: Record<string, string>;
+  status: 'active' | 'inactive';
+}
+
 export interface Document {
   id: string;
   name: string;

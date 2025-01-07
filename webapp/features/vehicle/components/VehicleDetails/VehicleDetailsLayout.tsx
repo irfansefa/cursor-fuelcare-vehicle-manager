@@ -23,7 +23,7 @@ export function VehicleDetailsLayout({ vehicle }: VehicleDetailsLayoutProps) {
               <h2 className="text-2xl font-bold">{vehicle.make} {vehicle.model}</h2>
               <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                 {vehicle.year && <span>{vehicle.year}</span>}
-                {vehicle.licensePlate && <span>• {vehicle.licensePlate}</span>}
+                {vehicle.license_plate && <span>• {vehicle.license_plate}</span>}
               </div>
             </div>
             <Badge variant={vehicle.status === 'active' ? 'success' : vehicle.status === 'maintenance' ? 'warning' : 'error'}>
@@ -40,18 +40,17 @@ export function VehicleDetailsLayout({ vehicle }: VehicleDetailsLayoutProps) {
           <TabsTrigger value="fuel">Fuel Logs</TabsTrigger>
           <TabsTrigger value="consumption">Consumption</TabsTrigger>
           <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
-          <TabsTrigger value="documents">Documents</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview">
+        <TabsContent value="overview" className="space-y-4">
           <VehicleOverview vehicle={vehicle} />
         </TabsContent>
 
-        <TabsContent value="fuel">
+        <TabsContent value="fuel" className="space-y-4">
           <VehicleFuelLogs vehicle={vehicle} />
         </TabsContent>
 
-        <TabsContent value="consumption">
+        <TabsContent value="consumption" className="space-y-4">
           <VehicleConsumption vehicle={vehicle} />
         </TabsContent>
 
@@ -59,14 +58,6 @@ export function VehicleDetailsLayout({ vehicle }: VehicleDetailsLayoutProps) {
           <Card>
             <CardContent className="pt-6">
               <p className="text-muted-foreground">Maintenance records coming soon...</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="documents" className="space-y-4">
-          <Card>
-            <CardContent className="pt-6">
-              <p className="text-muted-foreground">Documents coming soon...</p>
             </CardContent>
           </Card>
         </TabsContent>

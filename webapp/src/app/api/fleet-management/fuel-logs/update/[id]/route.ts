@@ -14,7 +14,7 @@ export async function PATCH(
     // Convert camelCase to snake_case for database
     const updateData = {
       date: body.date,
-      fuel_type: body.fuelType,
+      fuel_type_id: body.fuelTypeId,
       quantity: body.quantity,
       price_per_unit: body.pricePerUnit,
       total_cost: body.totalCost,
@@ -43,7 +43,7 @@ export async function PATCH(
       id: fuelLog.id,
       vehicleId: fuelLog.vehicle_id,
       date: fuelLog.date,
-      fuelType: fuelLog.fuel_type,
+      fuelTypeId: fuelLog.fuel_type_id,
       quantity: fuelLog.quantity,
       pricePerUnit: fuelLog.price_per_unit,
       totalCost: fuelLog.total_cost,

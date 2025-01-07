@@ -20,7 +20,7 @@ export const vehicleApi = createApi({
       query: (id) => `/vehicles/details/${id}`,
       providesTags: ['Vehicle'],
     }),
-    createVehicle: builder.mutation<Vehicle, Omit<NewVehicle, 'documents'>>({
+    createVehicle: builder.mutation<Vehicle, NewVehicle>({
       query: (vehicle) => ({
         url: '/vehicles/create',
         method: 'POST',

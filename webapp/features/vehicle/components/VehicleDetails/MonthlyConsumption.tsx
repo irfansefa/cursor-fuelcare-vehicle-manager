@@ -3,9 +3,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card/card";
 import { BarChart } from "@/components/ui/chart/bar-chart";
 import { Vehicle } from "../../types";
-import { useGetFuelLogsQuery } from "../../store/fuelLogApi";
+import { useGetFuelLogsQuery, type FuelLog } from "../../store/fuelLogApi";
 import { useMemo, useState } from "react";
 import { ChartDateRangeControls } from "./ChartDateRangeControls";
+import { useGetFuelTypesQuery } from "@/features/fuel/store/fuelTypeApi";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/form/select";
+import type { FuelType } from "@/features/fuel/types/fuelType";
 
 interface MonthlyConsumptionProps {
   vehicle: Vehicle;
@@ -17,15 +20,26 @@ interface MonthlyData {
   avgCost: number;
   totalDistance: number;
   totalFuel: number;
+  fuelTypeId: string;
+}
+
+interface ExtendedFuelLog extends Omit<FuelLog, 'fuelType'> {
+  fuelType: FuelType;
 }
 
 export function MonthlyConsumption({ vehicle }: MonthlyConsumptionProps) {
-  const { data: fuelLogsData, isLoading } = useGetFuelLogsQuery({
+  const { data: fuelLogsData, isLoading: isLoadingLogs } = useGetFuelLogsQuery({
     vehicleId: vehicle.id,
     pageSize: 1000,
     sortField: 'date',
     sortOrder: 'asc',
   });
+
+  const { data: fuelTypes, isLoading: isLoadingTypes } = useGetFuelTypesQuery({
+    status: 'active'
+  });
+
+  const [selectedFuelType, setSelectedFuelType] = useState<string>('all');
 
   // Get min and max dates from data
   const { minDate, maxDate } = useMemo(() => {
@@ -45,7 +59,7 @@ export function MonthlyConsumption({ vehicle }: MonthlyConsumptionProps) {
   }));
 
   const monthlyData = useMemo(() => {
-    if (!fuelLogsData?.data) return [];
+    if (!fuelLogsData?.data || !fuelTypes) return [];
 
     const startDate = new Date(dateRange.startDate);
     const endDate = new Date(dateRange.endDate);
@@ -56,70 +70,112 @@ export function MonthlyConsumption({ vehicle }: MonthlyConsumptionProps) {
       return logDate >= startDate && logDate <= endDate;
     });
 
-    const sortedLogs = [...filteredLogs].sort((a, b) => 
-      new Date(a.date).getTime() - new Date(b.date).getTime()
-    );
+    // Add fuel type information to logs
+    const logsWithFuelType = filteredLogs.map(log => {
+      const fuelType = fuelTypes.find(ft => ft.id === log.fuelTypeId);
+      if (!fuelType) return null;
+      return {
+        ...log,
+        fuelType,
+      };
+    }).filter((log): log is ExtendedFuelLog => log !== null);
 
-    const monthlyStats = new Map<string, {
+    // Group logs by fuel type
+    const fuelTypeGroups = new Map<string, ExtendedFuelLog[]>();
+
+    // Initialize groups
+    logsWithFuelType.forEach(log => {
+      if (!fuelTypeGroups.has(log.fuelTypeId)) {
+        fuelTypeGroups.set(log.fuelTypeId, []);
+      }
+      fuelTypeGroups.get(log.fuelTypeId)!.push(log);
+    });
+
+    const monthlyStats = new Map<string, Map<string, {
       totalFuel: number;
       totalCost: number;
       distances: number[];
       quantities: number[];
-    }>();
+    }>>();
 
-    // Calculate distances and aggregate monthly data
-    for (let i = 1; i < sortedLogs.length; i++) {
-      const currentLog = sortedLogs[i];
-      const previousLog = sortedLogs[i - 1];
-      
-      const monthKey = new Date(currentLog.date).toISOString().slice(0, 7); // YYYY-MM format
-      
-      if (!monthlyStats.has(monthKey)) {
-        monthlyStats.set(monthKey, {
-          totalFuel: 0,
-          totalCost: 0,
-          distances: [],
-          quantities: [],
-        });
-      }
+    // Calculate distances and aggregate monthly data for each fuel type
+    fuelTypeGroups.forEach((logs, fuelTypeId) => {
+      const sortedLogs = [...logs].sort((a, b) => 
+        new Date(a.date).getTime() - new Date(b.date).getTime()
+      );
 
-      const stats = monthlyStats.get(monthKey)!;
-      stats.totalFuel += currentLog.quantity;
-      stats.totalCost += currentLog.totalCost;
-      
-      if (currentLog.odometer && previousLog.odometer) {
-        const distance = currentLog.odometer - previousLog.odometer;
-        if (distance > 0) {
-          stats.distances.push(distance);
-          stats.quantities.push(currentLog.quantity);
+      for (let i = 1; i < sortedLogs.length; i++) {
+        const currentLog = sortedLogs[i];
+        const previousLog = sortedLogs[i - 1];
+        
+        const monthKey = new Date(currentLog.date).toISOString().slice(0, 7); // YYYY-MM format
+        
+        if (!monthlyStats.has(monthKey)) {
+          monthlyStats.set(monthKey, new Map());
+        }
+
+        const monthStats = monthlyStats.get(monthKey)!;
+        if (!monthStats.has(fuelTypeId)) {
+          monthStats.set(fuelTypeId, {
+            totalFuel: 0,
+            totalCost: 0,
+            distances: [],
+            quantities: [],
+          });
+        }
+
+        const stats = monthStats.get(fuelTypeId)!;
+        stats.totalFuel += currentLog.quantity;
+        stats.totalCost += currentLog.totalCost;
+        
+        if (currentLog.odometer && previousLog.odometer) {
+          const distance = currentLog.odometer - previousLog.odometer;
+          if (distance > 0) {
+            stats.distances.push(distance);
+            stats.quantities.push(currentLog.quantity);
+          }
         }
       }
-    }
+    });
 
     // Convert to array and calculate averages
-    return Array.from(monthlyStats.entries()).map(([month, stats]) => {
-      const totalDistance = stats.distances.reduce((sum, d) => sum + d, 0);
-      const avgConsumption = totalDistance > 0 
-        ? (stats.totalFuel * 100) / totalDistance 
-        : 0;
-      const avgCost = totalDistance > 0 
-        ? (stats.totalCost * 100) / totalDistance 
-        : 0;
+    const allMonthlyData: MonthlyData[] = [];
 
-      // Format month for display (e.g., "Jan 2023")
-      const [year, monthNum] = month.split('-');
-      const monthName = new Date(`${year}-${monthNum}-01`).toLocaleString('default', { month: 'short' });
-      const displayMonth = `${monthName} ${year}`;
+    monthlyStats.forEach((fuelTypeStats, month) => {
+      fuelTypeStats.forEach((stats, fuelTypeId) => {
+        const totalDistance = stats.distances.reduce((sum, d) => sum + d, 0);
+        const avgConsumption = totalDistance > 0 
+          ? (stats.totalFuel * 100) / totalDistance 
+          : 0;
+        const avgCost = totalDistance > 0 
+          ? (stats.totalCost * 100) / totalDistance 
+          : 0;
 
-      return {
-        month: displayMonth,
-        avgConsumption: Number(avgConsumption.toFixed(2)),
-        avgCost: Number(avgCost.toFixed(2)),
-        totalDistance: Number(totalDistance.toFixed(1)),
-        totalFuel: Number(stats.totalFuel.toFixed(1)),
-      };
+        // Format month for display (e.g., "Jan 2023")
+        const [year, monthNum] = month.split('-');
+        const monthName = new Date(`${year}-${monthNum}-01`).toLocaleString('default', { month: 'short' });
+        const displayMonth = `${monthName} ${year}`;
+
+        allMonthlyData.push({
+          month: displayMonth,
+          avgConsumption: Number(avgConsumption.toFixed(2)),
+          avgCost: Number(avgCost.toFixed(2)),
+          totalDistance: Number(totalDistance.toFixed(1)),
+          totalFuel: Number(stats.totalFuel.toFixed(1)),
+          fuelTypeId,
+        });
+      });
     });
-  }, [fuelLogsData?.data, dateRange]);
+
+    // Filter by selected fuel type
+    if (selectedFuelType !== 'all') {
+      return allMonthlyData.filter(data => data.fuelTypeId === selectedFuelType);
+    }
+
+    return allMonthlyData;
+  }, [fuelLogsData?.data, fuelTypes, dateRange, selectedFuelType]);
+
+  const isLoading = isLoadingLogs || isLoadingTypes;
 
   if (isLoading) {
     return (
@@ -129,6 +185,11 @@ export function MonthlyConsumption({ vehicle }: MonthlyConsumptionProps) {
     );
   }
 
+  // Get the unit for the selected fuel type
+  const selectedUnit = selectedFuelType !== 'all'
+    ? fuelTypes?.find(ft => ft.id === selectedFuelType)?.unit || 'liters'
+    : 'liters';
+
   return (
     <Card>
       <CardHeader>
@@ -137,23 +198,44 @@ export function MonthlyConsumption({ vehicle }: MonthlyConsumptionProps) {
       <CardContent>
         {monthlyData.length > 0 ? (
           <div className="space-y-6">
-            <ChartDateRangeControls
-              startDate={dateRange.startDate}
-              endDate={dateRange.endDate}
-              onRangeChange={(startDate, endDate) => setDateRange({ startDate, endDate })}
-              minDate={minDate}
-              maxDate={maxDate}
-            />
+            <div className="flex flex-col sm:flex-row gap-4">
+              <ChartDateRangeControls
+                startDate={dateRange.startDate}
+                endDate={dateRange.endDate}
+                onRangeChange={(startDate, endDate) => setDateRange({ startDate, endDate })}
+                minDate={minDate}
+                maxDate={maxDate}
+              />
+
+              <Select
+                value={selectedFuelType}
+                onValueChange={setSelectedFuelType}
+              >
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Select fuel type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Fuel Types</SelectItem>
+                  {fuelTypes?.map(type => (
+                    <SelectItem key={type.id} value={type.id}>
+                      {type.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
             <div>
-              <h4 className="mb-2 text-sm font-medium">Average Consumption (L/100km)</h4>
+              <h4 className="mb-2 text-sm font-medium">
+                Average Consumption ({selectedUnit === 'liters' ? 'L' : 'gal'}/100km)
+              </h4>
               <BarChart
                 data={monthlyData}
                 bars={[
                   {
                     dataKey: "avgConsumption",
                     fill: "#2563eb", // blue-600
-                    name: "L/100km",
+                    name: `${selectedUnit === 'liters' ? 'L' : 'gal'}/100km`,
                   }
                 ]}
                 xAxisDataKey="month"

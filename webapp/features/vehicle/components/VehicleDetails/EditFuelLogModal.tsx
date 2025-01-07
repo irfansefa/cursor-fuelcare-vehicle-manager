@@ -75,6 +75,7 @@ export function EditFuelLogModal({
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
           isSubmitting={isLoading}
+          vehicleId={vehicleId}
         />
       </ModalContent>
     </Modal>

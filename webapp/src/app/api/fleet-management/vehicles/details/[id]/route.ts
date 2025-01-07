@@ -28,7 +28,16 @@ export async function GET(
     console.log('Fetching vehicle details:', params.id);
     const { data: vehicle, error } = await supabase
       .from('vehicles')
-      .select('*')
+      .select(`
+        *,
+        compatible_fuel_types,
+        preferred_fuel_type,
+        fuel_types:preferred_fuel_type (
+          id,
+          name,
+          unit
+        )
+      `)
       .eq('id', params.id)
       .eq('user_id', session.user.id)
       .single();

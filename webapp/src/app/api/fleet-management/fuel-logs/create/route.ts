@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       .insert([{
         vehicle_id: data.vehicleId,
         date: data.date,
-        fuel_type: data.fuelType,
+        fuel_type_id: data.fuelTypeId,
         quantity: data.quantity,
         price_per_unit: data.pricePerUnit,
         total_cost: data.totalCost,

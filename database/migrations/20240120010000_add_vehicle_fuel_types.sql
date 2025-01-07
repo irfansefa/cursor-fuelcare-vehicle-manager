@@ -48,14 +48,14 @@ CREATE OR REPLACE FUNCTION validate_fuel_log_type()
 RETURNS TRIGGER AS $$
 BEGIN
     -- Log the values for debugging
-    RAISE NOTICE 'Validating fuel log - Vehicle ID: %, Fuel Type: %', NEW.vehicle_id, NEW.fuel_type;
+    RAISE NOTICE 'Validating fuel log - Vehicle ID: %, Fuel Type id: %', NEW.vehicle_id, NEW.fuel_type_id;
     
     -- Check if the fuel type exists in vehicle's compatible types
     IF NOT EXISTS (
         SELECT 1 FROM public.vehicles v
         JOIN public.fuel_types ft ON ft.id = ANY(v.compatible_fuel_types)
         WHERE v.id = NEW.vehicle_id
-        AND ft.name ILIKE NEW.fuel_type
+        AND ft.id = NEW.fuel_type_id
     ) THEN
         RAISE EXCEPTION 'Invalid fuel type for vehicle';
     END IF;

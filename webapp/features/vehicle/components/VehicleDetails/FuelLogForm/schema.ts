@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const fuelLogSchema = z.object({
   date: z.string().min(1, 'Date is required'),
-  fuelType: z.enum(['regular', 'premium', 'diesel', 'electric'], {
+  fuelTypeId: z.string({
     required_error: 'Please select a fuel type',
   }),
   quantity: z.number().min(0.01, 'Quantity must be greater than 0'),

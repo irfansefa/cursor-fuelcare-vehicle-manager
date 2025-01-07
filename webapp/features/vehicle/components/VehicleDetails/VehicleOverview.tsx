@@ -68,10 +68,10 @@ export function VehicleOverview({ vehicle }: VehicleOverviewProps) {
                 <dd>{vehicle.year}</dd>
               </div>
             )}
-            {vehicle.licensePlate && (
+            {vehicle.license_plate && (
               <div>
                 <dt className="font-medium text-muted-foreground">License Plate</dt>
-                <dd>{vehicle.licensePlate}</dd>
+                <dd>{vehicle.license_plate}</dd>
               </div>
             )}
             {vehicle.vin && (
