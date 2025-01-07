@@ -5,15 +5,30 @@ VALUES
 ON CONFLICT (id) DO UPDATE 
 SET full_name = EXCLUDED.full_name;
 
+-- Sample fuel types with properties
+INSERT INTO fuel_types (id, name, description, unit, properties, status)
+VALUES
+  ('11111111-2222-3333-4444-555555555555', 'Regular Unleaded', 'Standard unleaded gasoline', 'liters', '{"octane": 87, "ethanol_content": "10%"}'::jsonb, 'active'),
+  ('22222222-3333-4444-5555-666666666666', 'Premium Unleaded', 'High octane unleaded gasoline', 'liters', '{"octane": 91, "ethanol_content": "10%"}'::jsonb, 'active'),
+  ('33333333-4444-5555-6666-777777777777', 'Super Premium', 'Premium high octane gasoline', 'liters', '{"octane": 95, "ethanol_content": "10%"}'::jsonb, 'active'),
+  ('44444444-5555-6666-7777-888888888888', 'Diesel', 'Standard diesel fuel', 'liters', '{"cetane": 51, "sulfur": "ultra low"}'::jsonb, 'active'),
+  ('55555555-6666-7777-8888-999999999999', 'Bio-Diesel', 'Biodiesel fuel blend', 'liters', '{"blend": "B20", "renewable_content": "20%"}'::jsonb, 'active');
+
 -- Sample vehicles
-INSERT INTO vehicles (id, user_id, make, model, year, license_plate, vin, status)
+INSERT INTO vehicles (id, user_id, make, model, year, license_plate, vin, status, compatible_fuel_types, preferred_fuel_type)
 VALUES
   -- Family SUV with regular usage pattern
-  ('11111111-1111-1111-1111-111111111111', 'USER_ID', 'Toyota', 'RAV4', 2020, 'ABC123', 'JT3HP10V5X7123456', 'active'),
+  ('11111111-1111-1111-1111-111111111111', 'USER_ID', 'Toyota', 'RAV4', 2020, 'ABC123', 'JT3HP10V5X7123456', 'active', 
+   ARRAY['11111111-2222-3333-4444-555555555555']::uuid[], 
+   '11111111-2222-3333-4444-555555555555'),
   -- Work vehicle with high mileage
-  ('22222222-2222-2222-2222-222222222222', 'USER_ID', 'Ford', 'Transit', 2019, 'XYZ789', 'WF0XXXTTGXKY12345', 'active'),
+  ('22222222-2222-2222-2222-222222222222', 'USER_ID', 'Ford', 'Transit', 2019, 'XYZ789', 'WF0XXXTTGXKY12345', 'active', 
+   ARRAY['44444444-5555-6666-7777-888888888888', '55555555-6666-7777-8888-999999999999']::uuid[],
+   '44444444-5555-6666-7777-888888888888'),
   -- Weekend car with occasional use
-  ('33333333-3333-3333-3333-333333333333', 'USER_ID', 'Mazda', 'MX-5', 2021, 'DEF456', 'JM1NDAL75M0123456', 'active');
+  ('33333333-3333-3333-3333-333333333333', 'USER_ID', 'Mazda', 'MX-5', 2021, 'DEF456', 'JM1NDAL75M0123456', 'active', 
+   ARRAY['22222222-3333-4444-5555-666666666666', '33333333-4444-5555-6666-777777777777']::uuid[],
+   '22222222-3333-4444-5555-666666666666');
 
 -- Sample fuel logs for Toyota RAV4 (Regular usage, ~12,000 km/year, ~8.5 L/100km)
 INSERT INTO fuel_logs (vehicle_id, date, fuel_type, quantity, price_per_unit, total_cost, odometer, location, notes)

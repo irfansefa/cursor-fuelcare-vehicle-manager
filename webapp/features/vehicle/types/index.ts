@@ -10,15 +10,17 @@ export interface Document {
 
 export interface Vehicle {
   id: string;
+  user_id: string;
   make: string;
   model: string;
   year?: number;
-  licensePlate?: string;
+  license_plate?: string;
   vin?: string;
   status: VehicleStatus;
-  documents: string[];
-  createdAt: string;
-  updatedAt: string;
+  compatible_fuel_types: string[];
+  preferred_fuel_type?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface VehicleFilters {
@@ -26,17 +28,14 @@ export interface VehicleFilters {
   status?: VehicleStatus;
   make?: string;
   year?: number;
+  fuelType?: FuelType;
 }
 
-export interface NewVehicle extends Omit<Vehicle, 'id' | 'documents' | 'createdAt' | 'updatedAt'> {
-  documents?: Omit<Document, 'id'>[];
-}
+export type NewVehicle = Omit<Vehicle, 'id' | 'user_id' | 'created_at' | 'updated_at'>;
 
 export interface UpdateVehicle extends Partial<NewVehicle> {
   id: string;
 }
-
-export type FuelType = 'regular' | 'premium' | 'diesel' | 'electric';
 
 export interface FuelLog {
   id: string;

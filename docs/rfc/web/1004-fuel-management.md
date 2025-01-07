@@ -134,10 +134,10 @@ export const fuelApi = createApi({
 - [ ] Location integration
 
 ### Phase 2: Efficiency Tools (Week 2)
-- [ ] Efficiency calculation system
 - [ ] Interactive charts
 - [ ] Trend analysis tools
-- [ ] Comparison features
+- [ ] Consumption tracking
+- [ ] Fuel type management
 
 ### Phase 3: Price Features (Week 3)
 - [ ] Price map implementation

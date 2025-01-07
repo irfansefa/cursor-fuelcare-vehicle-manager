@@ -4,6 +4,7 @@ import storage from 'redux-persist/lib/storage'
 import authReducer from "@/features/auth/store/authSlice"
 import { vehicleApi } from "@/features/vehicle/store/vehicleApi"
 import { fuelLogApi } from "@/features/vehicle/store/fuelLogApi"
+import { fuelTypeApi } from "@/features/fuel/store/fuelTypeApi"
 
 const persistConfig = {
   key: 'root',
@@ -18,13 +19,14 @@ export const store = configureStore({
     auth: persistedReducer,
     [vehicleApi.reducerPath]: vehicleApi.reducer,
     [fuelLogApi.reducerPath]: fuelLogApi.reducer,
+    [fuelTypeApi.reducerPath]: fuelTypeApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
       },
-    }).concat(vehicleApi.middleware, fuelLogApi.middleware),
+    }).concat(vehicleApi.middleware, fuelLogApi.middleware, fuelTypeApi.middleware),
 })
 
 export const persistor = persistStore(store)
