@@ -11,7 +11,6 @@ The Fuel Management System is a critical component of the FuelCare web applicati
 ## Goals
 - Create user-friendly fuel logging interface
 - Implement interactive efficiency analytics
-- Build real-time price comparison tools
 - Develop comprehensive reporting dashboard
 
 ## Detailed Design
@@ -30,18 +29,13 @@ webapp/
 │       │   │   ├── EfficiencyChart
 │       │   │   ├── ConsumptionGraph
 │       │   │   └── TrendAnalysis
-│       │   ├── Prices/
-│       │   │   ├── PriceComparison
-│       │   │   ├── PriceMap
-│       │   │   └── PriceAlert
 │       │   └── Reports/
 │       │       ├── CostSummary
 │       │       ├── EfficiencyReport
 │       │       └── ExportTools
 │       ├── hooks/
 │       │   ├── useFuelLog
-│       │   ├── useEfficiency
-│       │   └── usePrices
+│       │   └── useEfficiency
 │       ├── store/
 │       │   ├── fuelSlice
 │       │   └── fuelApi
@@ -56,7 +50,6 @@ interface FuelState {
   logs: FuelLog[];
   selectedLog: FuelLog | null;
   filters: FuelFilters;
-  priceAlerts: PriceAlert[];
   loading: boolean;
   error: string | null;
 }
@@ -95,13 +88,7 @@ interface EfficiencyStats {
    - Cost analysis graphs
    - Vehicle comparisons
 
-3. Price Management
-   - Real-time price map
-   - Price comparison tools
-   - Price alert system
-   - Historical price trends
-
-4. Reporting Dashboard
+3. Reporting Dashboard
    - Custom report builder
    - Data visualization
    - Export options
@@ -118,9 +105,7 @@ export const fuelApi = createApi({
     getEfficiencyStats: builder.query<EfficiencyStats, string>(),
     addFuelLog: builder.mutation<FuelLog, NewFuelLog>(),
     updateFuelLog: builder.mutation<FuelLog, UpdateFuelLog>(),
-    deleteFuelLog: builder.mutation<void, string>(),
-    getPrices: builder.query<FuelPrice[], PriceFilters>(),
-    setPriceAlert: builder.mutation<void, PriceAlert>(),
+    deleteFuelLog: builder.mutation<void, string>()
   })
 });
 ```
@@ -139,13 +124,7 @@ export const fuelApi = createApi({
 - [ ] Consumption tracking
 - [ ] Fuel type management
 
-### Phase 3: Price Features (Week 3)
-- [ ] Price map implementation
-- [ ] Comparison interface
-- [ ] Alert system
-- [ ] Historical trends
-
-### Phase 4: Reporting Tools (Week 4)
+### Phase 3: Reporting Tools (Week 3)
 - [ ] Report builder interface
 - [ ] Data visualization components
 - [ ] Export functionality
@@ -211,5 +190,4 @@ interface EfficiencyChartProps {
 ## Open Questions
 1. Preferred chart libraries?
 2. Receipt OCR implementation?
-3. Offline data sync strategy?
-4. Price data update frequency? 
+3. Offline data sync strategy? 

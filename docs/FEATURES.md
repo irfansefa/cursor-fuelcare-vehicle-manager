@@ -30,19 +30,17 @@
 
 ### 3. Expense Management
 - Track various expense categories:
-  - Maintenance costs
-  - Insurance payments
-  - Registration fees
-  - Repair expenses
-  - Parking fees
-  - Toll charges
+  - Default categories provided (Maintenance, Insurance, Tax, etc.)
+  - Custom category creation
+  - Category color coding
 - Features:
-  - Receipt scanning and storage
-  - Expense categorization
-  - Budget setting and tracking
+  - Simple expense tracking
+  - Vehicle expense association
+  - Custom categorization
+  - Receipt scanning and storage (future enhancement)
   - Expense reports generation
   - Cost analysis and trends
-  - Budget alerts and notifications
+  - Export capabilities
 
 ### 4. Gas Station Finder
 - Real-time location-based search
@@ -94,7 +92,6 @@
   - Cost per kilometer/mile analysis
   - Fuel efficiency trends
   - Maintenance cost analysis
-  - Budget tracking and forecasting
   - Custom report generation
 - Visual analytics:
   - Interactive charts and graphs

@@ -30,15 +30,16 @@ FuelCare is a comprehensive vehicle management application designed to help user
 
 ### 2. Vehicle Expense Management
 - Categories for different expense types:
-  - Maintenance
-  - Insurance
-  - Registration
-  - Repairs
-  - Parking
-  - Tolls
-- Attach receipts and documents
-- Generate expense reports
-- Set budget alerts
+  - Default categories (Maintenance, Insurance, Tax, etc.)
+  - Custom category creation
+  - Category color coding
+- Features:
+  - Simple expense tracking
+  - Vehicle expense association
+  - Custom categorization
+  - Receipt management (future enhancement)
+  - Expense reports
+  - Analytics and trends
 
 ### 3. Gas Station Finder
 - Real-time location-based search
@@ -62,7 +63,6 @@ FuelCare is a comprehensive vehicle management application designed to help user
 - Cost per kilometer/mile analysis
 - Fuel efficiency trends
 - Maintenance cost analysis
-- Budget tracking and forecasting
 - Custom report generation
 
 ### 6. Maintenance Management
