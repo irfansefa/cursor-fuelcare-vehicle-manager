@@ -162,19 +162,21 @@ This document tracks the implementation progress of all features and components 
 
 ### Expense Management (RFC 1005)
 - ⏳ Core Expense Management
-  - ⏳ Basic expense form
+  - ✅ Basic expense form
+    - ✅ Form validation
+    - ✅ Category selection
+    - ✅ Amount and date fields
+    - ✅ Optional fields (description, vendor)
   - ⏳ Expense list with filters
-  - 🚧 Default categories setup
-    - 🚧 Database setup
-    - 🚧 Default categories seeding
-    - 🚧 Category model and types
-  - 🚧 Custom category management
-    - 🚧 Category list component
-    - 🚧 Category form component
-    - 🚧 Category card component
-    - 🚧 Category CRUD operations
-    - 🚧 Category color picker
-  - ⏳ Vehicle selection integration
+    - ⏳ List/Grid view toggle
+    - ⏳ Search functionality
+    - ⏳ Date range filter
+    - ⏳ Category filter
+    - ⏳ Sort options
+  - ⏳ Vehicle expense integration
+    - ⏳ Add expense button in vehicle details
+    - ⏳ Vehicle expenses list
+    - ⏳ Vehicle expense summary
 - ⏳ Analytics Features
   - ⏳ Category-based analysis
   - ⏳ Time-based trends
