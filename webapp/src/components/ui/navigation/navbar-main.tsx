@@ -1,16 +1,16 @@
 'use client';
 
-import { ModeToggle } from "./mode-toggle";
+import { ModeToggle } from "@/components/mode-toggle";
 import { UserMenu } from "@/features/auth/components/UserMenu";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import Link from "next/link";
-import { Navbar as NavbarComponent, NavbarBrand, NavbarContent, NavbarItem } from "@/components/ui/navigation/navbar";
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "./navbar";
 
-export function Navbar() {
+export function MainNavbar() {
   const { isAuthenticated } = useAuth();
 
   return (
-    <NavbarComponent
+    <Navbar
       fixed
       brand={
         <NavbarBrand>
@@ -35,8 +35,13 @@ export function Navbar() {
                 </Link>
               </NavbarItem>
               <NavbarItem>
-                <Link href="/fuel-logs" className="transition-colors hover:text-foreground/80">
-                  Fuel Logs
+                <Link href="/fuel-types" className="transition-colors hover:text-foreground/80">
+                  Fuel Types
+                </Link>
+              </NavbarItem>
+              <NavbarItem>
+                <Link href="/showcase" className="transition-colors hover:text-foreground/80">
+                  Showcase
                 </Link>
               </NavbarItem>
             </>
@@ -67,6 +72,6 @@ export function Navbar() {
           </div>
         </div>
       </NavbarContent>
-    </NavbarComponent>
+    </Navbar>
   );
 } 

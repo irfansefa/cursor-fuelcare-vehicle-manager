@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/components/Providers';
-import { Navbar } from '@/components/Navbar';
+import { MainNavbar } from '@/components/ui/navigation/navbar-main';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className} cz-shortcut-listen="true">
         <Providers>
-          <Navbar />
+          <MainNavbar />
           {children}
         </Providers>
       </body>

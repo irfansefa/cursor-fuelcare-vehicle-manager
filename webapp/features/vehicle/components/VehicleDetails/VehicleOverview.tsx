@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card/card";
 import { Vehicle } from "../../types";
-import { FiCalendar, FiClock, FiDroplet, FiTruck, FiMoreVertical } from "react-icons/fi";
+import { FiCalendar, FiClock, FiDroplet, FiTruck, FiMoreVertical, FiEdit2, FiTrash2 } from "react-icons/fi";
 import { useVehicleFuelTypes } from '../../hooks/useVehicleFuelTypes';
 import { Button } from "@/components/ui/button";
 import {
@@ -74,22 +74,40 @@ export function VehicleOverview({ vehicle }: VehicleOverviewProps) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <CardTitle>Vehicle Information</CardTitle>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm">
-                <span className="sr-only">Open menu</span>
-                <FiMoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleEditClick}>
+          <div className="flex items-center space-x-2">
+            {/* Desktop/Tablet Buttons */}
+            <div className="hidden md:flex items-center space-x-2">
+              <Button variant="outline" size="sm" onClick={handleEditClick}>
+                <FiEdit2 className="h-4 w-4 mr-2" />
                 Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleDeleteClick} className="text-red-600">
+              </Button>
+              <Button variant="destructive" size="sm" onClick={handleDeleteClick}>
+                <FiTrash2 className="h-4 w-4 mr-2" />
                 Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </Button>
+            </div>
+            {/* Mobile Dropdown */}
+            <div className="md:hidden">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm">
+                    <span className="sr-only">Open menu</span>
+                    <FiMoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={handleEditClick}>
+                    <FiEdit2 className="h-4 w-4 mr-2" />
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleDeleteClick} className="text-red-600">
+                    <FiTrash2 className="h-4 w-4 mr-2" />
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
