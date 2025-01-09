@@ -4,12 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card/c
 import { Vehicle } from "../../types";
 import { useGetFuelLogsQuery } from "../../store/fuelLogApi";
 import { calculateConsumptionMetrics } from "../../utils/consumption";
-import { ConsumptionTrends } from "./ConsumptionTrends";
-import { MonthlyConsumption } from "./MonthlyConsumption";
 import { CostTrends } from "./CostTrends";
 import { FuelTypeAnalytics } from "./FuelTypeAnalytics";
+import { ConsumptionAnalysis } from "./ConsumptionAnalysis";
 import { useGetFuelTypesQuery } from "@/features/fuel/store/fuelTypeApi";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 interface VehicleConsumptionProps {
   vehicle: Vehicle;
@@ -22,6 +21,37 @@ export function VehicleConsumption({ vehicle }: VehicleConsumptionProps) {
     sortField: 'date',
     sortOrder: 'asc',
   });
+
+  const { data: fuelTypes, isLoading: isLoadingTypes } = useGetFuelTypesQuery({
+    status: 'active'
+  });
+
+  // Get min and max dates from data
+  const { minDate, maxDate } = useMemo(() => {
+    if (!fuelLogsData?.data?.length) return { minDate: undefined, maxDate: undefined };
+    
+    const timestamps = fuelLogsData.data.map(log => new Date(log.date).getTime());
+    return {
+      minDate: new Date(Math.min(...timestamps)).toISOString().split('T')[0],
+      maxDate: new Date(Math.max(...timestamps)).toISOString().split('T')[0],
+    };
+  }, [fuelLogsData?.data]);
+
+  // Initialize date range state
+  const [dateRange, setDateRange] = useState<{ startDate: string; endDate: string }>(() => ({
+    startDate: '',
+    endDate: '',
+  }));
+
+  // Update date range when min/max dates are available
+  useEffect(() => {
+    if (minDate && maxDate) {
+      setDateRange({
+        startDate: minDate,
+        endDate: maxDate,
+      });
+    }
+  }, [minDate, maxDate]);
 
   // Transform API FuelLog to internal FuelLog type
   const transformedLogs = useMemo(() => {
@@ -43,12 +73,31 @@ export function VehicleConsumption({ vehicle }: VehicleConsumptionProps) {
     });
   }, [fuelLogsData?.data]);
 
-  const { data: fuelTypes, isLoading: isLoadingTypes } = useGetFuelTypesQuery({
-    status: 'active'
-  });
-
   const metrics = calculateConsumptionMetrics(transformedLogs);
   const isLoading = isLoadingLogs || isLoadingTypes;
+
+  // Filter logs based on date range
+  const filteredLogs = useMemo(() => {
+    if (!fuelLogsData?.data || !dateRange.startDate || !dateRange.endDate) return [];
+
+    const startDate = new Date(dateRange.startDate);
+    const endDate = new Date(dateRange.endDate);
+    endDate.setHours(23, 59, 59); // Include the entire end date
+
+    return fuelLogsData.data.filter(log => {
+      const logDate = new Date(log.date);
+      return logDate >= startDate && logDate <= endDate;
+    });
+  }, [fuelLogsData?.data, dateRange.startDate, dateRange.endDate]);
+
+  // Don't render children until we have all necessary data
+  if (isLoading || !dateRange.startDate || !dateRange.endDate) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -57,43 +106,37 @@ export function VehicleConsumption({ vehicle }: VehicleConsumptionProps) {
           <CardTitle>Overall Efficiency</CardTitle>
         </CardHeader>
         <CardContent>
-          {isLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold">{metrics.overall.totalDistance.toLocaleString()}</div>
-                    <div className="text-sm text-muted-foreground">km</div>
-                    <div className="text-sm font-medium mt-1">Total Distance</div>
-                  </div>
-                </CardContent>
-              </Card>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Card>
+              <CardContent className="pt-6">
+                <div className="text-center">
+                  <div className="text-2xl font-bold">{metrics.overall.totalDistance.toLocaleString()}</div>
+                  <div className="text-sm text-muted-foreground">km</div>
+                  <div className="text-sm font-medium mt-1">Total Distance</div>
+                </div>
+              </CardContent>
+            </Card>
 
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold">${metrics.overall.totalCost.toLocaleString()}</div>
-                    <div className="text-sm text-muted-foreground">total</div>
-                    <div className="text-sm font-medium mt-1">Total Cost</div>
-                  </div>
-                </CardContent>
-              </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="text-center">
+                  <div className="text-2xl font-bold">${metrics.overall.totalCost.toLocaleString()}</div>
+                  <div className="text-sm text-muted-foreground">total</div>
+                  <div className="text-sm font-medium mt-1">Total Cost</div>
+                </div>
+              </CardContent>
+            </Card>
 
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold">${metrics.overall.averageCostPerKm}</div>
-                    <div className="text-sm text-muted-foreground">per km</div>
-                    <div className="text-sm font-medium mt-1">Avg. Cost/km</div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
+            <Card>
+              <CardContent className="pt-6">
+                <div className="text-center">
+                  <div className="text-2xl font-bold">${metrics.overall.averageCostPerKm}</div>
+                  <div className="text-sm text-muted-foreground">per km</div>
+                  <div className="text-sm font-medium mt-1">Avg. Cost/km</div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </CardContent>
       </Card>
 
@@ -170,13 +213,35 @@ export function VehicleConsumption({ vehicle }: VehicleConsumptionProps) {
         );
       })}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <ConsumptionTrends vehicle={vehicle} />
-        <MonthlyConsumption vehicle={vehicle} />
-      </div>
+      <ConsumptionAnalysis 
+        vehicle={vehicle}
+        fuelLogs={filteredLogs}
+        dateRange={dateRange}
+        onDateRangeChange={(startDate, endDate) => setDateRange({ startDate, endDate })}
+        minDate={minDate}
+        maxDate={maxDate}
+        isLoading={false}
+      />
 
-      <CostTrends vehicle={vehicle} />
-      <FuelTypeAnalytics vehicle={vehicle} />
+      <CostTrends 
+        vehicle={vehicle}
+        fuelLogs={filteredLogs}
+        dateRange={dateRange}
+        onDateRangeChange={(startDate, endDate) => setDateRange({ startDate, endDate })}
+        minDate={minDate}
+        maxDate={maxDate}
+        isLoading={false}
+      />
+      <FuelTypeAnalytics 
+        vehicle={vehicle}
+        fuelLogs={filteredLogs}
+        fuelTypes={fuelTypes}
+        dateRange={dateRange}
+        onDateRangeChange={(startDate, endDate) => setDateRange({ startDate, endDate })}
+        minDate={minDate}
+        maxDate={maxDate}
+        isLoading={false}
+      />
     </div>
   );
 } 

@@ -84,8 +84,8 @@ export default function ChartsShowcase() {
               data={barChartData}
               xAxisDataKey="name"
               bars={[
-                { dataKey: "value1", fill: "#8884d8", name: "Series 1" },
-                { dataKey: "value2", fill: "#82ca9d", name: "Series 2" },
+                { dataKey: "value1", color: "#8884d8", name: "Series 1" },
+                { dataKey: "value2", color: "#82ca9d", name: "Series 2" },
               ]}
             />
           </div>
@@ -96,8 +96,8 @@ export default function ChartsShowcase() {
               data={barChartData}
               xAxisDataKey="name"
               bars={[
-                { dataKey: "value1", fill: "#8884d8", name: "Series 1" },
-                { dataKey: "value2", fill: "#82ca9d", name: "Series 2" },
+                { dataKey: "value1", color: "#8884d8", name: "Series 1" },
+                { dataKey: "value2", color: "#82ca9d", name: "Series 2" },
               ]}
               stackBars
             />

@@ -78,7 +78,7 @@ export function TrendAnalysis({ vehicleId }: TrendAnalysisProps) {
   const combinedChartData = yearOverYear.currentYear.map((current, index) => {
     const previousMonth = yearOverYear.previousYear[index];
     return {
-      x: current.month.substring(5), // Get MM from YYYY-MM
+      month: current.month.substring(5), // Get MM from YYYY-MM
       current: current.total,
       previous: previousMonth?.total || 0,
     };
@@ -139,14 +139,15 @@ export function TrendAnalysis({ vehicleId }: TrendAnalysisProps) {
           <h4 className="text-sm font-medium">Monthly Comparison</h4>
           <LineChart
             data={combinedChartData}
+            xAxisDataKey="month"
             xAxisLabel="Month"
             yAxisLabel="Expenses"
             height={300}
             formatYAxis={(value) => formatCurrency(value)}
             formatTooltip={(value) => formatCurrency(value)}
             lines={[
-              { dataKey: 'current', name: 'Current Year', color: 'var(--primary)' },
-              { dataKey: 'previous', name: 'Previous Year', color: 'var(--muted)' },
+              { dataKey: 'current', name: 'Current Year', stroke: 'var(--primary)' },
+              { dataKey: 'previous', name: 'Previous Year', stroke: 'var(--muted)' },
             ]}
           />
         </div>

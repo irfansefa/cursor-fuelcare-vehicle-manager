@@ -34,6 +34,21 @@ const defaultColors = [
   "#FF6B6B",
 ]
 
+const formatValue = (value: number) => value.toFixed(2);
+
+const CustomTooltip = ({ active, payload }: any) => {
+  if (!active || !payload?.[0]) return null;
+
+  const data = payload[0];
+  return (
+    <div className="rounded-lg border bg-background p-2 shadow-sm">
+      <p className="text-sm font-medium" style={{ color: data.payload.color || data.color }}>
+        {data.name}: {formatValue(data.value)}
+      </p>
+    </div>
+  );
+};
+
 const renderLegend = (props: any) => {
   const { payload } = props;
   
@@ -68,7 +83,7 @@ const PieChart = React.forwardRef<HTMLDivElement, PieChartProps>(
       <div ref={ref} className={cn("w-full", className)} {...props}>
         <ResponsiveContainer width="100%" height={height}>
           <RechartsPieChart margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            {showTooltip && <Tooltip />}
+            {showTooltip && <Tooltip content={<CustomTooltip />} cursor={false} />}
             {showLegend && <Legend content={renderLegend} />}
             <Pie
               data={data}
@@ -78,7 +93,7 @@ const PieChart = React.forwardRef<HTMLDivElement, PieChartProps>(
               cy="50%"
               innerRadius={innerRadius}
               outerRadius={outerRadius}
-              label
+              label={({ value }) => formatValue(value)}
             >
               {data.map((entry, index) => (
                 <Cell

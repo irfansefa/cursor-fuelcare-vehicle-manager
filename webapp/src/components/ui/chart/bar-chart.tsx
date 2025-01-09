@@ -15,8 +15,8 @@ interface BarChartProps extends React.HTMLAttributes<HTMLDivElement> {
   data: any[]
   bars: {
     dataKey: string
-    fill?: string
     name?: string
+    color?: string
   }[]
   xAxisDataKey: string
   height?: number | string
@@ -26,6 +26,23 @@ interface BarChartProps extends React.HTMLAttributes<HTMLDivElement> {
   layout?: "horizontal" | "vertical"
   stackBars?: boolean
 }
+
+const formatValue = (value: number) => value.toFixed(2);
+
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (!active || !payload) return null;
+
+  return (
+    <div className="rounded-lg border bg-background p-2 shadow-sm">
+      <p className="font-medium">{label}</p>
+      {payload.map((entry: any, index: number) => (
+        <p key={index} className="text-sm" style={{ color: entry.color }}>
+          {entry.name}: {formatValue(entry.value)}
+        </p>
+      ))}
+    </div>
+  );
+};
 
 const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
   ({
@@ -51,16 +68,18 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
           >
             {showGrid && <CartesianGrid strokeDasharray="3 3" />}
             <XAxis dataKey={xAxisDataKey} />
-            <YAxis />
-            {showTooltip && <Tooltip />}
+            <YAxis tickFormatter={formatValue} />
+            {showTooltip && <Tooltip content={<CustomTooltip />} cursor={false} />}
             {showLegend && <Legend />}
             {bars.map((bar, index) => (
               <Bar
                 key={bar.dataKey}
                 dataKey={bar.dataKey}
-                fill={bar.fill}
+                fill={bar.color}
                 name={bar.name || bar.dataKey}
                 stackId={stackBars ? "stack" : undefined}
+                background={{ fill: "transparent" }}
+                activeBar={{ stroke: "white", strokeWidth: 2 }}
               />
             ))}
           </RechartsBarChart>

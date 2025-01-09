@@ -2,17 +2,25 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card/card";
 import { Vehicle } from "../../types";
-import { useGetFuelLogsQuery } from "../../store/fuelLogApi";
-import { useGetFuelTypesQuery } from "@/features/fuel/store/fuelTypeApi";
-import { useMemo, useState } from "react";
+import type { FuelLog } from "../../store/fuelLogApi";
+import { useMemo } from "react";
 import { ChartDateRangeControls } from "./ChartDateRangeControls";
-import { LineChart } from "@/components/ui/chart/line-chart";
 import { BarChart } from "@/components/ui/chart/bar-chart";
 import { calculateConsumptionMetrics } from "../../utils/consumption";
 import type { FuelType } from "@/features/fuel/types/fuelType";
 
 interface FuelTypeAnalyticsProps {
   vehicle: Vehicle;
+  fuelLogs: FuelLog[];
+  fuelTypes: FuelType[] | undefined;
+  dateRange: {
+    startDate: string;
+    endDate: string;
+  };
+  onDateRangeChange: (startDate: string, endDate: string) => void;
+  minDate: string | undefined;
+  maxDate: string | undefined;
+  isLoading: boolean;
 }
 
 interface FuelTypeUsage {
@@ -33,41 +41,22 @@ interface TransitionData {
   reason?: string;
 }
 
-export function FuelTypeAnalytics({ vehicle }: FuelTypeAnalyticsProps) {
-  const { data: fuelLogsData, isLoading: isLoadingLogs } = useGetFuelLogsQuery({
-    vehicleId: vehicle.id,
-    pageSize: 1000,
-    sortField: 'date',
-    sortOrder: 'asc',
-  });
-
-  const { data: fuelTypes, isLoading: isLoadingTypes } = useGetFuelTypesQuery({
-    status: 'active'
-  });
-
-  // Get min and max dates from data
-  const { minDate, maxDate } = useMemo(() => {
-    if (!fuelLogsData?.data?.length) return { minDate: undefined, maxDate: undefined };
-    
-    const timestamps = fuelLogsData.data.map(log => new Date(log.date).getTime());
-    return {
-      minDate: new Date(Math.min(...timestamps)).toISOString().split('T')[0],
-      maxDate: new Date(Math.max(...timestamps)).toISOString().split('T')[0],
-    };
-  }, [fuelLogsData?.data]);
-
-  // Initialize date range state
-  const [dateRange, setDateRange] = useState(() => ({
-    startDate: minDate || new Date(new Date().setMonth(new Date().getMonth() - 6)).toISOString().split('T')[0],
-    endDate: maxDate || new Date().toISOString().split('T')[0],
-  }));
-
+export function FuelTypeAnalytics({ 
+  vehicle,
+  fuelLogs,
+  fuelTypes,
+  dateRange,
+  onDateRangeChange,
+  minDate,
+  maxDate,
+  isLoading
+}: FuelTypeAnalyticsProps) {
   // Calculate consumption metrics
   const metrics = useMemo(() => {
-    if (!fuelLogsData?.data) return null;
+    if (!fuelLogs) return null;
     
     // Transform API FuelLog to internal FuelLog type
-    const transformedLogs = fuelLogsData.data.map(log => {
+    const transformedLogs = fuelLogs.map(log => {
       // Handle nullable fields
       const { location, notes, ...rest } = log;
       
@@ -85,39 +74,33 @@ export function FuelTypeAnalytics({ vehicle }: FuelTypeAnalyticsProps) {
     });
     
     return calculateConsumptionMetrics(transformedLogs);
-  }, [fuelLogsData?.data]);
+  }, [fuelLogs]);
 
-  // Calculate fuel type usage statistics
+  // Calculate usage statistics
   const usageStats = useMemo(() => {
-    if (!fuelLogsData?.data || !fuelTypes) return [];
-
-    const startDate = new Date(dateRange.startDate);
-    const endDate = new Date(dateRange.endDate);
-    endDate.setHours(23, 59, 59);
-
-    const filteredLogs = fuelLogsData.data.filter(log => {
-      const logDate = new Date(log.date);
-      return logDate >= startDate && logDate <= endDate;
-    });
+    if (!fuelLogs || !fuelTypes || !vehicle.compatible_fuel_types?.length) return [];
 
     const stats = new Map<string, FuelTypeUsage>();
 
-    // Initialize stats for each fuel type
-    fuelTypes.forEach(type => {
-      stats.set(type.id, {
-        fuelTypeId: type.id,
-        name: type.name,
+    // Initialize stats for each compatible fuel type
+    vehicle.compatible_fuel_types.forEach((compatibleFuelTypeId: string) => {
+      const fuelType = fuelTypes.find(ft => ft.id === compatibleFuelTypeId);
+      if (!fuelType) return;
+
+      stats.set(fuelType.id, {
+        fuelTypeId: fuelType.id,
+        name: fuelType.name,
         totalQuantity: 0,
         totalCost: 0,
         fillUps: 0,
         averageQuantity: 0,
         averageCost: 0,
-        unit: type.unit,
+        unit: fuelType.unit,
       });
     });
 
     // Calculate statistics
-    filteredLogs.forEach(log => {
+    fuelLogs.forEach(log => {
       const stat = stats.get(log.fuelTypeId);
       if (stat) {
         stat.totalQuantity += log.quantity;
@@ -135,28 +118,20 @@ export function FuelTypeAnalytics({ vehicle }: FuelTypeAnalyticsProps) {
     });
 
     return Array.from(stats.values());
-  }, [fuelLogsData?.data, fuelTypes, dateRange]);
+  }, [fuelLogs, fuelTypes, vehicle.compatible_fuel_types]);
 
   // Analyze fuel type transitions
   const transitions = useMemo(() => {
-    if (!fuelLogsData?.data || !fuelTypes) return [];
-
-    const startDate = new Date(dateRange.startDate);
-    const endDate = new Date(dateRange.endDate);
-    endDate.setHours(23, 59, 59);
-
-    const filteredLogs = fuelLogsData.data
-      .filter(log => {
-        const logDate = new Date(log.date);
-        return logDate >= startDate && logDate <= endDate;
-      })
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    if (!fuelLogs || !fuelTypes) return [];
 
     const transitionData: TransitionData[] = [];
+    const sortedLogs = [...fuelLogs].sort((a, b) => 
+      new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
 
-    for (let i = 1; i < filteredLogs.length; i++) {
-      const currentLog = filteredLogs[i];
-      const previousLog = filteredLogs[i - 1];
+    for (let i = 1; i < sortedLogs.length; i++) {
+      const currentLog = sortedLogs[i];
+      const previousLog = sortedLogs[i - 1];
 
       if (currentLog.fuelTypeId !== previousLog.fuelTypeId) {
         const fromType = fuelTypes.find(ft => ft.id === previousLog.fuelTypeId)?.name || 'Unknown';
@@ -171,9 +146,7 @@ export function FuelTypeAnalytics({ vehicle }: FuelTypeAnalyticsProps) {
     }
 
     return transitionData;
-  }, [fuelLogsData?.data, fuelTypes, dateRange]);
-
-  const isLoading = isLoadingLogs || isLoadingTypes;
+  }, [fuelLogs, fuelTypes]);
 
   if (isLoading) {
     return (
@@ -193,121 +166,135 @@ export function FuelTypeAnalytics({ vehicle }: FuelTypeAnalyticsProps) {
           <ChartDateRangeControls
             startDate={dateRange.startDate}
             endDate={dateRange.endDate}
-            onRangeChange={(startDate, endDate) => setDateRange({ startDate, endDate })}
+            onRangeChange={onDateRangeChange}
             minDate={minDate}
             maxDate={maxDate}
           />
 
-          {/* Consumption Comparison */}
-          <div className="mt-6">
-            <h3 className="text-lg font-semibold mb-4">Consumption Comparison</h3>
-            <BarChart
-              data={Object.entries(metrics?.byFuelType || {}).map(([id, data]) => ({
-                name: fuelTypes?.find(ft => ft.id === id)?.name || 'Unknown',
-                consumption: data.averageConsumption,
-                unit: data.unit,
-              }))}
-              bars={[
-                {
-                  dataKey: "consumption",
-                  fill: "#2563eb",
-                  name: "Consumption",
-                }
-              ]}
-              xAxisDataKey="name"
-              height={300}
-              showGrid={true}
-              showLegend={false}
-              showTooltip={true}
-            />
-          </div>
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Usage Statistics */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Usage Statistics</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 gap-4">
+                  {usageStats.map(stat => (
+                    <Card key={stat.fuelTypeId}>
+                      <CardContent className="pt-6">
+                        <h4 className="text-base font-medium mb-4">{stat.name}</h4>
+                        <div className="space-y-2">
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Total Quantity:</span>
+                            <span>{stat.totalQuantity.toFixed(1)} {stat.unit}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Total Cost:</span>
+                            <span>${stat.totalCost.toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Fill-ups:</span>
+                            <span>{stat.fillUps}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Avg. Quantity:</span>
+                            <span>{stat.averageQuantity} {stat.unit}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Avg. Cost:</span>
+                            <span>${stat.averageCost}</span>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
 
-          {/* Usage Statistics */}
-          <div className="mt-8">
-            <h3 className="text-lg font-semibold mb-4">Usage Statistics</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {usageStats.map(stat => (
-                <Card key={stat.fuelTypeId}>
-                  <CardContent className="pt-6">
-                    <h4 className="text-base font-medium mb-4">{stat.name}</h4>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Total Quantity:</span>
-                        <span>{stat.totalQuantity.toFixed(1)} {stat.unit}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Total Cost:</span>
-                        <span>${stat.totalCost.toFixed(2)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Fill-ups:</span>
-                        <span>{stat.fillUps}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Avg. Quantity:</span>
-                        <span>{stat.averageQuantity} {stat.unit}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Avg. Cost:</span>
-                        <span>${stat.averageCost}</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            {/* Consumption Comparison */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Consumption Comparison</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <BarChart
+                  data={Object.entries(metrics?.byFuelType || {}).map(([id, data]) => ({
+                    name: fuelTypes?.find(ft => ft.id === id)?.name || 'Unknown',
+                    consumption: data.averageConsumption,
+                    unit: data.unit,
+                  }))}
+                  bars={[
+                    {
+                      dataKey: "consumption",
+                      color: "#2563eb",
+                      name: "Consumption",
+                    }
+                  ]}
+                  xAxisDataKey="name"
+                  height={300}
+                  showGrid={true}
+                  showLegend={false}
+                  showTooltip={true}
+                />
+              </CardContent>
+            </Card>
+
+            {/* Cost Comparison */}
+            <Card className="md:col-span-2">
+              <CardHeader>
+                <CardTitle>Cost Comparison</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <BarChart
+                  data={Object.entries(metrics?.byFuelType || {}).map(([id, data]) => ({
+                    name: fuelTypes?.find(ft => ft.id === id)?.name || 'Unknown',
+                    costPerKm: data.averageCostPerKm,
+                    costPerUnit: data.averageCostPerUnit,
+                    unit: data.unit,
+                  }))}
+                  bars={[
+                    {
+                      dataKey: "costPerKm",
+                      color: "#dc2626",
+                      name: "Cost per km",
+                    },
+                    {
+                      dataKey: "costPerUnit",
+                      color: "#eab308",
+                      name: "Cost per unit",
+                    }
+                  ]}
+                  xAxisDataKey="name"
+                  height={300}
+                  showGrid={true}
+                  showLegend={true}
+                  showTooltip={true}
+                />
+              </CardContent>
+            </Card>
           </div>
 
           {/* Transition Analysis */}
           {transitions.length > 0 && (
-            <div className="mt-8">
-              <h3 className="text-lg font-semibold mb-4">Fuel Type Transitions</h3>
-              <div className="rounded-lg border">
-                <div className="p-4">
-                  <div className="space-y-4">
-                    {transitions.map((transition, index) => (
-                      <div key={index} className="flex items-center gap-4">
-                        <span className="text-sm text-muted-foreground min-w-[100px]">{transition.date}</span>
-                        <span className="font-medium">{transition.fromType}</span>
-                        <span className="text-muted-foreground">→</span>
-                        <span className="font-medium">{transition.toType}</span>
-                      </div>
-                    ))}
-                  </div>
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle>Fuel Type Transitions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {transitions.map((transition, index) => (
+                    <div key={index} className="flex items-center gap-4">
+                      <span className="text-sm text-muted-foreground min-w-[100px]">{transition.date}</span>
+                      <span className="font-medium">{transition.fromType}</span>
+                      <span className="text-muted-foreground">→</span>
+                      <span className="font-medium">{transition.toType}</span>
+                    </div>
+                  ))}
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           )}
-
-          {/* Cost Comparison */}
-          <div className="mt-8">
-            <h3 className="text-lg font-semibold mb-4">Cost Comparison</h3>
-            <BarChart
-              data={Object.entries(metrics?.byFuelType || {}).map(([id, data]) => ({
-                name: fuelTypes?.find(ft => ft.id === id)?.name || 'Unknown',
-                costPerKm: data.averageCostPerKm,
-                costPerUnit: data.averageCostPerUnit,
-                unit: data.unit,
-              }))}
-              bars={[
-                {
-                  dataKey: "costPerKm",
-                  fill: "#dc2626",
-                  name: "Cost per km",
-                },
-                {
-                  dataKey: "costPerUnit",
-                  fill: "#eab308",
-                  name: "Cost per unit",
-                }
-              ]}
-              xAxisDataKey="name"
-              height={300}
-              showGrid={true}
-              showLegend={true}
-              showTooltip={true}
-            />
-          </div>
         </CardContent>
       </Card>
     </div>
