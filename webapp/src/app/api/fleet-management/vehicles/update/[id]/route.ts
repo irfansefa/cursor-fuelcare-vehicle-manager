@@ -50,6 +50,8 @@ export async function PATCH(
         license_plate: json.licensePlate,
         vin: json.vin,
         status: json.status,
+        compatible_fuel_types: json.compatible_fuel_types,
+        preferred_fuel_type: json.preferred_fuel_type,
         updated_at: now,
       })
       .eq('id', params.id)

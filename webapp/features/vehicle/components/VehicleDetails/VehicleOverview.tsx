@@ -1,9 +1,20 @@
 'use client';
 
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card/card";
 import { Vehicle } from "../../types";
-import { FiCalendar, FiClock, FiDroplet, FiTruck } from "react-icons/fi";
+import { FiCalendar, FiClock, FiDroplet, FiTruck, FiMoreVertical } from "react-icons/fi";
 import { useVehicleFuelTypes } from '../../hooks/useVehicleFuelTypes';
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/navigation/dropdown-menu";
+import { DeleteVehicleDialog } from '../DeleteVehicleDialog';
+import { UpdateVehicleModal } from '../UpdateVehicleModal';
+import { useRouter } from 'next/navigation';
 
 interface VehicleOverviewProps {
   vehicle: Vehicle;
@@ -38,6 +49,9 @@ function StatCard({ title, value, description, icon }: StatCardProps) {
 }
 
 export function VehicleOverview({ vehicle }: VehicleOverviewProps) {
+  const router = useRouter();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const { compatibleFuelTypes, preferredFuelType, isLoading: isLoadingFuelTypes } = useVehicleFuelTypes(vehicle);
   
   // These would come from the API in the real implementation
@@ -48,12 +62,34 @@ export function VehicleOverview({ vehicle }: VehicleOverviewProps) {
     nextService: "In 2,000 km",
   };
 
+  const handleEditClick = () => setShowUpdateModal(true);
+  const handleDeleteClick = () => setShowDeleteDialog(true);
+  const handleDeleteSuccess = () => {
+    router.push('/vehicles');
+  };
+
   return (
     <div className="space-y-6">
       {/* Vehicle Details */}
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <CardTitle>Vehicle Information</CardTitle>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <FiMoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleEditClick}>
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleDeleteClick} className="text-red-600">
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </CardHeader>
         <CardContent>
           <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
@@ -134,6 +170,20 @@ export function VehicleOverview({ vehicle }: VehicleOverviewProps) {
           icon={<FiCalendar size={20} />}
         />
       </div>
+
+      {/* Modals */}
+      <DeleteVehicleDialog
+        vehicle={vehicle}
+        isOpen={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        onDelete={handleDeleteSuccess}
+      />
+
+      <UpdateVehicleModal
+        vehicle={vehicle}
+        isOpen={showUpdateModal}
+        onClose={() => setShowUpdateModal(false)}
+      />
     </div>
   );
 } 
