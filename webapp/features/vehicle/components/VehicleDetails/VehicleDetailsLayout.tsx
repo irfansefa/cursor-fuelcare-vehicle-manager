@@ -8,6 +8,7 @@ import { VehicleOverview } from "./VehicleOverview";
 import { VehicleFuelLogs } from "./VehicleFuelLogs";
 import { VehicleConsumption } from "./VehicleConsumption";
 import { VehicleExpenses } from "./VehicleExpenses";
+import { VehicleExpenseAnalytics } from "@/features/expense/components/vehicle-expense-analytics/VehicleExpenseAnalytics";
 
 interface VehicleDetailsLayoutProps {
   vehicle: Vehicle;
@@ -40,6 +41,7 @@ export function VehicleDetailsLayout({ vehicle }: VehicleDetailsLayoutProps) {
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="fuel">Fuel Logs</TabsTrigger>
           <TabsTrigger value="consumption">Consumption</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
           <TabsTrigger value="expenses">Expenses</TabsTrigger>
         </TabsList>
@@ -54,6 +56,10 @@ export function VehicleDetailsLayout({ vehicle }: VehicleDetailsLayoutProps) {
 
         <TabsContent value="consumption" className="space-y-4">
           <VehicleConsumption vehicle={vehicle} />
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-4">
+          <VehicleExpenseAnalytics vehicleId={vehicle.id} />
         </TabsContent>
 
         <TabsContent value="maintenance" className="space-y-4">

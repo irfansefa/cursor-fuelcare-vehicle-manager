@@ -8,3 +8,8 @@ export interface ExpenseFilters {
   categoryId?: string;
   vendor?: string;
 } 
+
+export interface DateRange {
+  from?: string;
+  to?: string;
+} 

@@ -4,9 +4,21 @@ import React from 'react';
 import Link from 'next/link';
 import { Input } from "@/components/ui/input/input"
 import { FiSearch, FiMail, FiLock, FiEye, FiEyeOff, FiArrowLeft } from "react-icons/fi"
+import { DateRangePicker, DateRange } from "@/components/ui/input/date-range-picker"
+import { Label } from "@/components/ui/form/label"
 
 export default function InputsShowcase() {
   const [showPassword, setShowPassword] = React.useState(false)
+  const [dateRange1, setDateRange1] = React.useState<DateRange>({})
+  const [dateRange2, setDateRange2] = React.useState<DateRange>({
+    from: '2024-01-01',
+    to: '2024-01-31',
+  })
+  const [dateRange3, setDateRange3] = React.useState<DateRange>({})
+
+  const handleDateRange1Change = (value: DateRange) => setDateRange1(value)
+  const handleDateRange2Change = (value: DateRange) => setDateRange2(value)
+  const handleDateRange3Change = (value: DateRange) => setDateRange3(value)
 
   return (
     <div className="container mx-auto p-8">
@@ -106,6 +118,67 @@ export default function InputsShowcase() {
   rightIcon={<FiEye className="h-4 w-4" />}
 />`}
         </pre>
+      </div>
+
+      {/* Date Range Picker */}
+      <div className="flex flex-col gap-4 min-w-[280px] mt-8">
+        <h3 className="text-lg font-medium mb-2">Date Range Picker</h3>
+        <div className="space-y-4">
+          <div>
+            <Label>Default</Label>
+            <DateRangePicker
+              value={dateRange1}
+              onChange={handleDateRange1Change}
+            />
+          </div>
+
+          <div>
+            <Label>With Initial Value</Label>
+            <DateRangePicker
+              value={dateRange2}
+              onChange={handleDateRange2Change}
+            />
+          </div>
+
+          <div>
+            <Label>Disabled</Label>
+            <DateRangePicker
+              value={dateRange3}
+              onChange={handleDateRange3Change}
+              disabled
+            />
+          </div>
+        </div>
+
+        {/* Code Example */}
+        <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-md mt-4">
+          <pre className="text-sm">
+            {`import { DateRangePicker, DateRange } from "@/components/ui/input/date-range-picker"
+
+// Basic usage with state
+const [dateRange, setDateRange] = useState<DateRange>({});
+const handleDateRangeChange = (value: DateRange) => setDateRange(value);
+
+<DateRangePicker
+  value={dateRange}
+  onChange={handleDateRangeChange}
+/>
+
+// With initial value
+const [dateRange, setDateRange] = useState<DateRange>({
+  from: '2024-01-01',
+  to: '2024-01-31',
+});
+
+<DateRangePicker
+  value={dateRange}
+  onChange={handleDateRangeChange}
+/>
+
+// Disabled state
+<DateRangePicker disabled />`}
+          </pre>
+        </div>
       </div>
     </div>
   )

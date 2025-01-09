@@ -34,6 +34,24 @@ const defaultColors = [
   "#FF6B6B",
 ]
 
+const renderLegend = (props: any) => {
+  const { payload } = props;
+  
+  return (
+    <ul className="flex flex-wrap justify-center gap-4 mt-4">
+      {payload.map((entry: any, index: number) => (
+        <li key={`item-${index}`} className="flex items-center gap-2">
+          <div
+            className="w-3 h-3 rounded-full"
+            style={{ backgroundColor: entry.color }}
+          />
+          <span className="text-sm">{entry.value}</span>
+        </li>
+      ))}
+    </ul>
+  );
+};
+
 const PieChart = React.forwardRef<HTMLDivElement, PieChartProps>(
   ({
     className,
@@ -51,7 +69,7 @@ const PieChart = React.forwardRef<HTMLDivElement, PieChartProps>(
         <ResponsiveContainer width="100%" height={height}>
           <RechartsPieChart margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             {showTooltip && <Tooltip />}
-            {showLegend && <Legend />}
+            {showLegend && <Legend content={renderLegend} />}
             <Pie
               data={data}
               dataKey="value"
