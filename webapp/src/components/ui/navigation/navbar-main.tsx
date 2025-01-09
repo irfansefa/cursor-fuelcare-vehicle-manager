@@ -35,6 +35,11 @@ export function MainNavbar() {
                 </Link>
               </NavbarItem>
               <NavbarItem>
+                <Link href="/categories" className="transition-colors hover:text-foreground/80">
+                  Categories
+                </Link>
+              </NavbarItem>
+              <NavbarItem>
                 <Link href="/fuel-types" className="transition-colors hover:text-foreground/80">
                   Fuel Types
                 </Link>

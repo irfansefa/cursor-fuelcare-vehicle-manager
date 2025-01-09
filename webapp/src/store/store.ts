@@ -5,6 +5,7 @@ import authReducer from "@/features/auth/store/authSlice"
 import { vehicleApi } from "@/features/vehicle/store/vehicleApi"
 import { fuelLogApi } from "@/features/vehicle/store/fuelLogApi"
 import { fuelTypeApi } from "@/features/fuel/store/fuelTypeApi"
+import { categoryApi } from "@/features/expense/store/categoryApi"
 
 const persistConfig = {
   key: 'root',
@@ -20,13 +21,14 @@ export const store = configureStore({
     [vehicleApi.reducerPath]: vehicleApi.reducer,
     [fuelLogApi.reducerPath]: fuelLogApi.reducer,
     [fuelTypeApi.reducerPath]: fuelTypeApi.reducer,
+    [categoryApi.reducerPath]: categoryApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
       },
-    }).concat(vehicleApi.middleware, fuelLogApi.middleware, fuelTypeApi.middleware),
+    }).concat(vehicleApi.middleware, fuelLogApi.middleware, fuelTypeApi.middleware, categoryApi.middleware),
 })
 
 export const persistor = persistStore(store)

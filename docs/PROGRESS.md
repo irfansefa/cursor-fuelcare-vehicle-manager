@@ -164,8 +164,16 @@ This document tracks the implementation progress of all features and components 
 - ⏳ Core Expense Management
   - ⏳ Basic expense form
   - ⏳ Expense list with filters
-  - ⏳ Default categories setup
-  - ⏳ Custom category management
+  - 🚧 Default categories setup
+    - 🚧 Database setup
+    - 🚧 Default categories seeding
+    - 🚧 Category model and types
+  - 🚧 Custom category management
+    - 🚧 Category list component
+    - 🚧 Category form component
+    - 🚧 Category card component
+    - 🚧 Category CRUD operations
+    - 🚧 Category color picker
   - ⏳ Vehicle selection integration
 - ⏳ Analytics Features
   - ⏳ Category-based analysis
