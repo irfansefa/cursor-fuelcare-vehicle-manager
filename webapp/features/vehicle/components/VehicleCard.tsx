@@ -40,7 +40,7 @@ export function VehicleCard({ vehicle, onUpdate, onSelect }: VehicleCardProps) {
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
+                <Button variant="ghost" size="sm">
                   <span className="sr-only">Open menu</span>
                   <FiMoreHorizontal className="h-4 w-4" />
                 </Button>

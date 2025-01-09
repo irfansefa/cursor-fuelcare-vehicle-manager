@@ -76,7 +76,7 @@ export function VehicleOverview({ vehicle }: VehicleOverviewProps) {
           <CardTitle>Vehicle Information</CardTitle>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button variant="ghost" size="sm">
                 <span className="sr-only">Open menu</span>
                 <FiMoreVertical className="h-4 w-4" />
               </Button>
