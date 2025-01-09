@@ -4,7 +4,9 @@ import type {
   ExpenseWithDetails, 
   CreateExpenseDTO, 
   UpdateExpenseDTO, 
-  ExpenseFilters 
+  ExpenseFilters,
+  PaginatedResponse,
+  SortConfig
 } from '../types';
 
 export const expenseApi = createApi({
@@ -15,10 +17,16 @@ export const expenseApi = createApi({
   }),
   tagTypes: ['Expense'],
   endpoints: (builder) => ({
-    getExpenses: builder.query<ExpenseWithDetails[], ExpenseFilters>({
-      query: (filters) => ({
+    getExpenses: builder.query<PaginatedResponse<ExpenseWithDetails>, ExpenseFilters & { page?: number; pageSize?: number; sort?: SortConfig }>({
+      query: ({ sort, page, pageSize, ...filters }) => ({
         url: '/expenses',
-        params: filters,
+        params: {
+          ...filters,
+          page,
+          pageSize,
+          sortField: sort?.field,
+          sortOrder: sort?.order,
+        },
       }),
       providesTags: ['Expense'],
     }),
