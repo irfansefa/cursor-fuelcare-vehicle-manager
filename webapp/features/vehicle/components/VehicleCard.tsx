@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/navigation/dropdown-menu";
 import { DeleteVehicleDialog } from './DeleteVehicleDialog';
 import { UpdateVehicleModal } from './UpdateVehicleModal';
+import { useVehicleFuelTypes } from '../hooks/useVehicleFuelTypes';
 
 interface VehicleCardProps {
   vehicle: Vehicle;
@@ -32,7 +33,7 @@ export function VehicleCard({ vehicle, onUpdate, onSelect }: VehicleCardProps) {
 
   return (
     <>
-      <Card className="w-full">
+      <Card className="w-full flex flex-col h-full">
         <CardHeader>
           <CardTitle className="flex justify-between items-center">
             <div>
@@ -60,7 +61,7 @@ export function VehicleCard({ vehicle, onUpdate, onSelect }: VehicleCardProps) {
             {vehicle.license_plate && ` • License Plate: ${vehicle.license_plate}`}
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex-grow">
           <div className="grid gap-2">
             <div className="flex items-center">
               <span className="font-semibold mr-2">Status:</span>
@@ -81,9 +82,15 @@ export function VehicleCard({ vehicle, onUpdate, onSelect }: VehicleCardProps) {
                 <span className="font-semibold">VIN:</span> {vehicle.vin}
               </div>
             )}
+            {vehicle.preferred_fuel_type && (
+              <div>
+                <span className="font-semibold">Fuel:</span>{" "}
+                <FuelTypeDisplay vehicle={vehicle} />
+              </div>
+            )}
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="mt-auto">
           {onSelect && (
             <Button variant="secondary" className="w-full" onClick={onSelect}>
               View Details
@@ -108,4 +115,14 @@ export function VehicleCard({ vehicle, onUpdate, onSelect }: VehicleCardProps) {
       />
     </>
   );
+}
+
+function FuelTypeDisplay({ vehicle }: { vehicle: Vehicle }) {
+  const { preferredFuelType, isLoading } = useVehicleFuelTypes(vehicle);
+  
+  if (isLoading) {
+    return <span className="text-muted-foreground">Loading...</span>;
+  }
+  
+  return <span>{preferredFuelType || 'Not specified'}</span>;
 } 
