@@ -7,7 +7,7 @@ import { Grid } from '@/components/ui/layout/grid';
 import { Button } from '@/components/ui/button/button';
 import { Input } from '@/components/ui/input/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/form/select';
-import { FiGrid, FiList } from 'react-icons/fi';
+import { LayoutGrid, List } from 'lucide-react';
 
 interface FuelTypeListProps {
   fuelTypes: FuelType[];
@@ -60,14 +60,14 @@ export function FuelTypeList({ fuelTypes, onEdit, onDelete }: FuelTypeListProps)
               size="sm"
               onClick={() => setViewMode('grid')}
             >
-              <FiGrid className="h-4 w-4" />
+              <LayoutGrid className="h-4 w-4" />
             </Button>
             <Button
               variant={viewMode === 'list' ? 'default' : 'ghost'}
               size="sm"
               onClick={() => setViewMode('list')}
             >
-              <FiList className="h-4 w-4" />
+              <List className="h-4 w-4" />
             </Button>
           </div>
         </div>

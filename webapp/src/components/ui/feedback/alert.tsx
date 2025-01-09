@@ -1,7 +1,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
-import { FiInfo, FiAlertCircle, FiCheckCircle, FiXCircle, FiX } from "react-icons/fi"
+import { Info, AlertCircle, CheckCircle, XCircle, X } from "lucide-react"
 
 const alertVariants = cva(
   "relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
@@ -28,11 +28,11 @@ const Alert = React.forwardRef<
   }
 >(({ className, variant, children, onClose, ...props }, ref) => {
   const Icon = {
-    default: FiInfo,
-    info: FiInfo,
-    success: FiCheckCircle,
-    warning: FiAlertCircle,
-    error: FiXCircle,
+    default: Info,
+    info: Info,
+    success: CheckCircle,
+    warning: AlertCircle,
+    error: XCircle,
   }[variant || "default"]
 
   return (
@@ -42,14 +42,17 @@ const Alert = React.forwardRef<
       className={cn(alertVariants({ variant }), className)}
       {...props}
     >
-      <Icon className="h-4 w-4" />
+      {variant === "info" && <Info className="h-4 w-4" />}
+      {variant === "warning" && <AlertCircle className="h-4 w-4" />}
+      {variant === "success" && <CheckCircle className="h-4 w-4" />}
+      {variant === "error" && <XCircle className="h-4 w-4" />}
       <div className="flex-1">{children}</div>
       {onClose && (
         <button
           onClick={onClose}
           className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
         >
-          <FiX className="h-4 w-4" />
+          <X className="h-4 w-4" />
           <span className="sr-only">Close</span>
         </button>
       )}

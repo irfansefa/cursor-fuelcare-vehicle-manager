@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "../hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/data-display/avatar";
-import { FiLogOut, FiSettings, FiUser } from "react-icons/fi";
+import { LogOut, Settings, User } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,7 +43,7 @@ export function UserMenu() {
         <Avatar className="h-8 w-8">
           <AvatarImage src={user.avatarUrl || undefined} alt={user.fullName || user.email} />
           <AvatarFallback className="bg-primary text-primary-foreground">
-            {user.avatarUrl ? <FiUser size={16} /> : initials}
+            {user.avatarUrl ? <User size={16} /> : initials}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
@@ -56,11 +56,11 @@ export function UserMenu() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => router.push('/profile')} className="cursor-pointer">
-          <FiUser size={16} />
+          <User size={16} />
           <span>Profile</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => router.push('/settings')} className="cursor-pointer">
-          <FiSettings size={16} />
+          <Settings size={16} />
           <span>Settings</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -68,7 +68,7 @@ export function UserMenu() {
           onClick={handleLogout}
           className="text-destructive focus:text-destructive cursor-pointer"
         >
-          <FiLogOut size={16} />
+          <LogOut size={16} />
           <span>Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

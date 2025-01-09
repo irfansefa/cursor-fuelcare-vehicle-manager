@@ -14,7 +14,7 @@ import {
 import { Button } from '@/components/ui/button/button';
 import { Modal, ModalContent, ModalHeader, ModalTitle } from '@/components/ui/modal/modal';
 import { useToast } from '@/components/ui/feedback/use-toast';
-import { FiPlus } from 'react-icons/fi';
+import { Plus } from 'lucide-react';
 
 type SubmitHandler<T> = (data: T) => Promise<void>;
 
@@ -95,7 +95,7 @@ export default function FuelTypesPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Fuel Types</h1>
         <Button onClick={() => setIsAddModalOpen(true)}>
-          <FiPlus className="mr-2 h-4 w-4" />
+          <Plus className="mr-2 h-4 w-4" />
           Add Fuel Type
         </Button>
       </div>

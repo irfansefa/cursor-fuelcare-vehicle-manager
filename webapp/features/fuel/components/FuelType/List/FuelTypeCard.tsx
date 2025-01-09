@@ -4,7 +4,7 @@ import { FuelType } from '@/features/fuel/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card/card';
 import { Badge } from '@/components/ui/utils/badge';
 import { Button } from '@/components/ui/button/button';
-import { FiEdit2, FiTrash2 } from 'react-icons/fi';
+import { Pencil, Trash2 } from 'lucide-react';
 
 interface FuelTypeCardProps {
   fuelType: FuelType;
@@ -48,7 +48,7 @@ export function FuelTypeCard({ fuelType, onEdit, onDelete }: FuelTypeCardProps) 
               size="sm"
               onClick={() => onEdit(fuelType)}
             >
-              <FiEdit2 className="mr-2 h-4 w-4" />
+              <Pencil className="mr-2 h-4 w-4" />
               Edit
             </Button>
             <Button
@@ -56,7 +56,7 @@ export function FuelTypeCard({ fuelType, onEdit, onDelete }: FuelTypeCardProps) 
               size="sm"
               onClick={onDelete}
             >
-              <FiTrash2 className="mr-2 h-4 w-4" />
+              <Trash2 className="mr-2 h-4 w-4" />
               Delete
             </Button>
           </div>

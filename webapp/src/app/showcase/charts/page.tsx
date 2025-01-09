@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { FiArrowLeft } from "react-icons/fi"
+import { ArrowLeft } from "lucide-react";
 
 import { LineChart } from "@/components/ui/chart/line-chart"
 import { BarChart } from "@/components/ui/chart/bar-chart"
@@ -36,7 +36,7 @@ export default function ChartsShowcase() {
     <div className="container mx-auto p-8">
       <div className="mb-8">
         <Link href="/showcase" className="inline-flex items-center text-muted-foreground hover:text-foreground">
-          <FiArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Showcase
         </Link>
       </div>

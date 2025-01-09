@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { FiArrowLeft, FiAlertCircle, FiCheckCircle, FiInfo } from "react-icons/fi"
+import { ArrowLeft, AlertCircle, CheckCircle, Info } from "lucide-react";
 
 import { Button } from "@/components/ui/button/button"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/feedback/alert"
@@ -101,7 +101,7 @@ export default function FeedbackShowcase() {
     <div className="container mx-auto p-8">
       <div className="mb-8">
         <Link href="/showcase" className="inline-flex items-center text-muted-foreground hover:text-foreground">
-          <FiArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Showcase
         </Link>
       </div>
@@ -113,7 +113,7 @@ export default function FeedbackShowcase() {
         <h2 className="text-2xl font-semibold mb-4">Alerts</h2>
         <div className="space-y-4">
           <Alert>
-            <FiInfo className="h-4 w-4" />
+            <Info className="h-4 w-4" />
             <AlertTitle>Default Alert</AlertTitle>
             <AlertDescription>
               This is a default alert — check it out!
@@ -121,7 +121,7 @@ export default function FeedbackShowcase() {
           </Alert>
 
           <Alert variant="info">
-            <FiInfo className="h-4 w-4" />
+            <Info className="h-4 w-4" />
             <AlertTitle>Information</AlertTitle>
             <AlertDescription>
               Your trial period will end in 7 days.
@@ -129,7 +129,7 @@ export default function FeedbackShowcase() {
           </Alert>
 
           <Alert variant="success">
-            <FiCheckCircle className="h-4 w-4" />
+            <CheckCircle className="h-4 w-4" />
             <AlertTitle>Success</AlertTitle>
             <AlertDescription>
               Your changes have been saved successfully.
@@ -137,7 +137,7 @@ export default function FeedbackShowcase() {
           </Alert>
 
           <Alert variant="warning">
-            <FiAlertCircle className="h-4 w-4" />
+            <AlertCircle className="h-4 w-4" />
             <AlertTitle>Warning</AlertTitle>
             <AlertDescription>
               Your subscription is about to expire.
@@ -145,7 +145,7 @@ export default function FeedbackShowcase() {
           </Alert>
 
           <Alert variant="error">
-            <FiAlertCircle className="h-4 w-4" />
+            <AlertCircle className="h-4 w-4" />
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>
               There was an error processing your request.
@@ -153,7 +153,7 @@ export default function FeedbackShowcase() {
           </Alert>
 
           <Alert variant="error" onClose={() => console.log('close')}>
-            <FiAlertCircle className="h-4 w-4" />
+            <AlertCircle className="h-4 w-4" />
             <AlertTitle>Dismissible Alert</AlertTitle>
             <AlertDescription>
               This alert can be dismissed.

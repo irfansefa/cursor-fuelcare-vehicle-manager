@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/form/select";
-import { FiChevronLeft, FiChevronRight, FiChevronsLeft, FiChevronsRight } from "react-icons/fi";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 
 export interface PaginationProps {
   currentPage: number;
@@ -58,7 +58,7 @@ export function Pagination({
           onClick={() => onPageChange(1)}
           disabled={currentPage === 1}
         >
-          <FiChevronsLeft className="h-4 w-4" />
+          <ChevronsLeft className="h-4 w-4" />
         </Button>
         <Button
           variant="outline"
@@ -66,7 +66,7 @@ export function Pagination({
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
-          <FiChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-4 w-4" />
         </Button>
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium">Page {currentPage}</span>
@@ -78,7 +78,7 @@ export function Pagination({
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
-          <FiChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-4 w-4" />
         </Button>
         <Button
           variant="outline"
@@ -86,7 +86,7 @@ export function Pagination({
           onClick={() => onPageChange(totalPages)}
           disabled={currentPage === totalPages}
         >
-          <FiChevronsRight className="h-4 w-4" />
+          <ChevronsRight className="h-4 w-4" />
         </Button>
       </div>
     </div>

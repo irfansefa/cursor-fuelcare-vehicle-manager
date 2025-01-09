@@ -4,7 +4,7 @@ import { FuelType } from '@/features/fuel/types';
 import { Modal, ModalContent, ModalHeader, ModalTitle } from '@/components/ui/modal/modal';
 import { Button } from '@/components/ui/button/button';
 import { Alert, AlertDescription } from '@/components/ui/feedback/alert';
-import { FiAlertTriangle } from 'react-icons/fi';
+import { AlertTriangle } from 'lucide-react';
 
 interface DeleteFuelTypeDialogProps {
   fuelType: FuelType | null;
@@ -32,7 +32,7 @@ export function DeleteFuelTypeDialog({
         </ModalHeader>
         <div className="space-y-4">
           <Alert variant="error">
-            <FiAlertTriangle className="h-4 w-4" />
+            <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
               This action cannot be undone. This will permanently delete the fuel type
               {fuelType && <span className="font-medium"> "{fuelType.name}"</span>} and remove all associated data.

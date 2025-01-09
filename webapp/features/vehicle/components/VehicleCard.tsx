@@ -3,7 +3,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription }
 import { Vehicle } from "../types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/utils/badge";
-import { FiMoreHorizontal } from "react-icons/fi";
+import { MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,7 +43,7 @@ export function VehicleCard({ vehicle, onUpdate, onSelect }: VehicleCardProps) {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm">
                   <span className="sr-only">Open menu</span>
-                  <FiMoreHorizontal className="h-4 w-4" />
+                  <MoreHorizontal className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">

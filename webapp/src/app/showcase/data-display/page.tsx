@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-import { FiEdit, FiTrash2, FiMoreVertical } from "react-icons/fi";
+import { Pencil, Trash2, MoreVertical } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/data-display/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -160,13 +159,13 @@ export default function DataDisplayShowcase() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Button variant="ghost" size="sm">
-                        <FiEdit className="h-4 w-4" />
+                        <Pencil className="h-4 w-4" />
                       </Button>
                       <Button variant="ghost" size="sm">
-                        <FiTrash2 className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                       <Button variant="ghost" size="sm">
-                        <FiMoreVertical className="h-4 w-4" />
+                        <MoreVertical className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>

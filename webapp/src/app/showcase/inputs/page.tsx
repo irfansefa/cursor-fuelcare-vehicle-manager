@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Input } from "@/components/ui/input/input"
-import { FiSearch, FiMail, FiLock, FiEye, FiEyeOff, FiArrowLeft } from "react-icons/fi"
+import { Search, Mail, Lock, Eye, EyeOff, ArrowLeft } from "lucide-react"
 import { DateRangePicker, DateRange } from "@/components/ui/input/date-range-picker"
 import { Label } from "@/components/ui/form/label"
 
@@ -24,7 +24,7 @@ export default function InputsShowcase() {
     <div className="container mx-auto p-8">
       <div className="mb-8">
         <Link href="/showcase" className="inline-flex items-center text-muted-foreground hover:text-foreground">
-          <FiArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Showcase
         </Link>
       </div>
@@ -43,7 +43,7 @@ export default function InputsShowcase() {
             placeholder="Password input" 
             rightIcon={
               <button onClick={() => setShowPassword(!showPassword)} type="button">
-                {showPassword ? <FiEyeOff /> : <FiEye />}
+                {showPassword ? <EyeOff /> : <Eye />}
               </button>
             }
           />
@@ -71,18 +71,18 @@ export default function InputsShowcase() {
           <h3 className="text-lg font-medium mb-2">With Icons</h3>
           <Input
             placeholder="Search..."
-            leftIcon={<FiSearch className="h-4 w-4" />}
+            leftIcon={<Search className="h-4 w-4" />}
           />
           <Input
             type="email"
             placeholder="Email address"
-            leftIcon={<FiMail className="h-4 w-4" />}
+            leftIcon={<Mail className="h-4 w-4" />}
           />
           <Input
             type="password"
             placeholder="Password"
-            leftIcon={<FiLock className="h-4 w-4" />}
-            rightIcon={<FiEye className="h-4 w-4" />}
+            leftIcon={<Lock className="h-4 w-4" />}
+            rightIcon={<Eye className="h-4 w-4" />}
           />
         </div>
       </div>
@@ -99,7 +99,7 @@ export default function InputsShowcase() {
 // With icons
 <Input
   placeholder="Search..."
-  leftIcon={<FiSearch className="h-4 w-4" />}
+  leftIcon={<Search className="h-4 w-4" />}
 />
 
 // Different sizes
@@ -114,8 +114,8 @@ export default function InputsShowcase() {
 <Input
   type="password"
   placeholder="Password"
-  leftIcon={<FiLock className="h-4 w-4" />}
-  rightIcon={<FiEye className="h-4 w-4" />}
+  leftIcon={<Lock className="h-4 w-4" />}
+  rightIcon={<Eye className="h-4 w-4" />}
 />`}
         </pre>
       </div>

@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/form/select';
-import { FiPlus, FiTrash2 } from 'react-icons/fi';
+import { Plus, Trash2 } from 'lucide-react';
 
 const propertySchema = z.object({
   key: z.string().min(1, 'Key is required'),
@@ -194,7 +194,7 @@ export function FuelTypeForm(props: FuelTypeFormProps | EditFuelTypeFormProps) {
               size="sm"
               onClick={() => append({ key: '', value: '' })}
             >
-              <FiPlus className="mr-2 h-4 w-4" />
+              <Plus className="mr-2 h-4 w-4" />
               Add Property
             </Button>
           </div>
@@ -231,7 +231,7 @@ export function FuelTypeForm(props: FuelTypeFormProps | EditFuelTypeFormProps) {
                 size="sm"
                 onClick={() => remove(index)}
               >
-                <FiTrash2 className="h-4 w-4 text-destructive" />
+                <Trash2 className="h-4 w-4 text-destructive" />
               </Button>
             </div>
           ))}

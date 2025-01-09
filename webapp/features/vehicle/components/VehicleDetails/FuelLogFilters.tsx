@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/input/input";
 import { Label } from "@/components/ui/form/label";
 import { Button } from "@/components/ui/button/button";
-import { FiX } from "react-icons/fi";
+import { X } from "lucide-react";
 import { FuelTypeSelect } from "@/features/fuel/components/FuelLog/FuelTypeSelect";
 
 export interface FuelLogFilters {
@@ -74,7 +74,7 @@ export function FuelLogFilters({ filters, onFiltersChange, vehicleId }: FuelLogF
           onClick={handleReset}
           disabled={!Object.values(filters).some(Boolean)}
         >
-          <FiX className="mr-2 h-4 w-4" />
+          <X className="mr-2 h-4 w-4" />
           Reset Filters
         </Button>
       </div>

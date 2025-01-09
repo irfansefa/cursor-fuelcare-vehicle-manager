@@ -3,7 +3,7 @@
 import { Category } from '@/features/expense/types';
 import { Card, CardContent, CardFooter } from '@/components/ui/card/card';
 import { Button } from '@/components/ui/button/button';
-import { FiEdit2, FiTrash2 } from 'react-icons/fi';
+import { Pencil, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface CategoryCardProps {
@@ -35,14 +35,14 @@ export function CategoryCard({ category, onEdit, onDelete }: CategoryCardProps) 
           size="icon"
           onClick={() => onEdit(category)}
         >
-          <FiEdit2 className="h-4 w-4" />
+          <Pencil className="h-4 w-4" />
         </Button>
         <Button
           variant="outline"
           size="icon"
           onClick={onDelete}
         >
-          <FiTrash2 className="h-4 w-4" />
+          <Trash2 className="h-4 w-4" />
         </Button>
       </CardFooter>
     </Card>

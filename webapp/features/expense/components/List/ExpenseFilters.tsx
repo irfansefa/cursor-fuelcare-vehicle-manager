@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/input/input";
 import { Label } from "@/components/ui/form/label";
 import { Button } from "@/components/ui/button/button";
-import { FiX } from "react-icons/fi";
+import { X } from "lucide-react";
 import { CategorySelect } from "@/features/expense/components/ExpenseLog/CategorySelect";
 
 export interface ExpenseFilters {
@@ -72,7 +72,7 @@ export function ExpenseFilters({ filters, onFiltersChange }: ExpenseFiltersProps
           onClick={handleReset}
           disabled={!Object.values(filters).some(Boolean)}
         >
-          <FiX className="mr-2 h-4 w-4" />
+          <X className="mr-2 h-4 w-4" />
           Reset Filters
         </Button>
       </div>

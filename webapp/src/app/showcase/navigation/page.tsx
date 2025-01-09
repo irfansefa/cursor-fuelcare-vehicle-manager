@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
-import { FiSettings, FiUser, FiCreditCard, FiLogOut, FiChevronDown, FiHome } from "react-icons/fi";
+import { Settings, User, CreditCard, LogOut, ChevronDown, Home } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,7 +43,7 @@ export default function NavigationShowcase() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline">
-                    Options <FiChevronDown size={16} />
+                    Options <ChevronDown size={16} />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56">
@@ -51,21 +51,21 @@ export default function NavigationShowcase() {
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
                     <DropdownMenuItem>
-                      <FiUser size={16} />
+                      <User size={16} />
                       <span>Profile</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                      <FiCreditCard size={16} />
+                      <CreditCard size={16} />
                       <span>Billing</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                      <FiSettings size={16} />
+                      <Settings size={16} />
                       <span>Settings</span>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem className="text-red-600">
-                    <FiLogOut size={16} />
+                    <LogOut size={16} />
                     <span>Log out</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -90,7 +90,7 @@ export default function NavigationShowcase() {
             <div className="border rounded-lg overflow-hidden">
               <Navbar>
                 <NavbarBrand>
-                  <FiHome size={24} />
+                  <Home size={24} />
                   <span className="ml-2 text-xl font-bold">Brand</span>
                 </NavbarBrand>
                 <NavbarContent>

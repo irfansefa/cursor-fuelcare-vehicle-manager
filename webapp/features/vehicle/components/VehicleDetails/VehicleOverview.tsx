@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card/card";
 import { Vehicle } from "../../types";
-import { FiCalendar, FiClock, FiDroplet, FiTruck, FiMoreVertical, FiEdit2, FiTrash2 } from "react-icons/fi";
+import { Calendar, Clock, Droplet, Truck, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { useVehicleFuelTypes } from '../../hooks/useVehicleFuelTypes';
 import { Button } from "@/components/ui/button";
 import {
@@ -78,11 +78,11 @@ export function VehicleOverview({ vehicle }: VehicleOverviewProps) {
             {/* Desktop/Tablet Buttons */}
             <div className="hidden md:flex items-center space-x-2">
               <Button variant="outline" size="sm" onClick={handleEditClick}>
-                <FiEdit2 className="h-4 w-4 mr-2" />
+                <Pencil className="mr-2 h-4 w-4" />
                 Edit
               </Button>
               <Button variant="destructive" size="sm" onClick={handleDeleteClick}>
-                <FiTrash2 className="h-4 w-4 mr-2" />
+                <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </Button>
             </div>
@@ -92,16 +92,16 @@ export function VehicleOverview({ vehicle }: VehicleOverviewProps) {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm">
                     <span className="sr-only">Open menu</span>
-                    <FiMoreVertical className="h-4 w-4" />
+                    <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={handleEditClick}>
-                    <FiEdit2 className="h-4 w-4 mr-2" />
+                    <Pencil className="mr-2 h-4 w-4" />
                     Edit
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleDeleteClick} className="text-red-600">
-                    <FiTrash2 className="h-4 w-4 mr-2" />
+                    <Trash2 className="mr-2 h-4 w-4" />
                     Delete
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -170,22 +170,22 @@ export function VehicleOverview({ vehicle }: VehicleOverviewProps) {
         <StatCard
           title="Total Distance"
           value={mockStats.totalDistance}
-          icon={<FiTruck size={20} />}
+          icon={<Truck className="h-4 w-4" />}
         />
         <StatCard
           title="Fuel Efficiency"
           value={mockStats.fuelEfficiency}
-          icon={<FiDroplet size={20} />}
+          icon={<Droplet className="h-4 w-4" />}
         />
         <StatCard
           title="Last Maintenance"
           value={mockStats.lastMaintenance}
-          icon={<FiClock size={20} />}
+          icon={<Clock className="h-4 w-4" />}
         />
         <StatCard
           title="Next Service"
           value={mockStats.nextService}
-          icon={<FiCalendar size={20} />}
+          icon={<Calendar className="h-4 w-4" />}
         />
       </div>
 

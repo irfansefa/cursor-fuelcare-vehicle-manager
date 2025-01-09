@@ -9,7 +9,7 @@ import { formatCurrency } from '@/lib/formatters';
 import { DateRange } from '@/features/expense/types';
 import { Skeleton } from '@/components/ui/feedback/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/feedback/alert';
-import { FiAlertCircle, FiArrowDown, FiArrowUp } from 'react-icons/fi';
+import { AlertCircle, ArrowDown, ArrowUp } from 'lucide-react';
 
 interface TrendAnalysisProps {
   vehicleId: string;
@@ -39,7 +39,7 @@ export function TrendAnalysis({ vehicleId }: TrendAnalysisProps) {
   if (error) {
     return (
       <Alert variant="error">
-        <FiAlertCircle className="h-4 w-4" />
+        <AlertCircle className="h-4 w-4" />
         <AlertDescription>
           Failed to load expense trends. Please try again later.
         </AlertDescription>
@@ -125,9 +125,9 @@ export function TrendAnalysis({ vehicleId }: TrendAnalysisProps) {
                 {yearOverYear.yearOverYearChange.toFixed(1)}%
               </div>
               {yearOverYear.yearOverYearChange > 0 ? (
-                <FiArrowUp className="text-destructive" />
+                <ArrowUp className="text-destructive" />
               ) : yearOverYear.yearOverYearChange < 0 ? (
-                <FiArrowDown className="text-success" />
+                <ArrowDown className="text-success" />
               ) : null}
             </div>
           </div>

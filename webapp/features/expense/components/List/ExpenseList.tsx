@@ -14,7 +14,7 @@ import { formatCurrency, formatDate } from '@/lib/formatters';
 import { ExpenseFilters } from './ExpenseFilters';
 import { Alert, AlertDescription } from '@/components/ui/feedback/alert';
 import { Skeleton } from '@/components/ui/feedback/skeleton';
-import { FiAlertCircle, FiArrowDown, FiArrowUp, FiEdit2, FiTrash2 } from 'react-icons/fi';
+import { AlertCircle, ArrowDown, ArrowUp, Pencil, Trash2 } from 'lucide-react';
 import { Pagination } from '@/components/ui/navigation/pagination';
 import { Button } from '@/components/ui/button/button';
 import { useToast } from '@/components/ui/feedback/use-toast';
@@ -84,9 +84,9 @@ export function ExpenseList({ vehicleId }: ExpenseListProps) {
   const renderSortIcon = (field: SortField) => {
     if (sort.field !== field) return null;
     return sort.order === 'desc' ? (
-      <FiArrowDown className="inline ml-1" />
+      <ArrowDown className="inline ml-1" />
     ) : (
-      <FiArrowUp className="inline ml-1" />
+      <ArrowUp className="inline ml-1" />
     );
   };
 
@@ -125,7 +125,7 @@ export function ExpenseList({ vehicleId }: ExpenseListProps) {
 
   const renderErrorState = () => (
     <Alert variant="error">
-      <FiAlertCircle className="h-4 w-4" />
+      <AlertCircle className="h-4 w-4" />
       <AlertDescription>
         Failed to load expenses. Please try again later.
       </AlertDescription>
@@ -210,14 +210,14 @@ export function ExpenseList({ vehicleId }: ExpenseListProps) {
                         size="sm"
                         onClick={() => setExpenseToEdit(expense)}
                       >
-                        <FiEdit2 className="h-4 w-4" />
+                        <Pencil className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => setExpenseToDelete(expense)}
                       >
-                        <FiTrash2 className="h-4 w-4 text-destructive" />
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>

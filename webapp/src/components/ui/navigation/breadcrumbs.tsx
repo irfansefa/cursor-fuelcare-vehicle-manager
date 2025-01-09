@@ -1,5 +1,5 @@
 import * as React from "react"
-import { FiChevronRight } from "react-icons/fi"
+import { ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface BreadcrumbsProps extends React.HTMLAttributes<HTMLElement> {
@@ -8,7 +8,7 @@ interface BreadcrumbsProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const Breadcrumbs = React.forwardRef<HTMLElement, BreadcrumbsProps>(
-  ({ className, separator = <FiChevronRight className="h-4 w-4" />, children, ...props }, ref) => {
+  ({ className, separator = <ChevronRight className="h-4 w-4" />, children, ...props }, ref) => {
     const items = React.Children.toArray(children)
 
     return (

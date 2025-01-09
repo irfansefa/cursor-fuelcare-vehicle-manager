@@ -3,14 +3,14 @@
 import React from 'react';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button/button"
-import { FiPlus, FiTrash2, FiSave, FiArrowLeft } from "react-icons/fi"
+import { Plus, Trash2, Save, ArrowLeft } from "lucide-react"
 
 export default function ButtonsShowcase() {
   return (
     <div className="container mx-auto p-8">
       <div className="mb-8">
         <Link href="/showcase" className="inline-flex items-center text-muted-foreground hover:text-foreground">
-          <FiArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Showcase
         </Link>
       </div>
@@ -48,16 +48,16 @@ export default function ButtonsShowcase() {
         <div className="flex flex-col gap-2">
           <h3 className="text-lg font-medium mb-2">With Icons</h3>
           <Button>
-            <FiPlus className="mr-2 h-4 w-4" /> Add New
+            <Plus className="mr-2 h-4 w-4" /> Add New
           </Button>
           <Button variant="destructive">
-            <FiTrash2 className="mr-2 h-4 w-4" /> Delete
+            <Trash2 className="mr-2 h-4 w-4" /> Delete
           </Button>
           <Button variant="outline">
-            <FiSave className="mr-2 h-4 w-4" /> Save
+            <Save className="mr-2 h-4 w-4" /> Save
           </Button>
           <Button size="icon">
-            <FiPlus className="h-4 w-4" />
+            <Plus className="h-4 w-4" />
           </Button>
         </div>
       </div>

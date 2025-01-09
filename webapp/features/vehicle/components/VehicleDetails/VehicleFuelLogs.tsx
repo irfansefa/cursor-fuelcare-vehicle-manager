@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card/card";
 import { Button } from "@/components/ui/button";
-import { FiEdit2, FiMoreVertical, FiPlus, FiTrash2, FiArrowUp, FiArrowDown } from "react-icons/fi";
+import { Pencil, Plus, Trash2, ArrowUp, ArrowDown } from "lucide-react";
 import { Vehicle } from "../../types";
 import {
   Table,
@@ -120,9 +120,9 @@ export function VehicleFuelLogs({ vehicle }: VehicleFuelLogsProps) {
   const renderSortIcon = (field: SortField) => {
     if (field !== sortField) return null;
     return sortOrder === 'asc' ? (
-      <FiArrowUp className="ml-2 h-4 w-4 inline" />
+      <ArrowUp className="ml-2 h-4 w-4 inline" />
     ) : (
-      <FiArrowDown className="ml-2 h-4 w-4 inline" />
+      <ArrowDown className="ml-2 h-4 w-4 inline" />
     );
   };
 
@@ -143,7 +143,7 @@ export function VehicleFuelLogs({ vehicle }: VehicleFuelLogsProps) {
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Fuel Logs</CardTitle>
           <Button onClick={() => setIsAddModalOpen(true)} size="sm">
-            <FiPlus className="mr-2" />
+            <Plus className="mr-2" />
             Add Fuel Log
           </Button>
         </CardHeader>
@@ -189,14 +189,14 @@ export function VehicleFuelLogs({ vehicle }: VehicleFuelLogsProps) {
                             size="sm"
                             onClick={() => setEditingLog(log)}
                           >
-                            <FiEdit2 className="h-4 w-4" />
+                            <Pencil className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => setDeleteLogId(log.id)}
                           >
-                            <FiTrash2 className="h-4 w-4 text-destructive" />
+                            <Trash2 className="h-4 w-4 text-destructive" />
                           </Button>
                         </div>
                       </TableCell>
