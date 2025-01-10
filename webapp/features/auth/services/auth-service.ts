@@ -1,6 +1,6 @@
 'use client';
 
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase';
 
 interface LoginCredentials {
   email: string;
@@ -33,6 +33,7 @@ interface AuthResponse {
 
 export class AuthService {
   static async login({ email, password }: LoginCredentials): Promise<AuthResponse> {
+    const supabase = createClient();
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -64,6 +65,7 @@ export class AuthService {
   }
 
   static async register({ email, password, fullName, avatarUrl }: RegisterCredentials): Promise<void> {
+    const supabase = createClient();
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -81,6 +83,7 @@ export class AuthService {
   }
 
   static async logout(): Promise<void> {
+    const supabase = createClient();
     const { error } = await supabase.auth.signOut();
     if (error) {
       throw new Error(error.message);
@@ -88,6 +91,7 @@ export class AuthService {
   }
 
   static async getCurrentSession(): Promise<AuthResponse | null> {
+    const supabase = createClient();
     const { data: { session }, error } = await supabase.auth.getSession();
 
     if (error || !session?.user) {
@@ -112,6 +116,7 @@ export class AuthService {
   }
 
   static async updateProfile(userId: string, data: Partial<Profile>): Promise<void> {
+    const supabase = createClient();
     const { error } = await supabase
       .from('profiles')
       .update({
@@ -127,6 +132,7 @@ export class AuthService {
   }
 
   static async requestPasswordReset(email: string): Promise<void> {
+    const supabase = createClient();
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
@@ -137,6 +143,7 @@ export class AuthService {
   }
 
   static async updatePassword(newPassword: string): Promise<void> {
+    const supabase = createClient();
     const { error } = await supabase.auth.updateUser({
       password: newPassword
     });

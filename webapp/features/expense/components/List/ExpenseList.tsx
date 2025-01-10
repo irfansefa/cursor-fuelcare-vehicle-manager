@@ -38,7 +38,7 @@ export function ExpenseList({ vehicleId }: ExpenseListProps) {
   const { toast } = useToast();
 
   const { data: response, isLoading, error } = useGetExpensesQuery({ 
-    vehicles: [vehicleId],
+    vehicleId,
     ...filters,
     page,
     pageSize,
@@ -194,8 +194,14 @@ export function ExpenseList({ vehicleId }: ExpenseListProps) {
                   <TableCell>{formatDate(expense.date)}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <div className={`w-3 h-3 rounded-full ${expense.category.color}`} />
-                      {expense.category.name}
+                      {expense.category ? (
+                        <>
+                          <div className={`w-3 h-3 rounded-full ${expense.category.color}`} />
+                          {expense.category.name}
+                        </>
+                      ) : (
+                        <span className="text-muted-foreground italic">Deleted Category</span>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>{formatCurrency(expense.amount)}</TableCell>

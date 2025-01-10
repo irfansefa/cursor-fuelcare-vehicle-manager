@@ -1,50 +1,51 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { z } from 'zod';
 
-const categorySchema = z.object({
-  name: z.string().min(1, 'Name is required').max(50, 'Name is too long'),
-  description: z.string().max(200, 'Description is too long').optional(),
-  color: z.string().min(1, 'Color is required'),
-});
-
-interface RouteParams {
-  params: {
-    id: string;
-  };
-}
-
-export async function PUT(request: Request, { params }: RouteParams) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
-    const json = await request.json();
+    const cookieStore = cookies();
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value;
+          },
+        },
+      }
+    );
 
-    // Validate input
-    const result = categorySchema.safeParse(json);
-    if (!result.success) {
+    // Get the current user
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
       return NextResponse.json(
-        { error: 'Invalid input', details: result.error.format() },
-        { status: 400 }
+        { error: 'Unauthorized' },
+        { status: 401 }
       );
     }
 
-    const supabase = createRouteHandlerClient({ cookies });
-    const { data: category, error } = await supabase
+    const { error } = await supabase
       .from('categories')
-      .update(result.data)
+      .delete()
       .eq('id', params.id)
-      .select()
-      .single();
+      .eq('user_id', user.id);
 
     if (error) {
+      console.error('Error deleting category:', error);
       return NextResponse.json(
-        { error: 'Failed to update category' },
+        { error: 'Failed to delete category' },
         { status: 500 }
       );
     }
 
-    return NextResponse.json(category);
+    return new NextResponse(null, { status: 204 });
   } catch (error) {
+    console.error('Unexpected error in DELETE /categories/[id]:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -52,24 +53,54 @@ export async function PUT(request: Request, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(_request: Request, { params }: RouteParams) {
+export async function PUT(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const cookieStore = cookies();
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value;
+          },
+        },
+      }
+    );
 
-    const { error } = await supabase
+    // Get the current user
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    const json = await request.json();
+
+    const { data, error } = await supabase
       .from('categories')
-      .delete()
-      .eq('id', params.id);
+      .update(json)
+      .eq('id', params.id)
+      .eq('user_id', user.id)
+      .select()
+      .single();
 
     if (error) {
+      console.error('Error updating category:', error);
       return NextResponse.json(
-        { error: 'Failed to delete category' },
+        { error: 'Failed to update category' },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json(data);
   } catch (error) {
+    console.error('Unexpected error in PUT /categories/[id]:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -1,113 +1,213 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
+
+const expenseSchema = z.object({
+  amount: z.number().min(0, 'Amount must be positive'),
+  date: z.string().min(1, 'Date is required'),
+  description: z.string().max(200, 'Description is too long').optional(),
+  category_id: z.string().min(1, 'Category is required'),
+  vehicle_id: z.string().min(1, 'Vehicle is required'),
+  vendor: z.string().max(100, 'Vendor name is too long').optional(),
+});
 
 export async function GET(request: Request) {
-  const searchParams = new URL(request.url).searchParams;
-  const vehicles = searchParams.get('vehicles')?.split(',') || [];
-  const dateFrom = searchParams.get('dateFrom');
-  const dateTo = searchParams.get('dateTo');
-  const categoryId = searchParams.get('categoryId');
-  const vendor = searchParams.get('vendor');
-  const page = parseInt(searchParams.get('page') || '1');
-  const pageSize = parseInt(searchParams.get('pageSize') || '10');
-  const sortField = searchParams.get('sortField') || 'date';
-  const sortOrder = searchParams.get('sortOrder') || 'desc';
+  try {
+    const cookieStore = cookies();
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value;
+          },
+        },
+      }
+    );
 
-  console.log('Fetching expenses with filters:', { vehicles, dateFrom, dateTo, categoryId, vendor, page, pageSize, sortField, sortOrder });
+    // Get query parameters
+    const url = new URL(request.url);
+    const categoryId = url.searchParams.get('categoryId');
+    const vehicleId = url.searchParams.get('vehicleId');
+    const dateFrom = url.searchParams.get('dateFrom');
+    const dateTo = url.searchParams.get('dateTo');
+    const vendor = url.searchParams.get('vendor');
+    const page = parseInt(url.searchParams.get('page') || '1');
+    const pageSize = parseInt(url.searchParams.get('pageSize') || '10');
+    const sortField = url.searchParams.get('sortField') || 'date';
+    const sortOrder = url.searchParams.get('sortOrder') || 'desc';
 
-  const supabase = createRouteHandlerClient({ cookies });
+    // Get the current user
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
 
-  // Build query with filters
-  let query = supabase
-    .from('expenses')
-    .select(`
-      *,
-      category:categories(*)
-    `, { count: 'exact' });
+    // First verify that the vehicle belongs to the user if vehicleId is provided
+    if (vehicleId) {
+      const { data: vehicle, error: vehicleError } = await supabase
+        .from('vehicles')
+        .select('id')
+        .eq('id', vehicleId)
+        .eq('user_id', user.id)
+        .single();
 
-  if (vehicles.length > 0) {
-    query.in('vehicle_id', vehicles);
-  }
+      if (vehicleError || !vehicle) {
+        return NextResponse.json(
+          { error: 'Vehicle not found or unauthorized' },
+          { status: 404 }
+        );
+      }
+    }
 
-  if (dateFrom) {
-    query.gte('date', dateFrom);
-  }
+    // Build query
+    let query = supabase
+      .from('expenses')
+      .select(`
+        *,
+        categories (
+          id,
+          name,
+          color
+        ),
+        vehicles (
+          id,
+          make,
+          model,
+          year,
+          license_plate
+        )
+      `, { count: 'exact' });
 
-  if (dateTo) {
-    query.lte('date', dateTo);
-  }
+    // Apply filters
+    if (categoryId) query = query.eq('category_id', categoryId);
+    if (vehicleId) query = query.eq('vehicle_id', vehicleId);
+    if (dateFrom) query = query.gte('date', dateFrom);
+    if (dateTo) query = query.lte('date', dateTo);
+    if (vendor) query = query.ilike('vendor', `%${vendor}%`);
 
-  if (categoryId) {
-    query.eq('category_id', categoryId);
-  }
+    // Add pagination
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
 
-  if (vendor) {
-    query.ilike('vendor', `%${vendor}%`);
-  }
+    // Add sorting
+    query = query.order(sortField, { ascending: sortOrder === 'asc' });
 
-  // Get total count with filters
-  const { count: totalCount, error: countError } = await query;
+    // Add pagination range
+    query = query.range(from, to);
 
-  if (countError) {
-    console.error('Error getting expenses count:', countError);
+    const { data: expenses, error, count } = await query;
+
+    console.log('Query parameters:', {
+      vehicleId,
+      categoryId,
+      dateFrom,
+      dateTo,
+      vendor,
+      page,
+      pageSize,
+      sortField,
+      sortOrder
+    });
+
+    if (error) {
+      console.error('Error fetching expenses:', error);
+      return NextResponse.json(
+        { error: 'Failed to fetch expenses' },
+        { status: 500 }
+      );
+    }
+
+    console.log('Raw expenses data:', JSON.stringify(expenses, null, 2));
+
+    // Map the response to ensure category data is properly structured
+    const mappedExpenses = expenses?.map(expense => ({
+      ...expense,
+      category: expense.categories,
+      vehicles: undefined,
+      categories: undefined
+    }));
+
+    console.log('Mapped expenses data:', JSON.stringify(mappedExpenses, null, 2));
+
+    return NextResponse.json({
+      data: mappedExpenses,
+      meta: {
+        currentPage: page,
+        pageSize,
+        totalCount: count || 0,
+        totalPages: Math.ceil((count || 0) / pageSize),
+      }
+    });
+  } catch (error) {
+    console.error('Unexpected error in GET /expenses:', error);
     return NextResponse.json(
-      { error: 'Failed to get expenses count' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
-
-  // Calculate pagination
-  const from = (page - 1) * pageSize;
-  const to = from + pageSize - 1;
-
-  // Get paginated data with filters and sorting
-  const { data, error } = await query
-    .order(sortField, { ascending: sortOrder === 'asc' })
-    .range(from, to);
-
-  if (error) {
-    console.error('Supabase error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  return NextResponse.json({
-    data,
-    meta: {
-      currentPage: page,
-      pageSize,
-      totalCount: totalCount || 0,
-      totalPages: Math.ceil((totalCount || 0) / pageSize),
-    }
-  });
 }
 
 export async function POST(request: Request) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
-    const data = await request.json();
-
-    if (!data.vehicle_id) {
+    const cookieStore = cookies();
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value;
+          },
+        },
+      }
+    );
+    
+    // Get the current user
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
       return NextResponse.json(
-        { error: 'Vehicle ID is required' },
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    const json = await request.json();
+
+    // Validate input
+    const result = expenseSchema.safeParse(json);
+    if (!result.success) {
+      return NextResponse.json(
+        { error: 'Invalid input', details: result.error.format() },
         { status: 400 }
       );
     }
 
+    // Verify vehicle ownership
+    const { data: vehicle, error: vehicleError } = await supabase
+      .from('vehicles')
+      .select('id')
+      .eq('id', result.data.vehicle_id)
+      .eq('user_id', user.id)
+      .single();
+
+    if (vehicleError || !vehicle) {
+      return NextResponse.json(
+        { error: 'Vehicle not found or unauthorized' },
+        { status: 404 }
+      );
+    }
+
+    // Create the expense
     const { data: expense, error } = await supabase
       .from('expenses')
-      .insert([{
-        vehicle_id: data.vehicle_id,
-        category_id: data.category_id,
-        date: data.date,
-        amount: data.amount,
-        vendor: data.vendor,
-        description: data.description,
-      }])
-      .select(`
-        *,
-        category:categories(*)
-      `)
+      .insert([result.data])
+      .select()
       .single();
 
     if (error) {
@@ -120,7 +220,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(expense);
   } catch (error) {
-    console.error('Error in create expense route:', error);
+    console.error('Unexpected error in POST /expenses:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

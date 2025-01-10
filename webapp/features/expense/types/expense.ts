@@ -11,7 +11,7 @@ export interface Expense {
 }
 
 export interface ExpenseWithDetails extends Expense {
-  category: {
+  category?: {
     id: string;
     name: string;
     color: string;
@@ -32,7 +32,7 @@ export interface UpdateExpenseDTO extends Partial<CreateExpenseDTO> {
 }
 
 export interface ExpenseFilters {
-  vehicles?: string[];
+  vehicleId?: string;
   dateFrom?: string;
   dateTo?: string;
   categoryId?: string;

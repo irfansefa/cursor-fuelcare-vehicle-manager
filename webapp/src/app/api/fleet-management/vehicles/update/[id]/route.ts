@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
@@ -11,18 +11,29 @@ export async function PATCH(
   try {
     console.log('PATCH /api/fleet-management/vehicles/update/[id] - Start', { id: params.id });
     
-    const supabase = createRouteHandlerClient({ cookies });
+    const cookieStore = cookies();
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value;
+          },
+        },
+      }
+    );
     
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    console.log('Session check:', {
-      hasSession: !!session,
-      error: sessionError?.message,
-      userId: session?.user?.id
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    console.log('User check:', {
+      hasUser: !!user,
+      error: userError?.message,
+      userId: user?.id
     });
 
-    if (!session) {
-      console.log('PATCH /api/fleet-management/vehicles/update/[id] - No session found');
-      return NextResponse.json({ error: 'Unauthorized - No session' }, { status: 401 });
+    if (userError || !user) {
+      console.log('PATCH /api/fleet-management/vehicles/update/[id] - No user found');
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Verify vehicle ownership
@@ -30,7 +41,7 @@ export async function PATCH(
       .from('vehicles')
       .select('id')
       .eq('id', params.id)
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .single();
 
     if (!existingVehicle) {
@@ -55,7 +66,7 @@ export async function PATCH(
         updated_at: now,
       })
       .eq('id', params.id)
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .select()
       .single();
 

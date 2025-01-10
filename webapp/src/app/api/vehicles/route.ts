@@ -1,51 +1,48 @@
-import { NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
 
-export const dynamic = 'force-dynamic';
-
-export async function GET(request: Request) {
+export async function GET() {
   try {
-    console.log('GET /api/vehicles - Start');
-    
     const cookieStore = cookies();
-    console.log('Cookie store:', {
-      hasGetAll: !!cookieStore.getAll,
-      hasGet: !!cookieStore.get,
-    });
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value;
+          },
+        },
+      }
+    );
 
-    // Create a Supabase client using the auth helpers
-    const supabase = createRouteHandlerClient({ cookies });
-    
-    // Get the session directly from Supabase
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    console.log('Session check:', {
-      hasSession: !!session,
-      error: sessionError?.message,
-      userId: session?.user?.id
-    });
-
-    if (!session) {
-      console.log('GET /api/vehicles - No session found');
-      return NextResponse.json({ error: 'Unauthorized - No session' }, { status: 401 });
+    // Get the current user
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
     }
 
-    console.log('Fetching vehicles for user:', session.user.id);
     const { data: vehicles, error } = await supabase
       .from('vehicles')
       .select('*')
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Database error:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      console.error('Error fetching vehicles:', error);
+      return NextResponse.json(
+        { error: 'Failed to fetch vehicles' },
+        { status: 500 }
+      );
     }
 
-    console.log('Successfully fetched vehicles:', vehicles?.length);
     return NextResponse.json(vehicles);
   } catch (error) {
-    console.error('Error in GET /api/vehicles:', error);
+    console.error('Unexpected error in GET /vehicles:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -55,55 +52,53 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    console.log('POST /api/vehicles - Start');
-    
-    // Create a Supabase client using the auth helpers
-    const supabase = createRouteHandlerClient({ cookies });
-    
-    // Get the session directly from Supabase
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    console.log('Session check:', {
-      hasSession: !!session,
-      error: sessionError?.message,
-      userId: session?.user?.id
-    });
+    const cookieStore = cookies();
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value;
+          },
+        },
+      }
+    );
 
-    if (!session) {
-      console.log('POST /api/vehicles - No session found');
-      return NextResponse.json({ error: 'Unauthorized - No session' }, { status: 401 });
+    // Get the current user
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
     }
 
     const json = await request.json();
-    const now = new Date().toISOString();
 
-    console.log('Creating vehicle for user:', session.user.id);
-    const { data, error } = await supabase
+    // Add user_id to the data
+    const vehicleData = {
+      ...json,
+      user_id: user.id
+    };
+
+    const { data: vehicle, error } = await supabase
       .from('vehicles')
-      .insert([
-        {
-          make: json.make,
-          model: json.model,
-          year: json.year,
-          license_plate: json.licensePlate,
-          vin: json.vin,
-          status: json.status,
-          user_id: session.user.id,
-          created_at: now,
-          updated_at: now,
-        },
-      ])
+      .insert([vehicleData])
       .select()
       .single();
 
     if (error) {
-      console.error('Database error:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      console.error('Error creating vehicle:', error);
+      return NextResponse.json(
+        { error: 'Failed to create vehicle' },
+        { status: 500 }
+      );
     }
 
-    console.log('Successfully created vehicle:', data.id);
-    return NextResponse.json(data);
+    return NextResponse.json(vehicle);
   } catch (error) {
-    console.error('Error in POST /api/vehicles:', error);
+    console.error('Unexpected error in POST /vehicles:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

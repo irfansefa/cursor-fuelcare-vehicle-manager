@@ -13,6 +13,18 @@ interface CategoryCardProps {
 }
 
 export function CategoryCard({ category, onEdit, onDelete }: CategoryCardProps) {
+  const handleDelete = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onDelete();
+  };
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onEdit(category);
+  };
+
   return (
     <Card className="flex flex-col h-full">
       <CardContent className="flex-grow p-6">
@@ -33,14 +45,14 @@ export function CategoryCard({ category, onEdit, onDelete }: CategoryCardProps) 
         <Button
           variant="outline"
           size="icon"
-          onClick={() => onEdit(category)}
+          onClick={handleEdit}
         >
           <Pencil className="h-4 w-4" />
         </Button>
         <Button
           variant="outline"
           size="icon"
-          onClick={onDelete}
+          onClick={handleDelete}
         >
           <Trash2 className="h-4 w-4" />
         </Button>

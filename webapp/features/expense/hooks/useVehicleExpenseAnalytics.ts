@@ -9,7 +9,7 @@ interface UseVehicleExpenseAnalyticsProps {
 
 export function useVehicleExpenseAnalytics({ vehicleId, dateRange }: UseVehicleExpenseAnalyticsProps) {
   const { data: response, isLoading, error } = useGetExpensesQuery({
-    vehicles: [vehicleId],
+    vehicleId,
     dateFrom: dateRange?.from,
     dateTo: dateRange?.to,
   });
