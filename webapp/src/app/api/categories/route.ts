@@ -1,21 +1,8 @@
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { createSupabaseServerClient } from '@/lib/supabase-server';
 
 export async function GET() {
-  const cookieStore = cookies();
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-      },
-    }
-  );
+  const supabase = createSupabaseServerClient();
 
   const { data: categories, error } = await supabase
     .from('categories')
@@ -30,18 +17,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const cookieStore = cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-      },
-    }
-  );
+  const supabase = createSupabaseServerClient();
 
   // Get the current user's session
   const { data: { session }, error: sessionError } = await supabase.auth.getSession();

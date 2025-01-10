@@ -1,112 +1,56 @@
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { createSupabaseServerClient } from '@/lib/supabase-server';
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const { id } = params;
-    const cookieStore = cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value;
-          },
-        },
-      }
-    );
-
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    const { error } = await supabase
-      .from('expenses')
-      .delete()
-      .eq('id', id);
-
-    if (error) {
-      console.error('Error deleting expense:', error);
-      return NextResponse.json(
-        { error: 'Failed to delete expense' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Error in delete expense route:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
+interface RouteParams {
+  params: {
+    id: string;
+  };
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const { id } = params;
-    const data = await request.json();
-    const cookieStore = cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value;
-          },
-        },
-      }
-    );
+export async function DELETE(request: Request, { params }: RouteParams) {
+  const supabase = createSupabaseServerClient();
 
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+  // Get the current user's session
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
-    const { data: expense, error } = await supabase
-      .from('expenses')
-      .update({
-        category_id: data.category_id,
-        date: data.date,
-        amount: data.amount,
-        vendor: data.vendor,
-        description: data.description,
-      })
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error updating expense:', error);
-      return NextResponse.json(
-        { error: 'Failed to update expense' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json(expense);
-  } catch (error) {
-    console.error('Error in update expense route:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+  if (sessionError || !session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+
+  const { error } = await supabase
+    .from('expenses')
+    .delete()
+    .eq('id', params.id);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return new NextResponse(null, { status: 204 });
+}
+
+export async function PUT(request: Request, { params }: RouteParams) {
+  const supabase = createSupabaseServerClient();
+
+  // Get the current user's session
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+  if (sessionError || !session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const json = await request.json();
+
+  const { data, error } = await supabase
+    .from('expenses')
+    .update(json)
+    .eq('id', params.id)
+    .select()
+    .single();
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json(data);
 }

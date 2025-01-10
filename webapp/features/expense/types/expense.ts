@@ -11,7 +11,7 @@ export interface Expense {
 }
 
 export interface ExpenseWithDetails extends Expense {
-  category?: {
+  category: {
     id: string;
     name: string;
     color: string;

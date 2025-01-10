@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useCallback } from "react";
 import { setCredentials, setError, setLoading, logout as logoutAction } from "../store/authSlice";
 import type { RootState } from "@/store/store";
-import { AuthService } from "../services/auth-service";
+import { supabase } from "../services/auth-service";
 
 interface LoginCredentials {
   email: string;
@@ -31,8 +31,19 @@ export function useAuth() {
         dispatch(setLoading(true));
         dispatch(setError(""));
 
-        const response = await AuthService.login(credentials);
-        dispatch(setCredentials(response));
+        const { data, error } = await supabase.auth.signInWithPassword(credentials);
+        if (error) throw error;
+        if (!data.user || !data.session) throw new Error('Authentication failed');
+
+        dispatch(setCredentials({
+          user: {
+            id: data.user.id,
+            email: data.user.email!,
+            fullName: data.user.user_metadata.full_name || null,
+            avatarUrl: data.user.user_metadata.avatar_url || null,
+          },
+          token: data.session.access_token
+        }));
       } catch (err) {
         dispatch(setError((err as Error).message));
         throw err;
@@ -49,7 +60,18 @@ export function useAuth() {
         dispatch(setLoading(true));
         dispatch(setError(""));
 
-        await AuthService.register(credentials);
+        const { error } = await supabase.auth.signUp({
+          email: credentials.email,
+          password: credentials.password,
+          options: {
+            data: {
+              full_name: credentials.fullName,
+              avatar_url: credentials.avatarUrl,
+            }
+          }
+        });
+        if (error) throw error;
+
         dispatch(setError("Registration successful! Please check your email to confirm your account."));
       } catch (err) {
         dispatch(setError((err as Error).message));
@@ -63,7 +85,8 @@ export function useAuth() {
 
   const logout = useCallback(async () => {
     try {
-      await AuthService.logout();
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
       dispatch(logoutAction());
     } catch (err) {
       console.error('Logout failed:', err);

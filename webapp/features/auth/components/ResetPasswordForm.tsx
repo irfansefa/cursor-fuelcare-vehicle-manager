@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { ControllerRenderProps } from "react-hook-form";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AuthService } from "../services/auth-service";
+import { supabase } from "../services/auth-service";
 
 const resetPasswordSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
@@ -44,7 +44,15 @@ export function ResetPasswordForm({ onSuccess, onError, redirectPath = "/auth" }
     try {
       setLoading(true);
       setError(null);
-      await AuthService.updatePassword(data.password);
+      
+      const { error } = await supabase.auth.updateUser({
+        password: data.password
+      });
+
+      if (error) {
+        throw error;
+      }
+
       onSuccess?.();
       router.push(redirectPath);
     } catch (error) {

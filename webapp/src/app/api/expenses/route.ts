@@ -1,7 +1,6 @@
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createSupabaseServerClient } from '@/lib/supabase-server';
 
 const expenseSchema = z.object({
   amount: z.number().min(0, 'Amount must be positive'),
@@ -14,18 +13,7 @@ const expenseSchema = z.object({
 
 export async function GET(request: Request) {
   try {
-    const cookieStore = cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value;
-          },
-        },
-      }
-    );
+    const supabase = createSupabaseServerClient();
 
     // Get query parameters
     const url = new URL(request.url);
@@ -155,18 +143,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const cookieStore = cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value;
-          },
-        },
-      }
-    );
+    const supabase = createSupabaseServerClient();
     
     // Get the current user
     const { data: { user }, error: userError } = await supabase.auth.getUser();

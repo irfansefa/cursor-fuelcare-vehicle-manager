@@ -21,7 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Checkbox } from "@/components/ui/form/checkbox";
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase";
+import { createSupabaseClient } from "@/lib/supabase";
 
 const schema = z.object({
   make: z.string().min(1, "Make is required"),
@@ -45,7 +45,7 @@ interface Props {
 
 export function VehicleForm({ initialData, onSubmit, onCancel, submitLabel = "Create Vehicle" }: Props) {
   const [fuelTypes, setFuelTypes] = useState<Array<{ id: string; name: string }>>([]);
-  const supabase = createClient();
+  const supabase = createSupabaseClient();
   
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
