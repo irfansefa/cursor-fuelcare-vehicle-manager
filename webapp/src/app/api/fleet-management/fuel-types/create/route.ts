@@ -1,49 +1,32 @@
 import { NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { createSupabaseServerClient } from '@/lib/supabase';
 import { CreateFuelTypeDTO } from '@/features/fuel/types';
 import { z } from 'zod';
-
-export const dynamic = 'force-dynamic';
 
 const createFuelTypeSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   description: z.string().optional(),
-  unit: z.enum(['liters', 'gallons']),
-  properties: z.record(z.any()).optional(),
+  unit: z.enum(['liters', 'gallons']).default('liters'),
+  properties: z.record(z.any()).optional().default({}),
   status: z.enum(['active', 'inactive']).default('active'),
 });
 
 export async function POST(request: Request) {
   try {
     console.log('POST /api/fleet-management/fuel-types/create - Start');
+    const supabase = await createSupabaseServerClient();
     
-    const cookieStore = cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value;
-          },
-        },
-      }
-    );
-    
+    // Get the current user
     const { data: { user }, error: userError } = await supabase.auth.getUser();
-    console.log('User check:', {
-      hasUser: !!user,
-      error: userError?.message,
-      userId: user?.id
-    });
+    console.log('User check:', { hasUser: !!user, error: userError?.message });
 
     if (userError || !user) {
-      console.log('POST /api/fleet-management/fuel-types/create - No user found');
+      console.log('Unauthorized: No user found');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const json = await request.json();
+    console.log('Request body:', json);
     
     // Validate request body
     const validationResult = createFuelTypeSchema.safeParse(json);
@@ -56,16 +39,17 @@ export async function POST(request: Request) {
     }
 
     const fuelType = validationResult.data;
-    const now = new Date().toISOString();
+    console.log('Validated fuel type:', fuelType);
 
-    console.log('Creating fuel type');
     const { data, error } = await supabase
       .from('fuel_types')
-      .insert([{
-        ...fuelType,
-        created_at: now,
-        updated_at: now,
-      }])
+      .insert({
+        name: fuelType.name,
+        description: fuelType.description,
+        unit: fuelType.unit,
+        properties: fuelType.properties,
+        status: fuelType.status,
+      })
       .select()
       .single();
 
@@ -74,13 +58,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    console.log('Successfully created fuel type:', data.id);
+    console.log('Successfully created fuel type:', data);
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error in POST /api/fleet-management/fuel-types/create:', error);
     return NextResponse.json(
-      { error: 'Failed to create fuel type' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
-} 
+}

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createSupabaseServerClient } from '@/lib/supabase-server';
+import { createSupabaseServerClient } from '@/lib/supabase';
 
 interface RouteParams {
   params: {
@@ -8,7 +8,7 @@ interface RouteParams {
 }
 
 export async function DELETE(request: Request, { params }: RouteParams) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
 
   // Get the current user's session
   const { data: { session }, error: sessionError } = await supabase.auth.getSession();
@@ -30,7 +30,7 @@ export async function DELETE(request: Request, { params }: RouteParams) {
 }
 
 export async function PUT(request: Request, { params }: RouteParams) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
 
   // Get the current user's session
   const { data: { session }, error: sessionError } = await supabase.auth.getSession();

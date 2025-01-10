@@ -1,5 +1,5 @@
 import { BaseQueryFn } from '@reduxjs/toolkit/query';
-import { supabase } from './client';
+import { createBrowserClient } from '@supabase/ssr';
 import { PostgrestError } from '@supabase/supabase-js';
 
 type FilterOperator = 
@@ -31,6 +31,11 @@ export const supabaseBaseQuery: BaseQueryFn<
   const { from, select = '*', filter, type = 'SELECT', values, single, order } = queryArg;
 
   try {
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    
     let query = supabase.from(from);
 
     switch (type) {

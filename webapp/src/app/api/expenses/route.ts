@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createSupabaseServerClient } from '@/lib/supabase-server';
+import { createSupabaseServerClient } from '@/lib/supabase';
 
 const expenseSchema = z.object({
   amount: z.number().min(0, 'Amount must be positive'),
@@ -13,7 +13,7 @@ const expenseSchema = z.object({
 
 export async function GET(request: Request) {
   try {
-    const supabase = createSupabaseServerClient();
+    const supabase = await createSupabaseServerClient();
 
     // Get query parameters
     const url = new URL(request.url);
@@ -143,7 +143,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const supabase = createSupabaseServerClient();
+    const supabase = await createSupabaseServerClient();
     
     // Get the current user
     const { data: { user }, error: userError } = await supabase.auth.getUser();

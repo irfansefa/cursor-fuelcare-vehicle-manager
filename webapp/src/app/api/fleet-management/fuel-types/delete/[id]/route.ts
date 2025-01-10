@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { createSupabaseServerClient } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
 
@@ -8,21 +7,10 @@ export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  const supabase = await createSupabaseServerClient();
+  
   try {
     console.log('DELETE /api/fleet-management/fuel-types/delete/[id] - Start', { id: params.id });
-    
-    const cookieStore = cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value;
-          },
-        },
-      }
-    );
     
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     console.log('User check:', {
