@@ -44,10 +44,10 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
         className={cn(navbarVariants({ variant, size, fixed }), className)}
         {...props}
       >
-        <div className="container mx-auto h-full px-4">
+        <div className="container relative mx-auto h-full px-4">
           <div className="flex h-full items-center justify-between">
             {brand && <div className="flex-shrink-0">{brand}</div>}
-            <div className="hidden md:block">{children}</div>
+            <div className="flex-1">{children}</div>
           </div>
         </div>
       </nav>
