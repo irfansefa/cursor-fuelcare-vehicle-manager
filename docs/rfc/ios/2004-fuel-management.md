@@ -6,13 +6,14 @@
 - Priority: P1 (Core Feature)
 
 ## Context
-The iOS Fuel Management System provides users with a native mobile interface to track fuel consumption, manage receipts, and analyze efficiency, leveraging iOS capabilities for location tracking, camera integration, and offline functionality.
+The iOS Fuel Management System provides users with a native mobile interface to track fuel costs, monitor consumption, and analyze efficiency across their vehicles, with support for offline logging and location-based features.
 
 ## Goals
-- Create fuel tracking interface
-- Implement receipt scanning
-- Build location tracking
-- Develop efficiency analytics
+- Create user-friendly fuel logging interface
+- Implement interactive efficiency analytics
+- Develop comprehensive reporting dashboard
+- Enable offline fuel logging
+- Integrate location services
 
 ## Detailed Design
 
@@ -21,14 +22,14 @@ The iOS Fuel Management System provides users with a native mobile interface to 
 ios/FuelCare/Features/Fuel/
 ├── Domain/
 │   ├── Models/
-│   │   ├── FuelEntry.swift
-│   │   ├── Receipt.swift
+│   │   ├── FuelLog.swift
+│   │   ├── FuelType.swift
 │   │   └── FuelStats.swift
 │   ├── Repositories/
 │   │   └── FuelRepository.swift
 │   └── UseCases/
-│       ├── TrackFuelUseCase.swift
-│       └── AnalyzeFuelUseCase.swift
+│       ├── FuelLoggingUseCase.swift
+│       └── FuelAnalyticsUseCase.swift
 ├── Data/
 │   ├── DataSources/
 │   │   ├── FuelRemoteDataSource.swift
@@ -37,17 +38,17 @@ ios/FuelCare/Features/Fuel/
 │       └── FuelRepositoryImpl.swift
 └── Presentation/
     ├── ViewModels/
-    │   ├── FuelEntryViewModel.swift
-    │   ├── FuelHistoryViewModel.swift
-    │   └── FuelAnalyticsViewModel.swift
+    │   ├── FuelLogViewModel.swift
+    │   ├── FuelStatsViewModel.swift
+    │   └── FuelHistoryViewModel.swift
     ├── Views/
-    │   ├── FuelEntryViewController.swift
+    │   ├── FuelLogViewController.swift
+    │   ├── FuelStatsViewController.swift
     │   ├── FuelHistoryViewController.swift
-    │   ├── FuelAnalyticsViewController.swift
     │   └── Components/
-    │       ├── ReceiptScanner.swift
-    │       ├── FuelStatsCard.swift
-    │       └── EfficiencyChart.swift
+    │       ├── FuelLogForm.swift
+    │       ├── StatsCard.swift
+    │       └── HistoryChart.swift
     └── Coordinator/
         └── FuelCoordinator.swift
 ```
@@ -56,54 +57,53 @@ ios/FuelCare/Features/Fuel/
 
 1. Fuel Models
 ```swift
-struct FuelEntry: Codable {
+struct FuelLog: Codable {
     let id: String
     let vehicleId: String
     var date: Date
-    var odometer: Double
-    var volume: Double
-    var cost: Decimal
     var fuelType: FuelType
+    var quantity: Double
+    var pricePerUnit: Decimal
+    var totalCost: Decimal
+    var odometer: Double
     var location: Location?
-    var receipt: Receipt?
     var notes: String?
     
     var isSync: Bool
     var lastSyncDate: Date?
 }
 
-struct Receipt: Codable {
-    let id: String
-    let imageUrl: URL
-    let localPath: String?
-    let scannedData: ScannedReceiptData?
-    let timestamp: Date
-}
-
-struct FuelStats {
+struct FuelStats: Codable {
     let averageConsumption: Double
     let totalCost: Decimal
     let totalVolume: Double
+    let costPerDistance: Decimal
     let efficiency: Double
-    let trends: ConsumptionTrends
+    let trends: [FuelTrend]
+}
+
+struct Location: Codable {
+    let latitude: Double
+    let longitude: Double
+    let address: String?
+    let stationName: String?
 }
 ```
 
 2. Fuel Repository
 ```swift
 protocol FuelRepository {
-    func getFuelEntries(vehicleId: String) async throws -> [FuelEntry]
-    func saveFuelEntry(_ entry: FuelEntry) async throws -> FuelEntry
-    func updateFuelEntry(_ entry: FuelEntry) async throws -> FuelEntry
-    func deleteFuelEntry(id: String) async throws
-    func uploadReceipt(_ image: UIImage, for entry: FuelEntry) async throws -> Receipt
+    func getFuelLogs(vehicleId: String) async throws -> [FuelLog]
+    func saveFuelLog(_ log: FuelLog) async throws -> FuelLog
+    func updateFuelLog(_ log: FuelLog) async throws -> FuelLog
+    func deleteFuelLog(id: String) async throws
     func getFuelStats(vehicleId: String) async throws -> FuelStats
+    func syncFuelLogs() async throws
 }
 
 class FuelRepositoryImpl: FuelRepository {
     private let remoteDataSource: FuelRemoteDataSource
     private let localDataSource: FuelLocalDataSource
-    private let receiptScanner: ReceiptScannerService
     private let locationService: LocationService
     
     // Implementation
@@ -112,25 +112,24 @@ class FuelRepositoryImpl: FuelRepository {
 
 3. Fuel ViewModel
 ```swift
-class FuelEntryViewModel: ViewModel {
+class FuelLogViewModel: ViewModel {
     struct Input {
         let saveTrigger: Observable<Void>
-        let scanReceiptTrigger: Observable<Void>
-        let useLocationTrigger: Observable<Void>
-        let entryData: Observable<FuelEntryFormData>
+        let locationTrigger: Observable<Void>
+        let logData: Observable<FuelLogFormData>
+        let vehicleSelection: Observable<String>
     }
     
     struct Output {
         let isLoading: Observable<Bool>
         let error: Observable<Error?>
-        let entry: Observable<FuelEntry?>
+        let fuelLog: Observable<FuelLog?>
         let saveResult: Observable<Bool>
-        let scannerVisible: Observable<Bool>
         let currentLocation: Observable<Location?>
+        let stats: Observable<FuelStats?>
     }
     
     private let fuelRepository: FuelRepository
-    private let receiptScanner: ReceiptScannerService
     private let locationService: LocationService
     
     func transform(input: Input) -> Output {
@@ -141,46 +140,42 @@ class FuelEntryViewModel: ViewModel {
 
 ### Features
 
-1. Fuel Entry Management
-   - Quick entry
-   - Receipt scanning
-   - Location tracking
+1. Fuel Logging
+   - Quick log entry
+   - Location auto-detection
    - Offline support
+   - Receipt scanning
+   - Multiple fuel types
 
-2. Receipt Processing
-   - Camera integration
-   - OCR processing
-   - Data extraction
-   - Receipt storage
-
-3. Location Services
-   - Auto-location
-   - Station detection
-   - Distance tracking
-   - Map integration
-
-4. Analytics
+2. Analytics Dashboard
    - Consumption tracking
    - Cost analysis
    - Efficiency metrics
-   - Trend visualization
+   - Interactive charts
+   - Trend analysis
+
+3. History Management
+   - Log history view
+   - Filtering options
+   - Sorting capabilities
+   - Export functionality
+   - Sync status
 
 ### API Integration
 
 ```swift
 protocol FuelEndpoint {
-    static func getFuelEntries(vehicleId: String) -> Endpoint
-    static func createFuelEntry(entry: FuelEntry) -> Endpoint
-    static func updateFuelEntry(entry: FuelEntry) -> Endpoint
-    static func deleteFuelEntry(id: String) -> Endpoint
-    static func uploadReceipt(entryId: String) -> Endpoint
+    static func getFuelLogs(vehicleId: String) -> Endpoint
+    static func createFuelLog(log: FuelLog) -> Endpoint
+    static func updateFuelLog(log: FuelLog) -> Endpoint
+    static func deleteFuelLog(id: String) -> Endpoint
     static func getFuelStats(vehicleId: String) -> Endpoint
 }
 
 extension FuelEndpoint {
-    static func getFuelEntries(vehicleId: String) -> Endpoint {
+    static func getFuelLogs(vehicleId: String) -> Endpoint {
         return Endpoint(
-            path: "/vehicles/\(vehicleId)/fuel",
+            path: "/vehicles/\(vehicleId)/fuel-logs",
             method: .get,
             headers: ["Content-Type": "application/json"]
         )
@@ -192,39 +187,38 @@ extension FuelEndpoint {
 ## Implementation Plan
 
 ### Phase 1: Core Features (Week 1)
-- [ ] Entry interface
-- [ ] History view
-- [ ] CRUD operations
-- [ ] Local storage
+- [ ] Fuel log form
+- [ ] Basic CRUD operations
+- [ ] Location integration
+- [ ] Offline storage
 
-### Phase 2: Receipt System (Week 2)
-- [ ] Camera integration
-- [ ] OCR processing
-- [ ] Data extraction
-- [ ] Receipt storage
-
-### Phase 3: Location Features (Week 3)
-- [ ] Location services
-- [ ] Station detection
-- [ ] Distance tracking
-- [ ] Map integration
-
-### Phase 4: Analytics (Week 4)
-- [ ] Stats calculation
-- [ ] Chart visualization
+### Phase 2: Analytics (Week 2)
+- [ ] Statistics calculation
+- [ ] Chart components
+- [ ] Data visualization
 - [ ] Trend analysis
-- [ ] Export features
+
+### Phase 3: History & Sync (Week 3)
+- [ ] History view
+- [ ] Filtering system
+- [ ] Background sync
+- [ ] Export options
+
+### Phase 4: Advanced Features (Week 4)
+- [ ] Receipt scanning
+- [ ] Location suggestions
+- [ ] Siri shortcuts
+- [ ] Widgets
 
 ## UI Components
 
-### FuelEntryViewController
+### FuelLogForm
 ```swift
-class FuelEntryViewController: BaseViewController<FuelEntryViewModel> {
-    private let scrollView = UIScrollView()
-    private let formContainer = UIStackView()
-    private let receiptImageView = UIImageView()
-    private let scanButton = IconButton()
-    private let locationButton = IconButton()
+class FuelLogForm: BaseView {
+    private let quantityField = DecimalField()
+    private let priceField = CurrencyField()
+    private let odometerField = NumberField()
+    private let locationButton = LocationButton()
     private let saveButton = PrimaryButton()
     
     override func setupUI() {
@@ -232,48 +226,41 @@ class FuelEntryViewController: BaseViewController<FuelEntryViewModel> {
     }
     
     override func bindViewModel() {
-        let input = FuelEntryViewModel.Input(
-            saveTrigger: saveButton.rx.tap.asObservable(),
-            scanReceiptTrigger: scanButton.rx.tap.asObservable(),
-            useLocationTrigger: locationButton.rx.tap.asObservable(),
-            entryData: formData.asObservable()
-        )
-        
-        let output = viewModel.transform(input: input)
-        // Bind outputs
+        // Bind inputs/outputs
     }
 }
 ```
 
 ## Testing Strategy
-- Repository tests
-- OCR accuracy tests
-- Location tests
-- Analytics tests
+- Unit tests for calculations
+- Integration tests for sync
 - UI interaction tests
+- Offline functionality tests
+- Location service tests
 
 ## Performance Considerations
-- Image optimization
-- OCR processing
-- Background sync
-- Battery usage
-- Memory management
+- Efficient data storage
+- Background sync optimization
+- Location services battery usage
+- Chart rendering performance
+- Offline first approach
 
 ## Security Measures
-- Receipt data privacy
-- Location privacy
-- Secure storage
-- Data encryption
+- Secure data storage
+- Location data privacy
+- Network security
+- Input validation
+- Access control
 
 ## Accessibility
 - VoiceOver support
 - Dynamic type
-- Manual entry options
 - Location alternatives
-- Receipt alternatives
+- Color contrast
+- Haptic feedback
 
 ## Open Questions
-1. OCR service provider?
-2. Receipt storage duration?
-3. Location accuracy vs battery?
-4. Offline analytics scope? 
+1. Preferred chart library?
+2. Offline storage limits?
+3. Location accuracy requirements?
+4. Receipt scanning accuracy? 

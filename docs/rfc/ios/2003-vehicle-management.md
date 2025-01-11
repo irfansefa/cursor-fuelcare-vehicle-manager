@@ -3,16 +3,17 @@
 ## Status
 - Status: Draft
 - Date: 2024-01-20
-- Priority: P1 (Core Feature)
+- Priority: P0 (Core Feature)
 
 ## Context
-The iOS Vehicle Management System provides users with a native mobile interface to manage their vehicles, leveraging iOS platform capabilities for enhanced functionality such as camera integration, offline access, and location services.
+The iOS Vehicle Management System provides users with a native mobile interface to manage their vehicle fleet, track vehicle details, and monitor vehicle status. The system leverages iOS capabilities for offline functionality and seamless data synchronization.
 
 ## Goals
-- Create vehicle management interface
-- Implement offline-first architecture
-- Build media handling system
-- Develop location integration
+- Create intuitive vehicle management interface
+- Implement comprehensive vehicle tracking
+- Enable offline vehicle data access
+- Develop vehicle status monitoring
+- Support multiple vehicle types
 
 ## Detailed Design
 
@@ -22,12 +23,13 @@ ios/FuelCare/Features/Vehicle/
 ├── Domain/
 │   ├── Models/
 │   │   ├── Vehicle.swift
-│   │   └── VehicleMedia.swift
+│   │   ├── VehicleType.swift
+│   │   └── VehicleStatus.swift
 │   ├── Repositories/
 │   │   └── VehicleRepository.swift
 │   └── UseCases/
-│       ├── ManageVehicleUseCase.swift
-│       └── SyncVehicleUseCase.swift
+│       ├── VehicleManagementUseCase.swift
+│       └── VehicleMonitoringUseCase.swift
 ├── Data/
 │   ├── DataSources/
 │   │   ├── VehicleRemoteDataSource.swift
@@ -37,14 +39,16 @@ ios/FuelCare/Features/Vehicle/
 └── Presentation/
     ├── ViewModels/
     │   ├── VehicleListViewModel.swift
-    │   └── VehicleDetailViewModel.swift
+    │   ├── VehicleDetailViewModel.swift
+    │   └── VehicleFormViewModel.swift
     ├── Views/
     │   ├── VehicleListViewController.swift
     │   ├── VehicleDetailViewController.swift
+    │   ├── VehicleFormViewController.swift
     │   └── Components/
     │       ├── VehicleCard.swift
-    │       ├── MediaPicker.swift
-    │       └── LocationPicker.swift
+    │       ├── StatusBadge.swift
+    │       └── VehicleForm.swift
     └── Coordinator/
         └── VehicleCoordinator.swift
 ```
@@ -55,34 +59,35 @@ ios/FuelCare/Features/Vehicle/
 ```swift
 struct Vehicle: Codable {
     let id: String
-    var name: String
     var make: String
     var model: String
     var year: Int
-    var licensePlate: String?
+    var type: VehicleType
+    var licensePlate: String
     var vin: String?
-    var images: [VehicleImage]
-    var location: Location?
-    var specifications: VehicleSpecs
+    var fuelType: FuelType
+    var tankCapacity: Double?
+    var odometer: Double
     var status: VehicleStatus
+    var notes: String?
     
     var isSync: Bool
     var lastSyncDate: Date?
 }
 
-struct VehicleImage: Codable {
-    let id: String
-    let url: URL
-    let type: ImageType
-    let timestamp: Date
-    var localPath: String?
+enum VehicleType: String, Codable {
+    case car
+    case motorcycle
+    case truck
+    case van
+    case other
 }
 
-struct Location: Codable {
-    let latitude: Double
-    let longitude: Double
-    let address: String?
-    let timestamp: Date
+enum VehicleStatus: String, Codable {
+    case active
+    case maintenance
+    case inactive
+    case retired
 }
 ```
 
@@ -95,14 +100,11 @@ protocol VehicleRepository {
     func updateVehicle(_ vehicle: Vehicle) async throws -> Vehicle
     func deleteVehicle(id: String) async throws
     func syncVehicles() async throws
-    func uploadImage(_ image: UIImage, for vehicle: Vehicle) async throws -> VehicleImage
 }
 
 class VehicleRepositoryImpl: VehicleRepository {
     private let remoteDataSource: VehicleRemoteDataSource
     private let localDataSource: VehicleLocalDataSource
-    private let mediaService: MediaService
-    private let locationService: LocationService
     
     // Implementation
 }
@@ -110,27 +112,23 @@ class VehicleRepositoryImpl: VehicleRepository {
 
 3. Vehicle ViewModel
 ```swift
-class VehicleDetailViewModel: ViewModel {
+class VehicleListViewModel: ViewModel {
     struct Input {
-        let saveVehicleTrigger: Observable<Void>
-        let takePictureTrigger: Observable<Void>
-        let selectLocationTrigger: Observable<Void>
-        let deleteVehicleTrigger: Observable<Void>
-        let vehicleData: Observable<VehicleFormData>
+        let refreshTrigger: Observable<Void>
+        let searchQuery: Observable<String>
+        let filterType: Observable<VehicleType?>
+        let statusFilter: Observable<VehicleStatus?>
     }
     
     struct Output {
         let isLoading: Observable<Bool>
         let error: Observable<Error?>
-        let vehicle: Observable<Vehicle?>
-        let saveResult: Observable<Bool>
-        let mediaPickerVisible: Observable<Bool>
-        let locationPickerVisible: Observable<Bool>
+        let vehicles: Observable<[Vehicle]>
+        let filteredVehicles: Observable<[Vehicle]>
+        let syncStatus: Observable<SyncStatus>
     }
     
     private let vehicleRepository: VehicleRepository
-    private let mediaService: MediaService
-    private let locationService: LocationService
     
     func transform(input: Input) -> Output {
         // Implementation
@@ -141,28 +139,25 @@ class VehicleDetailViewModel: ViewModel {
 ### Features
 
 1. Vehicle Management
-   - CRUD operations
+   - Add/edit vehicles
+   - Vehicle details
+   - Status tracking
+   - Notes and history
    - Offline support
-   - Data validation
-   - Batch operations
 
-2. Media Handling
-   - Camera integration
-   - Photo library
-   - Image optimization
-   - Offline storage
+2. Vehicle List
+   - Search functionality
+   - Type filtering
+   - Status filtering
+   - Sort options
+   - Quick actions
 
-3. Location Services
-   - Current location
-   - Address lookup
-   - Map integration
-   - Geofencing
-
-4. Sync System
-   - Background sync
-   - Conflict resolution
-   - Media sync
-   - Change tracking
+3. Vehicle Details
+   - Comprehensive info
+   - Status updates
+   - Maintenance history
+   - Fuel history
+   - Expense tracking
 
 ### API Integration
 
@@ -173,7 +168,6 @@ protocol VehicleEndpoint {
     static func createVehicle(vehicle: Vehicle) -> Endpoint
     static func updateVehicle(vehicle: Vehicle) -> Endpoint
     static func deleteVehicle(id: String) -> Endpoint
-    static func uploadImage(vehicleId: String) -> Endpoint
 }
 
 extension VehicleEndpoint {
@@ -191,89 +185,82 @@ extension VehicleEndpoint {
 ## Implementation Plan
 
 ### Phase 1: Core Features (Week 1)
-- [ ] Vehicle list
-- [ ] Vehicle details
-- [ ] CRUD operations
-- [ ] Local storage
+- [ ] Vehicle list view
+- [ ] Vehicle form
+- [ ] Basic CRUD operations
+- [ ] Offline storage
 
-### Phase 2: Media System (Week 2)
-- [ ] Camera integration
-- [ ] Image management
-- [ ] Storage optimization
-- [ ] Sync system
+### Phase 2: Enhanced Features (Week 2)
+- [ ] Search functionality
+- [ ] Filtering system
+- [ ] Sort options
+- [ ] Quick actions
 
-### Phase 3: Location Features (Week 3)
-- [ ] Location services
-- [ ] Map integration
-- [ ] Address handling
-- [ ] Offline maps
+### Phase 3: Details & History (Week 3)
+- [ ] Detailed view
+- [ ] Status management
+- [ ] History tracking
+- [ ] Data sync
 
 ### Phase 4: Advanced Features (Week 4)
-- [ ] Background sync
-- [ ] Conflict resolution
-- [ ] Batch operations
-- [ ] Performance tuning
+- [ ] VIN scanning
+- [ ] Document storage
+- [ ] Siri shortcuts
+- [ ] Widgets
 
 ## UI Components
 
-### VehicleDetailViewController
+### VehicleForm
 ```swift
-class VehicleDetailViewController: BaseViewController<VehicleDetailViewModel> {
-    private let scrollView = UIScrollView()
-    private let imageCollectionView: UICollectionView
-    private let formContainer = UIStackView()
+class VehicleForm: BaseView {
+    private let makeField = TextField()
+    private let modelField = TextField()
+    private let yearField = NumberField()
+    private let typeSelector = SegmentedControl()
+    private let plateField = TextField()
+    private let vinField = TextField()
     private let saveButton = PrimaryButton()
-    private let cameraButton = IconButton()
-    private let locationButton = IconButton()
     
     override func setupUI() {
         // UI setup
     }
     
     override func bindViewModel() {
-        let input = VehicleDetailViewModel.Input(
-            saveVehicleTrigger: saveButton.rx.tap.asObservable(),
-            takePictureTrigger: cameraButton.rx.tap.asObservable(),
-            selectLocationTrigger: locationButton.rx.tap.asObservable(),
-            deleteVehicleTrigger: deleteButton.rx.tap.asObservable(),
-            vehicleData: formData.asObservable()
-        )
-        
-        let output = viewModel.transform(input: input)
-        // Bind outputs
+        // Bind inputs/outputs
     }
 }
 ```
 
 ## Testing Strategy
-- Repository tests
-- Sync logic tests
-- Media handling tests
-- Location tests
+- Unit tests for models
+- Integration tests for sync
 - UI interaction tests
+- Offline functionality tests
+- Form validation tests
 
 ## Performance Considerations
+- Efficient data storage
+- Background sync optimization
 - Image caching
-- Background operations
-- Memory management
-- Battery optimization
-- Network efficiency
+- List performance
+- Search optimization
 
 ## Security Measures
-- Data encryption
-- Secure file storage
-- Location privacy
+- Secure data storage
+- Network security
+- Input validation
 - Access control
+- Data encryption
 
 ## Accessibility
 - VoiceOver support
 - Dynamic type
-- Image descriptions
-- Location alternatives
-- Gesture support
+- Color contrast
+- Haptic feedback
+- Keyboard navigation
 
 ## Open Questions
-1. Offline map provider?
-2. Image compression ratio?
-3. Sync frequency?
-4. Location accuracy level? 
+1. VIN scanning accuracy requirements?
+2. Document storage limits?
+3. Offline sync conflict resolution?
+4. Widget update frequency? 

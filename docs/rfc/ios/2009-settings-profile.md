@@ -1,18 +1,19 @@
-# RFC 2009: iOS Settings & Profile Management System
+# RFC 2009: iOS Settings & Profile System
 
 ## Status
 - Status: Draft
 - Date: 2024-01-20
-- Priority: P2 (Secondary Feature)
+- Priority: P2 (Enhancement)
 
 ## Context
-The iOS Settings & Profile Management System provides users with a native mobile interface to manage their account settings, preferences, and vehicle profiles, leveraging iOS capabilities for biometric authentication, iCloud sync, and device-specific configurations.
+The iOS Settings & Profile System provides users with a comprehensive interface to manage their account settings, preferences, and profile information. The system leverages iOS capabilities for secure data management and system integration.
 
 ## Goals
-- Create settings management interface
-- Implement biometric security
-- Build iCloud sync system
-- Develop device preferences
+- Create intuitive settings interface
+- Implement profile management
+- Enable preference customization
+- Develop notification controls
+- Support data management
 
 ## Detailed Design
 
@@ -23,12 +24,12 @@ ios/FuelCare/Features/Settings/
 │   ├── Models/
 │   │   ├── UserProfile.swift
 │   │   ├── AppSettings.swift
-│   │   └── DeviceConfig.swift
+│   │   └── Preferences.swift
 │   ├── Repositories/
 │   │   └── SettingsRepository.swift
 │   └── UseCases/
 │       ├── ProfileManagementUseCase.swift
-│       └── SettingsSyncUseCase.swift
+│       └── SettingsManagementUseCase.swift
 ├── Data/
 │   ├── DataSources/
 │   │   ├── SettingsRemoteDataSource.swift
@@ -39,15 +40,15 @@ ios/FuelCare/Features/Settings/
     ├── ViewModels/
     │   ├── SettingsViewModel.swift
     │   ├── ProfileViewModel.swift
-    │   └── SecurityViewModel.swift
+    │   └── PreferencesViewModel.swift
     ├── Views/
     │   ├── SettingsViewController.swift
     │   ├── ProfileViewController.swift
-    │   ├── SecurityViewController.swift
+    │   ├── PreferencesViewController.swift
     │   └── Components/
     │       ├── SettingsCell.swift
-    │       ├── BiometricView.swift
-    │       └── SyncStatusView.swift
+    │       ├── ProfileHeader.swift
+    │       └── PreferenceToggle.swift
     └── Coordinator/
         └── SettingsCoordinator.swift
 ```
@@ -60,32 +61,29 @@ struct UserProfile: Codable {
     let id: String
     var email: String
     var name: String
-    var avatar: ImageAsset?
-    var preferences: UserPreferences
-    var devices: [DeviceInfo]
-    var biometricEnabled: Bool
+    var avatar: URL?
+    var phone: String?
+    var preferredCurrency: Currency
+    var preferredUnits: UnitPreferences
     var notificationSettings: NotificationPreferences
     
-    var isSynced: Bool
-    var lastSyncDate: Date?
+    var lastSync: Date?
 }
 
 struct AppSettings: Codable {
-    let deviceId: String
     var theme: AppTheme
-    var units: UnitPreferences
-    var privacySettings: PrivacySettings
-    var syncSettings: SyncPreferences
-    var localAuth: BiometricSettings
+    var language: Language
+    var notifications: NotificationSettings
+    var privacy: PrivacySettings
+    var dataSync: SyncSettings
 }
 
-struct DeviceConfig: Codable {
-    let deviceId: String
-    let deviceName: String
-    var pushToken: String?
-    var biometricType: BiometricType?
-    var lastActive: Date
-    var syncStatus: SyncStatus
+struct Preferences: Codable {
+    var currency: Currency
+    var units: UnitPreferences
+    var notifications: NotificationPreferences
+    var appearance: AppearancePreferences
+    var privacy: PrivacyPreferences
 }
 ```
 
@@ -95,16 +93,17 @@ protocol SettingsRepository {
     func getUserProfile() async throws -> UserProfile
     func updateProfile(_ profile: UserProfile) async throws -> UserProfile
     func getAppSettings() async throws -> AppSettings
-    func updateSettings(_ settings: AppSettings) async throws -> AppSettings
-    func syncWithCloud() async throws -> SyncResult
-    func configureBiometric(type: BiometricType) async throws -> Bool
+    func updateSettings(_ settings: AppSettings) async throws
+    func getPreferences() async throws -> Preferences
+    func updatePreferences(_ preferences: Preferences) async throws
+    func exportUserData() async throws -> URL
+    func deleteUserData() async throws
 }
 
 class SettingsRepositoryImpl: SettingsRepository {
     private let remoteDataSource: SettingsRemoteDataSource
     private let localDataSource: SettingsLocalDataSource
-    private let biometricService: BiometricService
-    private let cloudService: CloudSyncService
+    private let secureStorage: SecureStorage
     
     // Implementation
 }
@@ -114,25 +113,24 @@ class SettingsRepositoryImpl: SettingsRepository {
 ```swift
 class SettingsViewModel: ViewModel {
     struct Input {
+        let refreshTrigger: Observable<Void>
         let themeSelection: Observable<AppTheme>
-        let unitSelection: Observable<UnitPreferences>
-        let biometricToggle: Observable<Bool>
-        let syncTrigger: Observable<Void>
-        let privacySettings: Observable<PrivacySettings>
+        let languageSelection: Observable<Language>
+        let notificationToggle: Observable<NotificationCategory>
+        let exportTrigger: Observable<Void>
+        let deleteAccountTrigger: Observable<Void>
     }
     
     struct Output {
         let isLoading: Observable<Bool>
         let error: Observable<Error?>
         let settings: Observable<AppSettings>
-        let biometricAvailable: Observable<BiometricType?>
-        let syncStatus: Observable<SyncStatus>
-        let deviceInfo: Observable<DeviceConfig>
+        let preferences: Observable<Preferences>
+        let exportUrl: Observable<URL?>
+        let deleteConfirmation: Observable<Bool>
     }
     
     private let settingsRepository: SettingsRepository
-    private let biometricService: BiometricService
-    private let cloudService: CloudSyncService
     
     func transform(input: Input) -> Output {
         // Implementation
@@ -143,28 +141,25 @@ class SettingsViewModel: ViewModel {
 ### Features
 
 1. Profile Management
-   - Account settings
-   - Avatar handling
-   - Preferences sync
-   - Multi-device support
+   - Profile editing
+   - Avatar management
+   - Contact info
+   - Preferences
+   - Data export
 
-2. Security Features
-   - Biometric auth
-   - App lock
-   - Privacy controls
-   - Secure storage
+2. App Settings
+   - Theme selection
+   - Language options
+   - Notification controls
+   - Privacy settings
+   - Data management
 
-3. Device Sync
-   - iCloud sync
-   - Device management
-   - Conflict resolution
-   - Background sync
-
-4. App Configuration
-   - Theme settings
+3. Preferences
+   - Currency selection
    - Unit preferences
-   - Notifications
-   - Privacy options
+   - Display options
+   - Sync settings
+   - Security options
 
 ### API Integration
 
@@ -172,15 +167,16 @@ class SettingsViewModel: ViewModel {
 protocol SettingsEndpoint {
     static func getProfile() -> Endpoint
     static func updateProfile(profile: UserProfile) -> Endpoint
-    static func syncSettings(deviceId: String) -> Endpoint
-    static func registerDevice(config: DeviceConfig) -> Endpoint
-    static func updatePreferences(settings: AppSettings) -> Endpoint
+    static func getSettings() -> Endpoint
+    static func updateSettings(settings: AppSettings) -> Endpoint
+    static func exportData() -> Endpoint
+    static func deleteAccount() -> Endpoint
 }
 
 extension SettingsEndpoint {
     static func getProfile() -> Endpoint {
         return Endpoint(
-            path: "/profile",
+            path: "/user/profile",
             method: .get,
             headers: ["Content-Type": "application/json"]
         )
@@ -192,88 +188,79 @@ extension SettingsEndpoint {
 ## Implementation Plan
 
 ### Phase 1: Core Settings (Week 1)
-- [ ] Settings UI
+- [ ] Settings interface
 - [ ] Profile management
-- [ ] Local storage
-- [ ] Basic sync
+- [ ] Basic preferences
+- [ ] Data storage
 
-### Phase 2: Security (Week 2)
-- [ ] Biometric setup
-- [ ] App lock
+### Phase 2: Customization (Week 2)
+- [ ] Theme system
+- [ ] Language support
+- [ ] Unit preferences
+- [ ] Currency options
+
+### Phase 3: Integration (Week 3)
+- [ ] Notification setup
 - [ ] Privacy controls
-- [ ] Secure storage
-
-### Phase 3: Cloud Sync (Week 3)
-- [ ] iCloud integration
-- [ ] Device sync
-- [ ] Conflict handling
-- [ ] Background sync
+- [ ] Data sync
+- [ ] Security features
 
 ### Phase 4: Advanced Features (Week 4)
-- [ ] Theme system
-- [ ] Custom preferences
-- [ ] Migration tools
-- [ ] Backup/Restore
+- [ ] Data export
+- [ ] Account deletion
+- [ ] Backup system
+- [ ] Settings sync
 
 ## UI Components
 
 ### SettingsViewController
 ```swift
-class SettingsViewController: BaseViewController<SettingsViewModel> {
+class SettingsViewController: BaseViewController {
     private let tableView = UITableView(style: .grouped)
     private let profileHeader = ProfileHeaderView()
-    private let biometricSwitch = UISwitch()
-    private let syncButton = IconButton()
-    private let themeSelector = ThemePickerView()
+    private let themeSelector = ThemeSelector()
+    private let languagePicker = LanguagePicker()
     
     override func setupUI() {
         // UI setup
     }
     
     override func bindViewModel() {
-        let input = SettingsViewModel.Input(
-            themeSelection: themeSelector.rx.theme.asObservable(),
-            unitSelection: unitPicker.rx.units.asObservable(),
-            biometricToggle: biometricSwitch.rx.isOn.asObservable(),
-            syncTrigger: syncButton.rx.tap.asObservable(),
-            privacySettings: privacyForm.rx.settings.asObservable()
-        )
-        
-        let output = viewModel.transform(input: input)
-        // Bind outputs
+        // Bind inputs/outputs
     }
 }
 ```
 
 ## Testing Strategy
-- Settings persistence
-- Biometric auth
-- Sync reliability
-- Migration tests
+- Unit tests for settings
+- Profile validation tests
+- Preference sync tests
+- Security tests
 - UI interaction tests
 
 ## Performance Considerations
-- Sync efficiency
-- Background tasks
-- Memory usage
-- Battery impact
-- Storage optimization
+- Settings caching
+- Profile sync optimization
+- Image optimization
+- Preference loading
+- Background sync
 
 ## Security Measures
-- Keychain storage
-- Biometric security
+- Secure data storage
+- Profile privacy
+- Export security
+- Access control
 - Data encryption
-- Secure sync
 
 ## Accessibility
 - VoiceOver support
 - Dynamic type
-- Biometric alternatives
-- High contrast
-- Reduced motion
+- Color contrast
+- Haptic feedback
+- Keyboard navigation
 
 ## Open Questions
-1. Biometric fallback options?
-2. Sync conflict resolution?
-3. iCloud storage limits?
-4. Migration strategy? 
+1. Biometric auth integration?
+2. Backup frequency?
+3. Export format options?
+4. Theme customization extent? 

@@ -6,7 +6,7 @@
 - Priority: P2 (Secondary Feature)
 
 ## Context
-The iOS Maintenance Management System provides users with a native mobile interface to track and manage vehicle maintenance, leveraging iOS capabilities for service reminders, diagnostic integration, and offline service history.
+The iOS Maintenance Management System provides users with a native mobile interface to track and manage vehicle maintenance, leveraging iOS capabilities for service reminders and offline service history.
 
 ## Goals
 - Create maintenance tracking interface
@@ -62,7 +62,6 @@ struct Service: Codable {
     var type: ServiceType
     var date: Date
     var odometer: Double
-    var provider: ServiceProvider?
     var cost: Decimal
     var parts: [ServicePart]
     var notes: String?
@@ -201,25 +200,17 @@ extension MaintenanceEndpoint {
 - [ ] Schedule system
 - [ ] Local storage
 
-### Phase 2: Reminders (Week 2)
+### Phase 2: Smart Features (Week 2)
 - [ ] Calendar integration
-- [ ] Notifications
-- [ ] Mileage tracking
-- [ ] Custom schedules
+- [ ] Push notifications
+- [ ] Offline support
+- [ ] Document handling
 
-### Phase 3: Diagnostics (Week 3)
-- [ ] OBD-II integration
-- [ ] Code reading
-- [ ] Sensor monitoring
-- [ ] Health reports
-
-### Phase 4: Analytics (Week 4)
-- [ ] Cost analysis
-- [ ] Service predictions
-- [ ] Health scoring
-- [ ] Reports generation
-
-## UI Components
+### Phase 3: Analytics (Week 3)
+- [ ] Cost tracking
+- [ ] Service analysis
+- [ ] Health monitoring
+- [ ] Reporting tools
 
 ### ServiceDetailViewController
 ```swift
@@ -258,27 +249,20 @@ class ServiceDetailViewController: BaseViewController<ServiceDetailViewModel> {
 - UI interaction tests
 
 ## Performance Considerations
-- Background processing
-- Diagnostic data handling
-- Notification scheduling
-- Battery optimization
-- Storage efficiency
-
-## Security Measures
-- Diagnostic data privacy
-- Service record integrity
-- Document encryption
-- Access control
+- Offline first approach
+- Background sync
+- Image optimization
+- Cache management
+- Battery efficiency
 
 ## Accessibility
 - VoiceOver support
 - Dynamic type
-- Reminder alternatives
-- Diagnostic feedback
-- Service guidance
+- Color contrast
+- Haptic feedback
+- Keyboard navigation
 
 ## Open Questions
-1. OBD-II adapter support?
-2. Reminder frequency limits?
-3. Diagnostic data retention?
-4. Health score algorithm? 
+1. Preferred calendar framework?
+2. Service interval defaults?
+3. Document size limits? 

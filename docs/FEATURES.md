@@ -75,14 +75,12 @@
   - Maintenance history
   - Service reminders
   - Upcoming maintenance alerts
-  - Service provider directory
 - Maintenance tools:
   - Custom maintenance checklists
   - Service interval tracking
   - Document storage for records
   - Service cost tracking
   - Maintenance expense analysis
-  - Service provider ratings
 
 ## Additional Features
 

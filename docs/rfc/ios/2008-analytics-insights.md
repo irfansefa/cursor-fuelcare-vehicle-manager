@@ -3,16 +3,17 @@
 ## Status
 - Status: Draft
 - Date: 2024-01-20
-- Priority: P2 (Secondary Feature)
+- Priority: P2 (Enhancement)
 
 ## Context
-The iOS Analytics & Insights System provides users with a comprehensive mobile analytics dashboard, leveraging iOS capabilities for real-time monitoring, offline analysis, and interactive visualizations of vehicle performance and costs.
+The iOS Analytics & Insights System provides users with comprehensive data analysis and visualization tools to understand their vehicle expenses, fuel efficiency, and maintenance patterns. The system leverages iOS capabilities for interactive charts and offline analytics.
 
 ## Goals
-- Create mobile analytics dashboard
-- Implement real-time monitoring
-- Build offline analysis system
-- Develop interactive visualizations
+- Create interactive analytics dashboard
+- Implement comprehensive data visualization
+- Enable offline analytics processing
+- Develop trend analysis tools
+- Support data export capabilities
 
 ## Detailed Design
 
@@ -21,14 +22,14 @@ The iOS Analytics & Insights System provides users with a comprehensive mobile a
 ios/FuelCare/Features/Analytics/
 ├── Domain/
 │   ├── Models/
-│   │   ├── Metric.swift
-│   │   ├── Report.swift
-│   │   └── Insight.swift
+│   │   ├── AnalyticsDashboard.swift
+│   │   ├── ChartData.swift
+│   │   └── InsightReport.swift
 │   ├── Repositories/
 │   │   └── AnalyticsRepository.swift
 │   └── UseCases/
-│       ├── MetricsAnalysisUseCase.swift
-│       └── InsightGenerationUseCase.swift
+│       ├── DashboardAnalyticsUseCase.swift
+│       └── TrendAnalysisUseCase.swift
 ├── Data/
 │   ├── DataSources/
 │   │   ├── AnalyticsRemoteDataSource.swift
@@ -38,16 +39,16 @@ ios/FuelCare/Features/Analytics/
 └── Presentation/
     ├── ViewModels/
     │   ├── DashboardViewModel.swift
-    │   ├── MetricDetailViewModel.swift
+    │   ├── ChartViewModel.swift
     │   └── InsightViewModel.swift
     ├── Views/
     │   ├── DashboardViewController.swift
-    │   ├── MetricDetailViewController.swift
+    │   ├── ChartViewController.swift
     │   ├── InsightViewController.swift
     │   └── Components/
-    │       ├── MetricCard.swift
     │       ├── ChartView.swift
-    │       └── InsightCard.swift
+    │       ├── InsightCard.swift
+    │       └── StatisticView.swift
     └── Coordinator/
         └── AnalyticsCoordinator.swift
 ```
@@ -56,60 +57,46 @@ ios/FuelCare/Features/Analytics/
 
 1. Analytics Models
 ```swift
-struct Metric: Codable {
-    let id: String
-    let vehicleId: String
-    var type: MetricType
-    var value: Double
-    var unit: UnitType
-    var timestamp: Date
-    var tags: [String]
-    var source: MetricSource
-    
-    var isRealTime: Bool
-    var lastUpdate: Date?
+struct AnalyticsDashboard: Codable {
+    let fuelStats: FuelStats
+    let expenseStats: ExpenseStats
+    let maintenanceStats: MaintenanceStats
+    let insights: [Insight]
+    let trends: [Trend]
 }
 
-struct Report: Codable {
-    let id: String
-    let vehicleId: String
-    var title: String
-    var metrics: [Metric]
-    var period: DateInterval
-    var format: ReportFormat
-    var filters: [MetricFilter]
-    var visualizations: [ChartConfig]
+struct ChartData: Codable {
+    let labels: [String]
+    let datasets: [Dataset]
+    let type: ChartType
+    let options: ChartOptions
 }
 
 struct Insight: Codable {
     let id: String
-    let vehicleId: String
-    var type: InsightType
-    var title: String
-    var description: String
-    var severity: InsightSeverity
-    var metrics: [Metric]
-    var recommendations: [String]
-    var timestamp: Date
+    let title: String
+    let description: String
+    let type: InsightType
+    let severity: InsightSeverity
+    let data: [String: Any]
+    let timestamp: Date
 }
 ```
 
 2. Analytics Repository
 ```swift
 protocol AnalyticsRepository {
-    func getMetrics(vehicleId: String, type: MetricType) async throws -> [Metric]
-    func getRealTimeMetrics(vehicleId: String) async throws -> AsyncStream<Metric>
-    func generateReport(config: ReportConfig) async throws -> Report
-    func getInsights(vehicleId: String) async throws -> [Insight]
+    func getDashboardData() async throws -> AnalyticsDashboard
+    func getChartData(type: ChartType, period: Period) async throws -> ChartData
+    func getInsights() async throws -> [Insight]
+    func getTrends(category: TrendCategory) async throws -> [Trend]
     func exportData(format: ExportFormat) async throws -> URL
-    func calculateTrends(metrics: [Metric]) async throws -> TrendAnalysis
 }
 
 class AnalyticsRepositoryImpl: AnalyticsRepository {
     private let remoteDataSource: AnalyticsRemoteDataSource
     private let localDataSource: AnalyticsLocalDataSource
     private let chartService: ChartService
-    private let exportService: ExportService
     
     // Implementation
 }
@@ -119,25 +106,22 @@ class AnalyticsRepositoryImpl: AnalyticsRepository {
 ```swift
 class DashboardViewModel: ViewModel {
     struct Input {
-        let dateRange: Observable<DateInterval>
-        let metricTypes: Observable<Set<MetricType>>
         let refreshTrigger: Observable<Void>
+        let periodSelection: Observable<Period>
+        let vehicleSelection: Observable<String?>
         let exportTrigger: Observable<ExportFormat>
-        let realTimeEnabled: Observable<Bool>
     }
     
     struct Output {
         let isLoading: Observable<Bool>
         let error: Observable<Error?>
-        let metrics: Observable<[MetricGroup]>
+        let dashboard: Observable<AnalyticsDashboard>
+        let charts: Observable<[ChartData]>
         let insights: Observable<[Insight]>
-        let realTimeUpdates: Observable<Metric?>
-        let exportProgress: Observable<Double>
+        let exportUrl: Observable<URL?>
     }
     
     private let analyticsRepository: AnalyticsRepository
-    private let chartService: ChartService
-    private let exportService: ExportService
     
     func transform(input: Input) -> Output {
         // Implementation
@@ -148,46 +132,42 @@ class DashboardViewModel: ViewModel {
 ### Features
 
 1. Analytics Dashboard
-   - Real-time metrics
-   - Interactive charts
-   - Custom widgets
+   - Overview statistics
+   - Key metrics
    - Quick insights
+   - Interactive charts
+   - Offline support
 
 2. Data Visualization
-   - Dynamic charts
-   - 3D Touch previews
-   - Gesture controls
-   - AR visualizations
+   - Multiple chart types
+   - Interactive graphs
+   - Custom periods
+   - Data filtering
+   - Export options
 
-3. Reporting System
-   - Custom reports
-   - Data export
-   - Share sheets
-   - Offline access
-
-4. Smart Insights
+3. Insights Engine
    - Trend detection
-   - Anomaly alerts
-   - Predictive analysis
-   - Recommendations
+   - Cost analysis
+   - Efficiency metrics
+   - Predictive insights
+   - Custom alerts
 
 ### API Integration
 
 ```swift
 protocol AnalyticsEndpoint {
-    static func getMetrics(vehicleId: String, type: MetricType) -> Endpoint
-    static func streamMetrics(vehicleId: String) -> Endpoint
-    static func generateReport(config: ReportConfig) -> Endpoint
-    static func getInsights(vehicleId: String) -> Endpoint
+    static func getDashboard() -> Endpoint
+    static func getChartData(type: ChartType, period: Period) -> Endpoint
+    static func getInsights() -> Endpoint
+    static func getTrends(category: TrendCategory) -> Endpoint
     static func exportData(format: ExportFormat) -> Endpoint
 }
 
 extension AnalyticsEndpoint {
-    static func getMetrics(vehicleId: String, type: MetricType) -> Endpoint {
+    static func getDashboard() -> Endpoint {
         return Endpoint(
-            path: "/vehicles/\(vehicleId)/metrics",
+            path: "/analytics/dashboard",
             method: .get,
-            parameters: ["type": type.rawValue],
             headers: ["Content-Type": "application/json"]
         )
     }
@@ -198,88 +178,80 @@ extension AnalyticsEndpoint {
 ## Implementation Plan
 
 ### Phase 1: Core Analytics (Week 1)
-- [ ] Dashboard UI
-- [ ] Basic metrics
-- [ ] Chart system
-- [ ] Local storage
+- [ ] Dashboard layout
+- [ ] Basic charts
+- [ ] Key metrics
+- [ ] Data processing
 
-### Phase 2: Real-time Features (Week 2)
-- [ ] Live updates
-- [ ] Streaming data
-- [ ] Background refresh
-- [ ] Push updates
-
-### Phase 3: Visualization (Week 3)
+### Phase 2: Visualization (Week 2)
 - [ ] Interactive charts
-- [ ] Custom widgets
-- [ ] AR features
-- [ ] Gesture controls
+- [ ] Custom periods
+- [ ] Filtering system
+- [ ] Export options
 
-### Phase 4: Insights (Week 4)
+### Phase 3: Insights (Week 3)
 - [ ] Trend analysis
-- [ ] Smart alerts
-- [ ] Recommendations
-- [ ] Export system
+- [ ] Cost insights
+- [ ] Efficiency metrics
+- [ ] Alert system
+
+### Phase 4: Advanced Features (Week 4)
+- [ ] Offline analytics
+- [ ] Custom reports
+- [ ] Widgets
+- [ ] Sharing options
 
 ## UI Components
 
-### DashboardViewController
+### ChartView
 ```swift
-class DashboardViewController: BaseViewController<DashboardViewModel> {
-    private let scrollView = UIScrollView()
-    private let metricsCollection: UICollectionView
-    private let chartsContainer = UIStackView()
-    private let insightsList = UITableView()
-    private let dateRangePicker = DateRangePickerView()
+class ChartView: BaseView {
+    private let chartContainer = UIView()
+    private let legendView = LegendView()
+    private let periodSelector = SegmentedControl()
+    private let filterButton = IconButton()
+    private let exportButton = IconButton()
     
     override func setupUI() {
         // UI setup
     }
     
     override func bindViewModel() {
-        let input = DashboardViewModel.Input(
-            dateRange: dateRangePicker.rx.range.asObservable(),
-            metricTypes: filterView.rx.selectedTypes.asObservable(),
-            refreshTrigger: refreshControl.rx.controlEvent(.valueChanged).asObservable(),
-            exportTrigger: exportButton.rx.tap.asObservable(),
-            realTimeEnabled: realTimeSwitch.rx.isOn.asObservable()
-        )
-        
-        let output = viewModel.transform(input: input)
-        // Bind outputs
+        // Bind inputs/outputs
     }
 }
 ```
 
 ## Testing Strategy
-- Metric calculations
-- Real-time updates
-- Chart rendering
-- Export functionality
-- UI responsiveness
+- Unit tests for calculations
+- Chart rendering tests
+- Data processing tests
+- Export functionality tests
+- Offline analytics tests
 
 ## Performance Considerations
-- Data aggregation
+- Efficient data processing
 - Chart optimization
-- Background updates
 - Memory management
-- Battery efficiency
+- Background calculations
+- Cache strategy
 
 ## Security Measures
-- Data encryption
-- Secure export
+- Secure data storage
+- Export security
 - Access control
-- Privacy settings
+- Data validation
+- Privacy controls
 
 ## Accessibility
 - VoiceOver support
 - Dynamic type
 - Chart alternatives
+- Color contrast
 - Haptic feedback
-- Motion sensitivity
 
 ## Open Questions
-1. Real-time update frequency?
-2. Offline analysis depth?
-3. AR visualization scope?
-4. Export format options? 
+1. Chart library selection?
+2. Offline calculation limits?
+3. Export format options?
+4. Widget refresh frequency? 

@@ -12,7 +12,6 @@ The Maintenance Management System provides users with a comprehensive web interf
 - Create maintenance scheduling interface
 - Implement service tracking system
 - Build maintenance history dashboard
-- Develop service provider management
 
 ## Detailed Design
 
@@ -30,18 +29,13 @@ webapp/
 │       │   │   ├── ServiceForm
 │       │   │   ├── ServiceList
 │       │   │   └── ServiceDetails
-│       │   ├── Providers/
-│       │   │   ├── ProviderDirectory
-│       │   │   ├── ProviderProfile
-│       │   │   └── ProviderRatings
 │       │   └── History/
 │       │       ├── MaintenanceHistory
 │       │       ├── ServiceTimeline
 │       │       └── CostAnalysis
 │       ├── hooks/
 │       │   ├── useSchedule
-│       │   ├── useService
-│       │   └── useProviders
+│       │   └── useService
 │       ├── store/
 │       │   ├── maintenanceSlice
 │       │   └── maintenanceApi
@@ -55,7 +49,6 @@ webapp/
 interface MaintenanceState {
   schedules: MaintenanceSchedule[];
   services: Service[];
-  providers: ServiceProvider[];
   reminders: Reminder[];
   selectedService: Service | null;
   loading: boolean;
@@ -81,7 +74,6 @@ interface Service {
   type: ServiceType;
   date: string;
   odometer: number;
-  provider: ServiceProvider;
   cost: number;
   notes: string;
   documents: Document[];
@@ -102,13 +94,7 @@ interface Service {
    - Cost tracking
    - Service history
 
-3. Provider Directory
-   - Provider profiles
-   - Rating system
-   - Service specialties
-   - Contact management
-
-4. Maintenance Analytics
+3. Maintenance Analytics
    - Cost analysis
    - Service timeline
    - Maintenance forecasting
@@ -125,7 +111,6 @@ export const maintenanceApi = createApi({
     getServices: builder.query<Service[], ServiceFilters>(),
     addService: builder.mutation<Service, NewService>(),
     updateSchedule: builder.mutation<MaintenanceSchedule, UpdateSchedule>(),
-    getProviders: builder.query<ServiceProvider[], ProviderFilters>(),
     setReminder: builder.mutation<Reminder, NewReminder>(),
     uploadServiceDoc: builder.mutation<string, FormData>(),
   })
@@ -146,13 +131,7 @@ export const maintenanceApi = createApi({
 - [ ] History tracking
 - [ ] Cost recording
 
-### Phase 3: Provider Features (Week 3)
-- [ ] Provider directory
-- [ ] Rating system
-- [ ] Provider profiles
-- [ ] Appointment scheduling
-
-### Phase 4: Analytics Tools (Week 4)
+### Phase 3: Analytics Tools (Week 3)
 - [ ] Maintenance dashboard
 - [ ] Cost analysis
 - [ ] Service forecasting
@@ -201,13 +180,11 @@ const validationSchema = z.object({
 - Reminder system tests
 - Form validation tests
 - Document handling tests
-- Provider integration tests
 
 ## Performance Optimizations
 - Calendar event virtualization
 - Document lazy loading
 - Background scheduling
-- Cached provider data
 - Optimistic updates
 
 ## Accessibility
@@ -220,5 +197,4 @@ const validationSchema = z.object({
 ## Open Questions
 1. Preferred calendar library?
 2. Service interval standards?
-3. Document storage limits?
-4. Provider verification process? 
+3. Document storage limits? 
