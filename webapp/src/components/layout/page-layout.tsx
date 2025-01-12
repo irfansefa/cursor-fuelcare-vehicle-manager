@@ -6,10 +6,12 @@ interface PageLayoutProps {
 
 export function PageLayout({ children }: PageLayoutProps) {
   return (
-    <div className="min-h-screen bg-background">
-      <main className="container py-6">
-        {children}
-      </main>
+    <div className="pt-14 md:pt-16">
+      <div className="w-full">
+        <div className="container py-6">
+          {children}
+        </div>
+      </div>
     </div>
   );
 } 

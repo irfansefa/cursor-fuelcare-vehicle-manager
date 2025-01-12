@@ -1,6 +1,7 @@
 import * as React from "react"
 import { ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { typographyScale } from "@/components/ui/utils"
 
 interface BreadcrumbsProps extends React.HTMLAttributes<HTMLElement> {
   separator?: React.ReactNode
@@ -12,8 +13,17 @@ const Breadcrumbs = React.forwardRef<HTMLElement, BreadcrumbsProps>(
     const items = React.Children.toArray(children)
 
     return (
-      <nav ref={ref} aria-label="breadcrumb" className={cn("flex", className)} {...props}>
-        <ol className="flex items-center space-x-2">
+      <nav 
+        ref={ref} 
+        aria-label="breadcrumb" 
+        className={cn(
+          "flex overflow-x-auto scrollbar-none", // Mobile scroll
+          "py-1 -mx-1 px-1", // Padding for touch scrolling
+          className
+        )} 
+        {...props}
+      >
+        <ol className="flex items-center space-x-2 min-w-fit">
           {items.map((item, index) => (
             <React.Fragment key={index}>
               {item}
@@ -35,7 +45,16 @@ const BreadcrumbItem = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <li
     ref={ref}
-    className={cn("text-sm text-muted-foreground hover:text-foreground flex items-center", className)}
+    className={cn(
+      // Typography
+      typographyScale.sm.mobile,
+      "md:text-sm",
+      // Colors and layout
+      "text-muted-foreground hover:text-foreground flex items-center",
+      // Mobile touch target
+      "min-h-[32px]",
+      className
+    )}
     {...props}
   />
 ))
@@ -48,7 +67,16 @@ const BreadcrumbLink = React.forwardRef<
   <a
     ref={ref}
     className={cn(
-      "text-sm font-medium underline-offset-4 hover:underline",
+      // Typography
+      typographyScale.sm.mobile,
+      "md:text-sm",
+      "font-medium",
+      // Interactive states
+      "underline-offset-4 hover:underline",
+      // Mobile touch target
+      "min-h-[32px] flex items-center",
+      // Active state
+      "active:opacity-80",
       className
     )}
     {...props}
@@ -65,7 +93,17 @@ const BreadcrumbPage = React.forwardRef<
     role="link"
     aria-disabled="true"
     aria-current="page"
-    className={cn("text-sm font-medium text-foreground", className)}
+    className={cn(
+      // Typography
+      typographyScale.sm.mobile,
+      "md:text-sm",
+      "font-medium",
+      // Colors
+      "text-foreground",
+      // Layout
+      "min-h-[32px] flex items-center",
+      className
+    )}
     {...props}
   />
 ))

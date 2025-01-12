@@ -1,5 +1,6 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import { typographyScale } from "@/components/ui/utils"
 
 const Card = React.forwardRef<
   HTMLDivElement,
@@ -8,7 +9,12 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-lg border bg-card text-card-foreground shadow-sm",
+      "rounded-md border bg-card text-card-foreground shadow-sm",
+      // Mobile optimizations
+      "touch-none",
+      "active:opacity-95",
+      // Compact spacing
+      "p-2 md:p-3",
       className
     )}
     {...props}
@@ -22,7 +28,13 @@ const CardHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex flex-col space-y-1.5 p-6", className)}
+    className={cn(
+      "flex flex-col",
+      // Compact spacing
+      "space-y-0.5",
+      "p-2 md:p-3",
+      className
+    )}
     {...props}
   />
 ))
@@ -35,7 +47,12 @@ const CardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "text-2xl font-semibold leading-none tracking-tight",
+      // Typography - reduced size
+      typographyScale.base.mobile,
+      "md:text-lg",
+      "font-semibold leading-none tracking-tight",
+      // Minimum height for touch
+      "min-h-[24px]",
       className
     )}
     {...props}
@@ -49,7 +66,15 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
+    className={cn(
+      // Typography - smaller size
+      typographyScale.xs.mobile,
+      "md:text-sm",
+      "text-muted-foreground",
+      // Reduced height
+      "min-h-[20px]",
+      className
+    )}
     {...props}
   />
 ))
@@ -59,7 +84,19 @@ const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
+  <div 
+    ref={ref} 
+    className={cn(
+      // Compact spacing
+      "px-2 pt-0 pb-2",
+      "md:px-3 md:pb-3",
+      // Typography - slightly smaller
+      typographyScale.sm.mobile,
+      "md:text-base",
+      className
+    )} 
+    {...props} 
+  />
 ))
 CardContent.displayName = "CardContent"
 
@@ -69,7 +106,15 @@ const CardFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex items-center p-6 pt-0", className)}
+    className={cn(
+      "flex items-center",
+      // Compact spacing
+      "px-2 pt-0 pb-2",
+      "md:px-3 md:pb-3",
+      // Reduced gap
+      "gap-1.5 md:gap-2",
+      className
+    )}
     {...props}
   />
 ))
