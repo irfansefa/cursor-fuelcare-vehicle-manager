@@ -23,8 +23,6 @@ const Avatar = React.forwardRef<
       'relative flex shrink-0 overflow-hidden rounded-full',
       // Base size classes
       avatarSizes[size],
-      // Touch target
-      'touch-none',
       // Active state for mobile
       'active:opacity-80',
       className

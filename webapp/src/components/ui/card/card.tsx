@@ -10,8 +10,7 @@ const Card = React.forwardRef<
     ref={ref}
     className={cn(
       "rounded-md border bg-card text-card-foreground shadow-sm",
-      // Mobile optimizations
-      "touch-none",
+      // Mobile optimizations - removed touch-none to allow scrolling
       "active:opacity-95",
       // Compact spacing
       "p-2 md:p-3",
