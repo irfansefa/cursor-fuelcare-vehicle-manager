@@ -1,6 +1,7 @@
 import * as React from "react"
 import * as LabelPrimitive from "@radix-ui/react-label"
 import { cn } from "@/lib/utils"
+import { typographyScale } from "@/components/ui/utils"
 
 const Label = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,
@@ -9,7 +10,15 @@ const Label = React.forwardRef<
   <LabelPrimitive.Root
     ref={ref}
     className={cn(
-      "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+      // Typography
+      typographyScale.sm.mobile,
+      "md:text-sm",
+      "font-medium leading-none",
+      // Mobile optimizations
+      "min-h-[32px] flex items-center",
+      "active:opacity-80",
+      // States
+      "peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
       className
     )}
     {...props}
