@@ -108,57 +108,103 @@ export default function FeedbackShowcase() {
 
       <h1 className="text-3xl font-bold mb-8">Feedback Components</h1>
 
-      {/* Alerts Section */}
+      {/* Updated Alerts Section */}
       <section className="mb-12">
         <h2 className="text-2xl font-semibold mb-4">Alerts</h2>
+        
+        {/* Alert Variants */}
         <div className="space-y-4">
-          <Alert>
-            <Info className="h-4 w-4" />
-            <AlertTitle>Default Alert</AlertTitle>
-            <AlertDescription>
-              This is a default alert — check it out!
-            </AlertDescription>
-          </Alert>
+          <div>
+            <h3 className="text-lg font-medium mb-2">Alert Variants</h3>
+            <div className="space-y-4">
+              <Alert>
+                <Info className="h-4 w-4" />
+                <AlertTitle>Default Alert</AlertTitle>
+                <AlertDescription>
+                  This is a default alert — check it out!
+                </AlertDescription>
+              </Alert>
 
-          <Alert variant="info">
-            <Info className="h-4 w-4" />
-            <AlertTitle>Information</AlertTitle>
-            <AlertDescription>
-              Your trial period will end in 7 days.
-            </AlertDescription>
-          </Alert>
+              <Alert variant="info">
+                <AlertTitle>Information</AlertTitle>
+                <AlertDescription>
+                  Your trial period will end in 7 days.
+                </AlertDescription>
+              </Alert>
 
-          <Alert variant="success">
-            <CheckCircle className="h-4 w-4" />
-            <AlertTitle>Success</AlertTitle>
-            <AlertDescription>
-              Your changes have been saved successfully.
-            </AlertDescription>
-          </Alert>
+              <Alert variant="success">
+                <AlertTitle>Success</AlertTitle>
+                <AlertDescription>
+                  Your changes have been saved successfully.
+                </AlertDescription>
+              </Alert>
 
-          <Alert variant="warning">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Warning</AlertTitle>
-            <AlertDescription>
-              Your subscription is about to expire.
-            </AlertDescription>
-          </Alert>
+              <Alert variant="warning">
+                <AlertTitle>Warning</AlertTitle>
+                <AlertDescription>
+                  Your subscription is about to expire.
+                </AlertDescription>
+              </Alert>
 
-          <Alert variant="error">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>
-              There was an error processing your request.
-            </AlertDescription>
-          </Alert>
+              <Alert variant="error">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>
+                  There was an error processing your request.
+                </AlertDescription>
+              </Alert>
+            </div>
+          </div>
 
-          <Alert variant="error" onClose={() => console.log('close')}>
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Dismissible Alert</AlertTitle>
-            <AlertDescription>
-              This alert can be dismissed.
-            </AlertDescription>
-          </Alert>
+          {/* Alert with Close Button */}
+          <div>
+            <h3 className="text-lg font-medium mb-2">Dismissible Alert</h3>
+            <Alert variant="error" onClose={() => console.log('close')}>
+              <AlertTitle>Dismissible Alert</AlertTitle>
+              <AlertDescription>
+                This alert can be dismissed using the close button. The close button is optimized for touch on mobile devices.
+              </AlertDescription>
+            </Alert>
+          </div>
+
+          {/* Alert without Title */}
+          <div>
+            <h3 className="text-lg font-medium mb-2">Alert without Title</h3>
+            <Alert variant="info">
+              <AlertDescription>
+                A simple alert message without a title.
+              </AlertDescription>
+            </Alert>
+          </div>
+
+          {/* Alert with Custom Content */}
+          <div>
+            <h3 className="text-lg font-medium mb-2">Alert with Custom Content</h3>
+            <Alert variant="warning">
+              <AlertTitle>Storage Space</AlertTitle>
+              <AlertDescription>
+                <div className="mt-2 space-y-2">
+                  <p>Your storage is almost full (90% used).</p>
+                  <div className="h-2 w-full bg-yellow-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-yellow-400 w-[90%]" />
+                  </div>
+                  <p className="text-sm">Consider upgrading your plan.</p>
+                </div>
+              </AlertDescription>
+            </Alert>
+          </div>
+
+          {/* Mobile Optimization Notes */}
+          <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-950">
+            <h3 className="text-lg font-medium mb-2 text-blue-800 dark:text-blue-200">Mobile Optimizations</h3>
+            <ul className="list-disc list-inside space-y-1 text-sm text-blue-800 dark:text-blue-200">
+              <li>Increased touch targets (min-height: 52px on mobile)</li>
+              <li>Larger close button (32x32px on mobile)</li>
+              <li>Optimized typography for mobile screens</li>
+              <li>Adjusted padding and spacing for touch</li>
+              <li>Larger icons on mobile devices</li>
+              <li>Touch feedback on interactive elements</li>
+            </ul>
+          </div>
         </div>
       </section>
 
