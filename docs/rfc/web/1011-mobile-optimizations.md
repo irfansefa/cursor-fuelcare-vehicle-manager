@@ -103,7 +103,6 @@ interface ResponsiveVehicleCardProps {
 - [ ] Optimize spacing and margins
   - [ ] Define consistent spacing scale
   - [ ] Implement responsive padding/margin utilities
-  - [ ] Test layout on minimum viewport (320px)
 
 ### Phase 2: Component Optimization (Week 2)
 - [ ] Implement responsive cards
@@ -114,7 +113,6 @@ interface ResponsiveVehicleCardProps {
 - [ ] Create mobile-optimized modals
   - [ ] Implement ResponsiveModal with fullscreen option
   - [ ] Add bottom sheet variant for mobile
-  - [ ] Add touch-friendly close gestures
 - [ ] Build collapsible filters
   - [ ] Implement CollapsibleFilters component
   - [ ] Add position variants (left/right/bottom)
@@ -129,19 +127,10 @@ interface ResponsiveVehicleCardProps {
   - [ ] Set up image lazy loading with srcset
   - [ ] Configure progressive loading feature flag
   - [ ] Implement below-fold content lazy loading
-- [ ] Add touch gestures using react-use-gesture
-  - [ ] Implement swipe actions
-  - [ ] Add pull-to-refresh functionality
-  - [ ] Configure pinch-to-zoom for images
-  - [ ] Add long press context menus
 - [ ] Optimize images
   - [ ] Implement responsive image pipeline
   - [ ] Configure WebP conversion with fallbacks
   - [ ] Set up thumbnail generation (150x150px)
-- [ ] Add loading states
-  - [ ] Create skeleton loading components
-  - [ ] Implement progressive loading indicators
-  - [ ] Add offline support indicators
 
 ## UI/UX Considerations
 - Touch-friendly tap targets (minimum 44x44px)
@@ -187,18 +176,3 @@ interface ResponsiveVehicleCardProps {
 - Format: WebP with JPEG fallback
 - Lazy loading for images below the fold
 - Responsive images using srcset
-
-### Gesture Implementation
-- Library: react-use-gesture
-- Supported gestures:
-  - Swipe (left/right for actions)
-  - Pull-to-refresh
-  - Pinch-to-zoom (for images)
-  - Long press for context menus
-
-### Feature Flags
-- enableTouchGestures: true
-- enableOfflineSupport: true
-- enableProgressiveLoading: true
-- enableMobileOptimizedModals: true
-- enableResponsiveImages: true 
