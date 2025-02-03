@@ -68,11 +68,6 @@ export function MainNavbar() {
                       Fuel Types
                     </Link>
                   </NavbarItem>
-                  <NavbarItem>
-                    <Link href="/showcase" className="transition-colors hover:text-foreground/80">
-                      Showcase
-                    </Link>
-                  </NavbarItem>
                 </>
               )}
             </div>
@@ -147,17 +142,6 @@ export function MainNavbar() {
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Fuel Types
-                  </Link>
-                  <Link
-                    href="/showcase"
-                    className={cn(
-                      typographyScale.base.mobile,
-                      "transition-colors hover:text-foreground/80",
-                      "min-h-[44px] flex items-center" // Mobile touch target
-                    )}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Showcase
                   </Link>
                 </>
               )}

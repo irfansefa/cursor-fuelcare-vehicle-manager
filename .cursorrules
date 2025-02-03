@@ -8,7 +8,6 @@ ui_components:
     - All UI elements MUST use components from our UI component library (@/components/ui/*)
     - Direct usage of HTML elements with custom styles is NOT allowed
     - New components must be implemented in UI library before use in features
-    - Every new component MUST be added to the showcase before using it
   
   implementation:
     structure:
@@ -18,7 +17,6 @@ ui_components:
       - Use class-variance-authority for variants
       - Include proper documentation
       - Export from category's index file
-      - Add component to showcase with all variants and examples
     
     patterns:
       - Use React.forwardRef for all components
@@ -40,32 +38,6 @@ ui_components:
       - Support screen readers
       - Ensure color contrast
       - Add focus states
-
-  showcase:
-    - Add component to appropriate section in showcase
-    - Demonstrate all variants and states
-    - Include example usage with common props
-    - Add proper documentation
-    - Show dark mode compatibility
-    - Provide code examples
-
-# Component Showcase Rules
-component_showcase:
-  rules:
-    - All new components must be added to the showcase page
-    - Each component must demonstrate all its variants and states
-    - Components must be organized in their respective sections
-    - Include example usage with common props and configurations
-    - Add proper documentation comments for each showcase section
-  file_location: webapp/src/app/showcase/page.tsx
-  sections:
-    - Buttons
-    - Inputs
-    - Forms
-    - Cards
-    - Navigation
-    - Feedback
-    - Layout
 
 # Best Practices
 code_principles:
