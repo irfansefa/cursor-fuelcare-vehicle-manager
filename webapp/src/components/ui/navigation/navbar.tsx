@@ -1,9 +1,15 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { typographyScale } from "@/components/ui/utils"
 
 const navbarVariants = cva(
-  "w-full border-b bg-background",
+  cn(
+    "w-full border-b bg-background",
+    // Mobile optimization
+    "safe-top", // iOS safe area
+    "backdrop-blur-lg bg-background/80" // Mobile glass effect
+  ),
   {
     variants: {
       variant: {
@@ -12,9 +18,9 @@ const navbarVariants = cva(
         transparent: "bg-transparent border-transparent",
       },
       size: {
-        default: "h-16",
-        sm: "h-14",
-        lg: "h-20",
+        default: "h-[56px] md:h-16", // Mobile-first height
+        sm: "h-[48px] md:h-14",
+        lg: "h-[64px] md:h-20",
       },
       fixed: {
         true: "sticky top-0 z-50",
@@ -26,6 +32,27 @@ const navbarVariants = cva(
       size: "default",
       fixed: false,
     },
+  }
+)
+
+const navbarItemVariants = cva(
+  cn(
+    "transition-colors",
+    // Mobile typography
+    typographyScale.base.mobile,
+    // Desktop typography
+    "md:text-sm"
+  ),
+  {
+    variants: {
+      variant: {
+        default: "text-foreground/60 hover:text-foreground",
+        active: "text-foreground font-medium",
+      }
+    },
+    defaultVariants: {
+      variant: "default"
+    }
   }
 )
 
@@ -56,36 +83,55 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
 )
 Navbar.displayName = "Navbar"
 
-const NavbarBrand = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("flex items-center space-x-2", className)}
-    {...props}
-  />
-))
+interface NavbarItemProps extends React.HTMLAttributes<HTMLDivElement> {
+  active?: boolean
+}
+
+const NavbarItem = React.forwardRef<HTMLDivElement, NavbarItemProps>(
+  ({ className, active, children, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          navbarItemVariants({
+            variant: active ? "active" : "default",
+            className,
+          })
+        )}
+        {...props}
+      >
+        {children}
+      </div>
+    )
+  }
+)
+NavbarItem.displayName = "NavbarItem"
+
+const NavbarBrand = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(
+        typographyScale.lg.mobile,
+        "md:text-lg",
+        "font-semibold",
+        className
+      )}
+      {...props}
+    />
+  )
+)
 NavbarBrand.displayName = "NavbarBrand"
 
-const NavbarContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("flex items-center space-x-4", className)}
-    {...props}
-  />
-))
+const NavbarContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn("flex items-center gap-4", className)}
+      {...props}
+    />
+  )
+)
 NavbarContent.displayName = "NavbarContent"
-
-const NavbarItem = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("", className)} {...props} />
-))
-NavbarItem.displayName = "NavbarItem"
 
 export { Navbar, NavbarBrand, NavbarContent, NavbarItem } 

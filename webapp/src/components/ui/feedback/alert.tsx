@@ -2,9 +2,20 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 import { Info, AlertCircle, CheckCircle, XCircle, X } from "lucide-react"
+import { typographyScale } from "@/components/ui/utils"
 
 const alertVariants = cva(
-  "relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
+  cn(
+    // Base styles
+    "relative w-full rounded-lg border",
+    // Mobile optimizations
+    "p-3 md:p-4", // Reduced padding on mobile
+    "min-h-[52px] md:min-h-[56px]", // Touch-friendly height
+    "[&>svg]:h-5 [&>svg]:w-5 md:[&>svg]:h-4 md:[&>svg]:w-4", // Larger icons on mobile
+    "[&>svg]:absolute [&>svg]:left-3 [&>svg]:top-3 md:[&>svg]:left-4 md:[&>svg]:top-4", // Adjusted icon position
+    "[&>svg+div]:translate-y-[-3px]",
+    "[&>svg~*]:pl-8 md:[&>svg~*]:pl-7", // Adjusted content padding
+  ),
   {
     variants: {
       variant: {
@@ -23,7 +34,8 @@ const alertVariants = cva(
 
 const Alert = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof alertVariants> & {
+  React.HTMLAttributes<HTMLDivElement> & 
+  VariantProps<typeof alertVariants> & {
     onClose?: () => void
   }
 >(({ className, variant, children, onClose, ...props }, ref) => {
@@ -42,15 +54,25 @@ const Alert = React.forwardRef<
       className={cn(alertVariants({ variant }), className)}
       {...props}
     >
-      {variant === "info" && <Info className="h-4 w-4" />}
-      {variant === "warning" && <AlertCircle className="h-4 w-4" />}
-      {variant === "success" && <CheckCircle className="h-4 w-4" />}
-      {variant === "error" && <XCircle className="h-4 w-4" />}
+      <Icon />
       <div className="flex-1">{children}</div>
       {onClose && (
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          className={cn(
+            // Base styles
+            "absolute rounded-sm opacity-70 ring-offset-background transition-opacity",
+            // Mobile optimizations
+            "right-2 top-2 md:right-4 md:top-4", // Adjusted position
+            "h-8 w-8 md:h-6 md:w-6", // Larger touch target on mobile
+            "flex items-center justify-center",
+            "active:opacity-80", // Touch feedback
+            // States
+            "hover:opacity-100",
+            "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+            "disabled:pointer-events-none"
+          )}
+          aria-label="Close alert"
         >
           <X className="h-4 w-4" />
           <span className="sr-only">Close</span>
@@ -67,7 +89,16 @@ const AlertTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h5
     ref={ref}
-    className={cn("mb-1 font-medium leading-none tracking-tight", className)}
+    className={cn(
+      // Typography
+      typographyScale.base.mobile,
+      "md:text-base",
+      "font-medium leading-none tracking-tight",
+      // Mobile optimizations
+      "mb-1 md:mb-1.5",
+      "min-h-[24px] flex items-center",
+      className
+    )}
     {...props}
   />
 ))
@@ -79,7 +110,15 @@ const AlertDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("text-sm [&_p]:leading-relaxed", className)}
+    className={cn(
+      // Typography
+      typographyScale.sm.mobile,
+      "md:text-sm",
+      // Mobile optimizations
+      "min-h-[20px] flex items-center",
+      "[&_p]:leading-relaxed",
+      className
+    )}
     {...props}
   />
 ))

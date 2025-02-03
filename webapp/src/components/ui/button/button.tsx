@@ -2,9 +2,18 @@ import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { typographyScale } from "@/components/ui/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+  cn(
+    "inline-flex items-center justify-center rounded-md font-medium transition-colors",
+    "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+    "disabled:pointer-events-none disabled:opacity-50",
+    // Mobile touch target optimization
+    "min-h-[44px] min-w-[44px]",
+    // Mobile tap state
+    "active:opacity-80"
+  ),
   {
     variants: {
       variant: {
@@ -20,10 +29,42 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-8",
-        icon: "h-9 w-9",
+        default: cn(
+          // Mobile size
+          typographyScale.sm.mobile,
+          // Desktop size
+          "md:text-base",
+          // Mobile-first spacing
+          "h-11 px-4 py-2.5",
+          // Desktop spacing
+          "md:h-9 md:px-4 md:py-2"
+        ),
+        sm: cn(
+          // Mobile size
+          typographyScale.xs.mobile,
+          // Desktop size
+          "md:text-sm",
+          // Mobile-first spacing
+          "h-10 px-3 py-2",
+          // Desktop spacing
+          "md:h-8 md:px-3 md:py-1.5"
+        ),
+        lg: cn(
+          // Mobile size
+          typographyScale.base.mobile,
+          // Desktop size
+          "md:text-lg",
+          // Mobile-first spacing
+          "h-12 px-6 py-3",
+          // Desktop spacing
+          "md:h-10 md:px-8 md:py-2"
+        ),
+        icon: cn(
+          // Mobile size
+          "h-11 w-11",
+          // Desktop size
+          "md:h-9 md:w-9"
+        ),
       },
     },
     defaultVariants: {

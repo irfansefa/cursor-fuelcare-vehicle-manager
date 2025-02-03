@@ -18,6 +18,18 @@ const config = {
       },
     },
     extend: {
+      fontSize: {
+        'xs-mobile': ['0.875rem', { lineHeight: '1.25rem' }],
+        'sm-mobile': ['0.9375rem', { lineHeight: '1.375rem' }],
+        'base-mobile': ['1rem', { lineHeight: '1.5rem' }],
+        'lg-mobile': ['1.0625rem', { lineHeight: '1.625rem' }],
+        'xl-mobile': ['1.125rem', { lineHeight: '1.75rem' }],
+        'xs': ['0.875rem', { lineHeight: '1.25rem' }],
+        'sm': ['1rem', { lineHeight: '1.5rem' }],
+        'base': ['1.125rem', { lineHeight: '1.75rem' }],
+        'lg': ['1.25rem', { lineHeight: '1.875rem' }],
+        'xl': ['1.5rem', { lineHeight: '2rem' }],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

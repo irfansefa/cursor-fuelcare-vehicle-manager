@@ -11,6 +11,7 @@ import {
 } from "react-hook-form"
 import { cn } from "@/lib/utils"
 import { Label } from "@/components/ui/form/label"
+import { typographyScale } from "@/components/ui/utils"
 
 const Form = FormProvider
 
@@ -77,7 +78,7 @@ const FormItem = React.forwardRef<
 
   return (
     <FormItemContext.Provider value={{ id }}>
-      <div ref={ref} className={cn("space-y-2", className)} {...props} />
+      <div ref={ref} className={cn("space-y-2 md:space-y-3", className)} {...props} />
     </FormItemContext.Provider>
   )
 })
@@ -132,7 +133,15 @@ const FormDescription = React.forwardRef<
     <p
       ref={ref}
       id={formDescriptionId}
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn(
+        // Typography
+        typographyScale.xs.mobile,
+        "md:text-sm",
+        "text-muted-foreground",
+        // Mobile optimizations
+        "min-h-[24px] flex items-center",
+        className
+      )}
       {...props}
     />
   )
@@ -154,7 +163,15 @@ const FormMessage = React.forwardRef<
     <p
       ref={ref}
       id={formMessageId}
-      className={cn("text-sm font-medium text-destructive", className)}
+      className={cn(
+        // Typography
+        typographyScale.xs.mobile,
+        "md:text-sm",
+        "font-medium text-destructive",
+        // Mobile optimizations
+        "min-h-[24px] flex items-center",
+        className
+      )}
       {...props}
     >
       {body}
